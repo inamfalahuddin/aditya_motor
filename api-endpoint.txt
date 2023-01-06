@@ -1,0 +1,177 @@
+Standar API
+
+{root.api}/v1/{grouping}/{endpoint}
+SAMPLE : 
+http://localhost:5000/v1/auth/login
+http://localhost:5000/v1/auth/register
+
+Standar Status Response
+200 - OK			--> Call API Success
+201 - CREATED			--> Post Success
+400 - BAD REQUEST		--> Error on Client side 
+401 - UNAUTHORIZED		--> User not authorized to the request
+403 - FORBIDDEN			--> User not allowed to access
+404 - NOT FOUND			--> Request Endpoint Not Found
+500 - INTERNAL SERVER ERROR	--> Errorn On Server Side
+502 - BAD GATEWAY		--> Invalid Response From Another Request
+
+GROUP: Authentication
+http://localhost:5000/v1/auth/login
+{
+    "email": "test@gmail.com",
+    "password": "123456"
+}
+
+http://localhost:5000/v1/auth/register
+{
+    "username": "cobaajh",
+    "alamat": "Jl.Sutajaya",
+    "no_telp": "0823565658",
+    "no_polisi": "ED 255487 XR",
+    "merk_kendaraan": "Yamaha C1000",
+    "email": "test@gmail.com",
+    "password": "123456"
+}
+
+GROUP: Mekanik
+1. Get Data Mekanik
+http://localhost:5000/v1/mekanik/user
+
+2. Post Data Mekanik
+http://localhost:5000/v1/mekanik/user
+{
+    "nama_lengkap": "julfah",
+    "alamat": "",
+    "no_telp": "",
+    "jabatan": "",
+    "foto": "",
+}
+
+3. Get Data Mekanik Detail
+http://localhost:5000/v1/mekanik/detail
+
+GROUP: Barang
+1. get data barang
+http://localhost:5000/v1/barang/all
+
+2. post data barang
+http://localhost:5000/v1/barang/add
+{
+    "kode_barang": "4521212", 
+    "nama_barang": "22021210",
+    "harga_barang": "",
+    "qty": 10,
+}
+
+3. get detail data barang
+http://localhost:5000/v1/barang/{id}
+
+
+Group: Suplier
+1. get data suplier
+http://localhost:5000/v1/suplier/all
+
+2. post data suplier
+http://localhost:5000/v1/suplier/add
+{
+    "nama_toko": "Cicangho",
+    "alamat": "Jl. Kalijaga",
+    "no_telp": "20247878"
+}
+
+3. get detail data suplier
+http://localhost:5000/v1/suplier/{id}
+
+
+GROUP: Pesanan
+1. get data pesanan
+http://localhost:5000/v1/pesanan/admin/all
+http://localhost:5000/v1/pesanan/customer/all
+
+
+2. post data pesanan
+http://localhost:5000/v1/pesanan/admin/add
+{
+    "nama_lengkap": "andika lubis",
+    "alamat": "hulubanteng",
+    "no_telp": "085823846387",
+    "no_polisi": "B32123",
+    "merk_kendaraan": "Yamaha", 
+    "permasalahan": "Karburator kotor, Rantai berisik",
+    "pelayanan": "Booking",
+    "tanggal": "30 September 2022",
+    "jam": "13:00",
+    "status": "progres",
+    "no_antrian": "002"
+}
+http://localhost:5000/v1/pesanan/customer/add
+{
+    "nama_lengkap": "andika lubis",
+    "alamat": "hulubanteng",
+    "no_telp": "085823846387",
+    "no_polisi": "B32123",
+    "merk_kendaraan": "Yamaha", 
+    "permasalahan": "Karburator kotor, Rantai berisik",
+    "pelayanan": "Booking",
+    "tanggal": "30 September 2022",
+    "jam": "13:00",
+}
+
+3. put pesanan
+http://localhost:5000/v1/pesanan/admin/{id}
+http://localhost:5000/v1/pesanan/customer/{id}
+{
+    "nama_lengkap": "andika lubis",
+    "alamat": "hulubanteng",
+    "no_telp": "085823846387",
+    "no_polisi": "B32123",
+    "merk_kendaraan": "Yamaha", 
+    "permasalahan": "Karburator kotor, Rantai berisik",
+    "pelayanan": "Booking",
+    "tanggal": "30 September 2022",
+    "jam": "13:00",
+    "status": "progres",
+    "no_antrian": "002"
+}
+
+3. get detail data pesanan
+http://localhost:5000/v1/pesanan/admin/{id}
+
+
+GROUP: Transaksi
+1. get Transaksi
+http://localhost:5000/v1/transaksi/all
+
+2. get detail Transaksi
+http://localhost:5000/v1/transaksi/{id}
+
+
+GROUP: Data kendaraan
+1. get kendaraan
+http://localhost:5000/v1/kendaraan/all
+
+2. post kendaraan
+http://localhost:5000/v1/kendaraan/
+{
+    "no_polisi": "AB 2054 XY",
+    "warna_kendaraan": "hitam",
+    "merk_kendaraan": "Yamaha",
+    "jenis": "sepeda motor",
+    "tahun": "2005",
+    "cylinder": "150 CC",
+    "bahan_bakar": "bensin"
+}
+
+3. put kendaraan
+http://localhost:5000/v1/kendaraan/{id}
+
+4. get detail kendaraan
+http://localhost:5000/v1/kendaraan/{id}
+
+
+GROUP: customer
+1. get pengguna
+http://localhost:5000/v1/customer/user
+
+2. put pengguna
+http://localhost:5000/v1/customer/user/{id}
