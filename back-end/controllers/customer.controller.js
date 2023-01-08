@@ -56,6 +56,7 @@ const addCustomer = (req, res) => {
 
   const salt = bcrypt.genSaltSync();
   const hashPassword = bcrypt.hashSync(data.password, salt);
+  const generateID = Math.floor(100000 + Math.random() * 900000);
 
   db.query(
     `SELECT email FROM customer WHERE email='${data.email}'`,
@@ -68,17 +69,32 @@ const addCustomer = (req, res) => {
           [
             {
               ...data,
+              id_customer: generateID,
               password: hashPassword,
             },
           ],
           (err, rows, fields) => {
-            if (err)
-              return response(res, 500, {
-                code: err.code,
-                sqlMessage: err.sqlMessage,
-              });
+            if (err) return response(res, 500, err.message);
+            db.query(
+              `INSERT INTO auth SET ?`,
 
-            return response(res, 200, "Berhasil menambahkan data");
+              [
+                {
+                  id_customer: generateID,
+                  token: "",
+                  role: "user",
+                },
+              ],
+              (err, rows, fields) => {
+                if (err)
+                  return response(res, 500, {
+                    code: err.code,
+                    sqlMessage: err.sqlMessage,
+                  });
+
+                return response(res, 200, "Berhasil menambahkan data");
+              }
+            );
           }
         );
       } else {

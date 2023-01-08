@@ -63,18 +63,61 @@ const getTransaksiById = (req, res) => {
   );
 };
 
+const getTransaksiByUserId = (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+
+  db.query(
+    `SELECT id_transaksi FROM transaksi WHERE id_customer=${id}`,
+    (err, rows, fields) => {
+      if (err) {
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      } else {
+        if (rows.length > 0) {
+          db.query(
+            `SELECT * FROM transaksi WHERE id_customer=${id}`,
+            (err, rows, fields) => {
+              if (err)
+                return response(res, 500, {
+                  code: err.code,
+                  sqlMessage: err.sqlMessage,
+                });
+
+              return response(res, 200, "Berhasil", rows);
+            }
+          );
+        } else {
+          return response(res, 404, `Tidak ada data dengan id ${id}`);
+        }
+      }
+    }
+  );
+};
+
 const addTransaksi = (req, res) => {
   const data = req.body;
 
-  db.query(`INSERT INTO transaksi SET ?`, [data], (err, rows, fields) => {
-    if (err)
-      return response(res, 500, {
-        code: err.code,
-        sqlMessage: err.sqlMessage,
-      });
+  console.log(data);
 
-    return response(res, 200, "Berhasil menambahkan data");
-  });
+  const date = new Date();
+  const today = date.toISOString().slice(0, 10);
+
+  db.query(
+    `INSERT INTO transaksi SET ?`,
+    [{ ...data, tanggal: today }],
+    (err, rows, fields) => {
+      if (err)
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+
+      return response(res, 200, "Berhasil menambahkan data");
+    }
+  );
 };
 
 const deleteTransaksi = (req, res) => {
@@ -110,6 +153,7 @@ const deleteTransaksi = (req, res) => {
 module.exports = {
   getTransaksiAll,
   getTransaksiById,
+  getTransaksiByUserId,
   addTransaksi,
   deleteTransaksi,
 };

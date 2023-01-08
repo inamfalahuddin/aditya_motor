@@ -8,14 +8,18 @@ const pesananRoute = require("./routes/pesanan.routes");
 const customerRoute = require("./routes/customer.routes");
 const kendaraanRoute = require("./routes/kendaraan.routes");
 const transaksiRoute = require("./routes/transaksi.routes");
+const loginRoute = require("./routes/auth.routes");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // routes
+app.use(loginRoute);
 app.use(mekanikRoute);
 app.use(barangRoute);
 app.use(suplierRoute);
