@@ -14,74 +14,28 @@ const login = (req, res) => {
         });
       }
 
-      if (rows.email == undefined) {
-        return response(res, 404, "Email tidak terdaftar");
-      } else {
+      if (rows.length > 0) {
         const match = bcrypt.compareSync(req.body.password, rows[0].password);
-        const { email, role } = rows[0];
+        const { id_customer, email, role } = rows[0];
 
-        if (match) {
-          const accessToken = jwt.sign(
-            { email, role },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "200s" }
-          );
-          const refreshToken = jwt.sign(
-            { email, role },
-            process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: "1d" }
-          );
-
-          db.query(
-            `UPDATE auth SET token='${refreshToken}' WHERE id_customer='${rows[0].id_customer}'`,
-            (err, rows, fields) => {
-              if (err) {
-                return response(res, 500, {
-                  code: err.code,
-                  sqlMessage: err.sqlMessage,
-                });
-              } else {
-                res.cookie("refreshToken", refreshToken, {
-                  httpOnly: true,
-                  maxAge: 24 * 60 * 60 * 1000,
-                });
-
-                return response(res, 200, "Login berhasil", {
-                  token: accessToken,
-                  expire: "1 day",
-                });
-              }
-            }
-          );
-        } else {
+        if (!match) {
           return response(res, 404, "Password salah");
         }
-      }
-    }
-  );
-  return response(res, 404, "Tidak ada data");
-};
 
-const logout = (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+        const accessToken = jwt.sign(
+          { email, role },
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: "200s" }
+        );
 
-  if (!refreshToken) {
-    return response(res, 204, "Tidak ada konten");
-  } else {
-    db.query(
-      `SELECT * FROM auth WHERE token='${refreshToken}'`,
-      (err, rows, fields) => {
-        if (err) {
-          return response(res, 500, {
-            code: err.code,
-            sqlMessage: err.sqlMessage,
-          });
-        }
-
-        const { email } = rows[0];
+        const refreshToken = jwt.sign(
+          { email, role },
+          process.env.REFRESH_TOKEN_SECRET,
+          { expiresIn: "1d" }
+        );
 
         db.query(
-          `UPDATE auth SET token='' WHERE email='${email}'`,
+          `UPDATE auth SET token='${refreshToken}' WHERE id_customer='${id_customer}'`,
           (err, rows, fields) => {
             if (err) {
               return response(res, 500, {
@@ -89,13 +43,60 @@ const logout = (req, res) => {
                 sqlMessage: err.sqlMessage,
               });
             }
-
-            return response(res, 200, "Logout berhasil");
           }
         );
+
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 24 * 60 * 60 * 1000,
+        });
+        return response(res, 200, "Login berhasil", { token: accessToken });
+      } else {
+        return response(res, 404, "Email tidak terdaftar");
       }
-    );
+    }
+  );
+};
+
+const logout = (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return response(res, 204, "Tidak ada token");
   }
+
+  db.query(
+    `SELECT * FROM auth WHERE token='${refreshToken}'`,
+    (err, rows, fields) => {
+      if (err) {
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      }
+
+      if (rows.length > 0) {
+        const { id_customer } = rows[0];
+
+        db.query(
+          `UPDATE auth SET token='' WHERE id_customer='${id_customer}'`,
+          (err, rows) => {
+            if (err) {
+              return response(res, 500, {
+                code: err.code,
+                sqlMessage: err.sqlMessage,
+              });
+            }
+            res.clearCookie("refreshToken");
+            response(res, 200, "Logout berhasil");
+            return res.end();
+          }
+        );
+      } else {
+        return response(res, 404, "Tidak ada user login");
+      }
+    }
+  );
 };
 
 module.exports = { login, logout };

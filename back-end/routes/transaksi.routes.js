@@ -6,13 +6,15 @@ const {
   getTransaksiAll,
   getTransaksiByUserId,
 } = require("../controllers/transaksi.controller");
+const auth = require("../middleware/auth-token");
+
 const router = express.Router();
 
 // Suplier
-router.post("/v1/transaksi/", addTransaksi);
-router.get("/v1/transaksi/all", getTransaksiAll);
-router.get("/v1/transaksi/:id", getTransaksiById);
-router.get("/v1/transaksi/user/:id", getTransaksiByUserId);
-router.delete("/v1/transaksi/:id", deleteTransaksi);
+router.post("/v1/transaksi/", auth, addTransaksi);
+router.get("/v1/transaksi/all", auth, getTransaksiAll);
+router.get("/v1/transaksi/:id", auth, getTransaksiById);
+router.get("/v1/transaksi/user/:id", auth, getTransaksiByUserId);
+router.delete("/v1/transaksi/:id", auth, deleteTransaksi);
 
 module.exports = router;
