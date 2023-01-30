@@ -40,28 +40,42 @@ function Sidebar() {
         <div className="list-group">
           <Link
             to="/dashboard"
-            className="list-group-item bg-danger text-white"
+            className="list-group-item bg-danger text-white item-hover"
           >
             <img src={IconDashboard} alt="dashboard" width={20} />
             <span className="ms-3">Dasbhoard</span>
           </Link>
           <Link
+            to="/mekanik"
+            className="list-group-item bg-danger text-white item-hover"
+          >
+            <img src={IconData} alt="barang" width={20} />
+            <span className="ms-3">Data Mekanik</span>
+          </Link>
+          <Link
+            to="/barang"
+            className="list-group-item bg-danger text-white  item-hover"
+          >
+            <img src={IconData} alt="Barang" width={20} />
+            <span className="ms-3">Data Barang</span>
+          </Link>
+          <Link
             to="/kendaraan"
-            className="list-group-item bg-danger text-white"
+            className="list-group-item bg-danger text-white  item-hover"
           >
             <img src={IconData} alt="dashboard" width={20} />
             <span className="ms-3">Data Kendaraan</span>
           </Link>
           <Link
-            to="/dashboard"
-            className="list-group-item bg-danger text-white"
+            to="/pemesanan"
+            className="list-group-item bg-danger text-white  item-hover"
           >
             <img src={IconData} alt="dashboard" width={20} />
             <span className="ms-3">Pemesanan</span>
           </Link>
           <Link
-            to="/dashboard"
-            className="list-group-item bg-danger text-white"
+            to="/transaksi"
+            className="list-group-item bg-danger text-white  item-hover"
           >
             <img src={IconData} alt="dashboard" width={20} />
             <span className="ms-3">Transaksi</span>
@@ -69,8 +83,8 @@ function Sidebar() {
           <div className="list-group-item bg-danger text-white">
             <span style={{ fontSize: ".85rem" }}>Pengaturan</span>
             <Link
-              to="/dashboard"
-              className="list-group-item bg-danger text-white border-0"
+              to="/pengguna"
+              className="list-group-item bg-danger text-white  item-hover border-0"
             >
               <img src={IconPengguna} alt="dashboard" width={20} />
               <span className="ms-3">Pengguna</span>
@@ -78,7 +92,7 @@ function Sidebar() {
           </div>
           <Link
             to="/dashboard"
-            className="list-group-item bg-danger text-white"
+            className="list-group-item bg-danger text-white item-hover"
           >
             <img src={IconLogout} alt="dashboard" width={20} />
             <span className="ms-3">Log Out</span>

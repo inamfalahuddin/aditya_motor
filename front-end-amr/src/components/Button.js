@@ -1,9 +1,13 @@
 import React from "react";
 
-function Button({ title }) {
+function Button({ children, color, className, onclick }) {
   return (
-    <button type="submit" className="btn btn-primary px-4 py-0">
-      {title}
+    <button
+      type="submit"
+      className={`btn btn-${color} px-3 py-1 ${className}`}
+      onClick={onclick}
+    >
+      {children}
     </button>
   );
 }

@@ -50,6 +50,10 @@ function Navbar() {
               style={{ height: "4px" }}
             ></span>
           </div>
+
+          <h5 className="text-capitalize text-white p-0 m-0">
+            {state.pages.title}
+          </h5>
         </div>
       </nav>
       {/* 

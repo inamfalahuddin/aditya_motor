@@ -3,11 +3,11 @@ import { useAppContext } from "../../context/app-context";
 import Toolbar from "../../components/Toolbar";
 import Action from "../../components/Action";
 
-function Kendaraan() {
+function Transaksi() {
   const [state, dispatch] = useAppContext();
 
   useEffect(() => {
-    dispatch({ type: "SET_TITLE", payload: "kendaraan" });
+    dispatch({ type: "SET_TITLE", payload: "transaksi" });
   }, []);
 
   return (
@@ -19,24 +19,22 @@ function Kendaraan() {
             <thead className="bg-danger text-white">
               <tr>
                 <td>No.</td>
+                <td>Tanggal</td>
+                <td>Nama Lengkap</td>
                 <td>No Polisi</td>
-                <td>Warna Kendaraan</td>
                 <td>Merk Kendaraan</td>
-                <td>Jenis</td>
-                <td>Tahun Kendaraan</td>
-                <td>Isi Cylinder</td>
+                <td>Nama Mekanik</td>
                 <td>Action</td>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1.</td>
+                <td>30, Januari 2023</td>
+                <td>Andika Lubis</td>
                 <td>B300999</td>
-                <td>Hitam</td>
                 <td>Yamaha</td>
-                <td>Sepeda Motor</td>
-                <td>2005</td>
-                <td>150 CC</td>
+                <td>Yoga Aditya</td>
                 <td>
                   <Action />
                 </td>
@@ -49,4 +47,4 @@ function Kendaraan() {
   );
 }
 
-export default Kendaraan;
+export default Transaksi;
