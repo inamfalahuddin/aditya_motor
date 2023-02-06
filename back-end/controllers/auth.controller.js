@@ -99,4 +99,48 @@ const logout = (req, res) => {
   );
 };
 
-module.exports = { login, logout };
+const refresh = (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    db.query(
+      `SELECT * FROM auth WHERE token='${refreshToken}'`,
+      (err, rows, fields) => {
+        if (err) {
+          return response(res, 500, {
+            code: err.code,
+            sqlMessage: err.sqlMessage,
+          });
+        }
+
+        if (rows.length > 0) {
+          jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET,
+            (err, decoded) => {
+              if (err) {
+                return response(res, 403, "Forbidden");
+              } else {
+                const { id_customer, role } = rows;
+
+                const accessToken = jwt.sign(
+                  { id_customer, role },
+                  process.env.ACCESS_TOKEN_SECRET,
+                  { expiresIn: "300s" }
+                );
+
+                return response(res, 200, "Success", { accessToken });
+              }
+            }
+          );
+        } else {
+          return response(res, 404, "Tidak ada user login");
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = { login, logout, refresh };
