@@ -1,19 +1,29 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CardData from "../../components/CardData";
+import Loading from "../../components/Loading";
 import { useAppContext } from "../../context/app-context";
+import useAuth from "../../hooks/useAuth";
 import LogoBrand from "../../images/logo-aditya-motor.png";
+import Template from "../Template";
 
 function Dasbhoard() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "dashboard" });
+
+    if (state.token.bearer === "") {
+      auth();
+    }
   }, []);
 
-  return (
-    <>
+  return state.isLoading ? (
+    <Loading />
+  ) : (
+    <Template>
       <img className="my-5" src={LogoBrand} alt="logo brand" />
       <div className="row">
         <div className="col-md-6" onClick={() => navigate("/kendaraan")}>
@@ -26,7 +36,7 @@ function Dasbhoard() {
           <CardData title="transaksi" />
         </div>
       </div>
-    </>
+    </Template>
   );
 }
 

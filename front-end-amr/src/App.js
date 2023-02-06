@@ -24,15 +24,21 @@ function App() {
       <Routes>
         <Route path="*" element={<Notfound />} />
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <AppProvider>
+              <Login />
+            </AppProvider>
+          }
+        />
+
         <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
           element={
             <AppProvider>
-              <Template>
-                <Dasbhoard />
-              </Template>
+              <Dasbhoard />
             </AppProvider>
           }
         />
@@ -80,9 +86,7 @@ function App() {
           path="/mekanik"
           element={
             <AppProvider>
-              <Template>
-                <Mekanik />
-              </Template>
+              <Mekanik />
             </AppProvider>
           }
         />

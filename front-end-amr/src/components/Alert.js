@@ -1,11 +1,11 @@
 import React from "react";
 
-function Alert() {
+function Alert({ data }) {
   return (
-    <div className="alert alert-danger" role="alert">
-      A simple secondary alert—check it out!
+    <div className={`alert alert-${data.color}`} role="alert">
+      {data.message}
     </div>
   );
 }
 
-export default Alert;
+export default React.memo(Alert);

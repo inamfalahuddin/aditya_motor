@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import UserProfile from "../images/user-profile.svg";
 import IconDashboard from "../images/dashboard-icon.svg";
@@ -6,6 +6,7 @@ import IconData from "../images/icon-data.svg";
 import IconLogout from "../images/logout-icon.svg";
 import IconPengguna from "../images/user-icon.svg";
 import { useAppContext } from "../context/app-context";
+import axios from "../api/axios";
 
 function Sidebar() {
   const [state, dispatch] = useAppContext();
@@ -17,6 +18,18 @@ function Sidebar() {
     window
       .matchMedia("(min-width: 992px)")
       .addEventListener("change", (e) => setMatches(e.matches));
+  }, []);
+
+  const Logout = useCallback(async (e) => {
+    try {
+      const response = await axios.delete("auth/logout", {
+        withCredentials: true,
+      });
+
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (
@@ -91,8 +104,9 @@ function Sidebar() {
             </Link>
           </div>
           <Link
-            to="/dashboard"
+            to="/login"
             className="list-group-item bg-danger text-white item-hover"
+            onClick={Logout}
           >
             <img src={IconLogout} alt="dashboard" width={20} />
             <span className="ms-3">Log Out</span>

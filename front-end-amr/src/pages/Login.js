@@ -1,10 +1,45 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import LogoBrand from "../images/logo-aditya-motor.png";
 import Button from "../components/Button";
 import Alert from "../components/Alert";
+import axios from "../api/axios";
+import { useAppContext } from "../context/app-context";
+import jwt_decoded from "jwt-decode";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState({});
+
+  const navigate = useNavigate("");
+  const [state, dispatch] = useAppContext();
+
+  const Auth = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "auth/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+
+      dispatch({ type: "SET_TOKEN", payload: response.data.data.token });
+
+      setMessage({ message: response.data.message, color: "success" });
+
+      navigate("/dashboard");
+    } catch (err) {
+      setMessage({ message: err.response.data.message, color: "danger" });
+      // console.log(err);
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="container h-full vh-100 d-flex justify-content-center align-items-md-center">
       <div className="d-lg-flex align-items-center">
@@ -20,7 +55,7 @@ function Login() {
             Login
           </div>
           <div className="card-body text-center">
-            <Alert />
+            {message.message !== undefined ? <Alert data={message} /> : null}
             <form>
               <div className="mb-3 text-start">
                 <label htmlFor="exampleInputEmail1" className="form-label">
@@ -30,7 +65,10 @@ function Login() {
                   type="email"
                   className="form-control"
                   id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
+                  value={email}
+                  onChange={useCallback((e) => {
+                    setEmail(e.target.value);
+                  }, [])}
                 />
               </div>
               <div className="mb-3 text-start">
@@ -41,9 +79,15 @@ function Login() {
                   type="password"
                   className="form-control"
                   id="exampleInputPassword1"
+                  value={password}
+                  onChange={useCallback((e) => {
+                    setPassword(e.target.value);
+                  }, [])}
                 />
               </div>
-              <Button title="Masuk" />
+              <Button color="primary" onclick={Auth}>
+                Masuk
+              </Button>
             </form>
             <p className="my-4">
               Membuat akun | <Link to={"/register"}>Register</Link>{" "}

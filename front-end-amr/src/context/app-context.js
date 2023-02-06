@@ -11,6 +11,11 @@ const intialState = {
     title: "",
   },
   isMenu: false,
+  isLoading: true,
+  token: {
+    bearer: "",
+    exp: 0,
+  },
 };
 
 const reducer = (state, action) => {
@@ -20,6 +25,10 @@ const reducer = (state, action) => {
       return { ...state, pages: { title: action.payload } };
     case "SET_MENU":
       return { ...state, isMenu: action.payload };
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    case "SET_TOKEN":
+      return { ...state, token: action.payload };
     default:
       throw new Error();
   }

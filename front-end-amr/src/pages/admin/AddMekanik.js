@@ -96,7 +96,7 @@ function AddMekanik() {
                 Kembali
               </Button>
               <Button className="me-3" color="primary">
-                Edit
+                Tambah
               </Button>
             </div>
           </div>

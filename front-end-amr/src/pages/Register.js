@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LogoBrand from "../images/logo-aditya-motor.png";
 import Button from "../components/Button";
 import Alert from "../components/Alert";
 
 function Register() {
+  const [message, setMessage] = useState({});
+
+  const Register = async (e) => {
+    e.preventDefault();
+
+    console.log("hai sayang");
+  };
+
   return (
     <div className="container px-5 my-5">
       <div className="row">
@@ -23,7 +31,8 @@ function Register() {
               Register
             </div>
             <div className="card-body text-center">
-              <Alert />
+              {message.message !== undefined ? <Alert data={message} /> : null}
+
               <form>
                 <div className="mb-3 text-start">
                   <label htmlFor="exampleInputEmail1" className="form-label">
@@ -32,7 +41,6 @@ function Register() {
                   <input
                     type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -43,7 +51,6 @@ function Register() {
                   <input
                     type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -54,7 +61,6 @@ function Register() {
                   <input
                     type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -65,7 +71,6 @@ function Register() {
                   <input
                     type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -76,7 +81,6 @@ function Register() {
                   <input
                     type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -87,7 +91,6 @@ function Register() {
                   <input
                     type="email"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                   />
                 </div>

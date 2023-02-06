@@ -1,14 +1,41 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import Toolbar from "../../components/Toolbar";
 import Action from "../../components/Action";
+import axios from "../../api/axios";
+import useAuth from "../../hooks/useAuth";
 
 function Kendaraan() {
   const [state, dispatch] = useAppContext();
+  const [kendaraan, setKendaraan] = useState([]);
+  const auth = useAuth();
+
+  const getKendaraan = async () => {
+    try {
+      const response = await axios.get("kendaraan/all", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setKendaraan(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "kendaraan" });
+
+    if (state.token.bearer === "") {
+      auth();
+    }
   }, []);
+
+  useEffect(() => {
+    getKendaraan();
+  }, [state.token.bearer]);
 
   return (
     <div>
