@@ -58,6 +58,62 @@ const login = (req, res) => {
   );
 };
 
+const register = (req, res) => {
+  const {
+    username,
+    alamat,
+    no_tlp,
+    no_polisi,
+    merk_kendaraan,
+    email,
+    password,
+  } = req.body;
+
+  const idCustomer = generateIdCustomer();
+
+  db.query(
+    `INSERT INTO customer SET ?`,
+    [
+      {
+        id_customer: idCustomer,
+        username,
+        alamat,
+        no_tlp,
+        email,
+        password,
+      },
+    ],
+    (err, rows, fields) => {
+      if (err) {
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      } else {
+        db.query(
+          `INSERT INTO auth SET ?`,
+          [
+            {
+              id_customer: idCustomer,
+              role: "user",
+            },
+          ],
+          (err, rows, fields) => {
+            if (err) {
+              return response(res, 500, {
+                code: err.code,
+                sqlMessage: err.sqlMessage,
+              });
+            } else {
+              return response(res, 200, "Berhasil menambahkan data");
+            }
+          }
+        );
+      }
+    }
+  );
+};
+
 const logout = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 
@@ -143,4 +199,11 @@ const refresh = (req, res) => {
   }
 };
 
-module.exports = { login, logout, refresh };
+function generateIdCustomer() {
+  const min = 100000;
+  const max = 999999;
+
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+module.exports = { login, register, logout, refresh };
