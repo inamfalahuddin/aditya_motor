@@ -1,16 +1,112 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import LogoBrand from "../images/logo-aditya-motor.png";
 import Button from "../components/Button";
 import Alert from "../components/Alert";
+import axios from "../api/axios";
 
 function Register() {
   const [message, setMessage] = useState({});
+  const [username, setUsername] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [noTlp, setNoTlp] = useState("");
+  const [noPolisi, setNoPolisi] = useState("");
+  const [merkKendaraan, setMerkKendaraan] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const Register = async (e) => {
     e.preventDefault();
 
-    console.log("hai sayang");
+    try {
+      if (formValidation() === true) {
+        const response = await axios.post("auth/register", {
+          username,
+          alamat,
+          no_tlp: noTlp,
+          no_polisi: noPolisi,
+          merk_kendaraan: merkKendaraan,
+          email,
+          password,
+        });
+
+        setUsername("");
+        setAlamat("");
+        setNoTlp("");
+        setNoPolisi("");
+        setMerkKendaraan("");
+        setEmail("");
+        setPassword("");
+        setMessage({ message: response.data.message, color: "success" });
+      }
+    } catch (err) {
+      setMessage({ message: err.response.data.message, color: "danger" });
+      console.log(Response);
+    }
+  };
+
+  const formValidation = () => {
+    if (username === "") {
+      setMessage({ message: "Username wajib di isi", color: "warning" });
+      return false;
+    } else {
+      if (alamat === "") {
+        setMessage({ message: "alamat wajib di isi", color: "warning" });
+        return false;
+      } else {
+        if (noTlp === "") {
+          setMessage({ message: "noTlp wajib di isi", color: "warning" });
+          return false;
+        } else {
+          if (noPolisi === "") {
+            setMessage({ message: "noPolisi wajib di isi", color: "warning" });
+            return false;
+          } else {
+            if (merkKendaraan === "") {
+              setMessage({
+                message: "merkKendaraan wajib di isi",
+                color: "warning",
+              });
+              return false;
+            } else {
+              if (email === "") {
+                setMessage({ message: "email wajib di isi", color: "warning" });
+                return false;
+              } else {
+                if (password === "") {
+                  setMessage({
+                    message: "password wajib di isi",
+                    color: "warning",
+                  });
+                  return false;
+                } else {
+                  setMessage("");
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // username === ""
+    //   ? setMessage({ message: "Username wajib di isi", color: "warning" })
+    //   : alamat === ""
+    //   ? setMessage({ message: "Alamat wajib di isi", color: "warning" })
+    //   : noTlp === ""
+    //   ? setMessage({ message: "Nomor Telpon wajib di isi", color: "warning" })
+    //   : noPolisi === ""
+    //   ? setMessage({ message: "Nomor Polisi wajib di isi", color: "warning" })
+    //   : merkKendaraan === ""
+    //   ? setMessage({
+    //       message: "Merk Kendaraan wajib di isi",
+    //       color: "warning",
+    //     })
+    //   : email === ""
+    //   ? setMessage({ message: "Email wajib di isi", color: "warning" })
+    //   : password === ""
+    //   ? setMessage({ message: "Password wajib di isi", color: "warning" })
+    //   : setMessage("");
   };
 
   return (
@@ -42,6 +138,11 @@ function Register() {
                     type="text"
                     className="form-control"
                     aria-describedby="emailHelp"
+                    value={username}
+                    onChange={useCallback((e) => {
+                      setUsername(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -52,6 +153,11 @@ function Register() {
                     type="text"
                     className="form-control"
                     aria-describedby="emailHelp"
+                    value={alamat}
+                    onChange={useCallback((e) => {
+                      setAlamat(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -59,9 +165,14 @@ function Register() {
                     No Tlp
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     aria-describedby="emailHelp"
+                    value={noTlp}
+                    onChange={useCallback((e) => {
+                      setNoTlp(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -72,6 +183,11 @@ function Register() {
                     type="text"
                     className="form-control"
                     aria-describedby="emailHelp"
+                    value={noPolisi}
+                    onChange={useCallback((e) => {
+                      setNoPolisi(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -82,6 +198,11 @@ function Register() {
                     type="text"
                     className="form-control"
                     aria-describedby="emailHelp"
+                    value={merkKendaraan}
+                    onChange={useCallback((e) => {
+                      setMerkKendaraan(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -92,6 +213,11 @@ function Register() {
                     type="email"
                     className="form-control"
                     aria-describedby="emailHelp"
+                    value={email}
+                    onChange={useCallback((e) => {
+                      setEmail(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -102,9 +228,16 @@ function Register() {
                     type="password"
                     className="form-control"
                     id="exampleInputPassword1"
+                    value={password}
+                    onChange={useCallback((e) => {
+                      setPassword(e.target.value);
+                    }, [])}
+                    required
                   />
                 </div>
-                <Button title="Registrasi" />
+                <Button color="primary" onclick={Register}>
+                  Register
+                </Button>
               </form>
               <p className="my-4">
                 Sudah memiliki akun | <Link to={"/login"}>Login</Link>{" "}
