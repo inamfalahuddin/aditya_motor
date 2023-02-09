@@ -18,14 +18,13 @@ function Mekanik() {
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "mekanik" });
 
-    auth();
+    const authentication = auth();
+    authentication.then((auth) => {
+      if (auth) {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
+    });
   }, []);
-
-  useEffect(() => {
-    if (state.token.bearer !== "") {
-      getMekanik();
-    }
-  }, [state.token.bearer]);
 
   const getMekanik = async () => {
     try {

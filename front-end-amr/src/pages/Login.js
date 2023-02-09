@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LogoBrand from "../images/logo-aditya-motor.png";
 import Button from "../components/Button";
@@ -35,12 +35,15 @@ function Login() {
           exp: jwt_decoded(response.data.data.token).exp,
         },
       });
-      setMessage({ message: response.data.message, color: "success" });
 
+      const accessToken = response?.data.data?.token;
+      const roles = jwt_decoded(accessToken).role;
+
+      setMessage({ message: response.data.message, color: "success" });
       navigate("/dashboard");
     } catch (err) {
-      setMessage({ message: err.response.data.message, color: "danger" });
       // console.log(err);
+      setMessage({ message: err.response.data.message, color: "danger" });
       navigate("/login");
     }
   };

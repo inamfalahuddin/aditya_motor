@@ -1,8 +1,8 @@
-import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import { useAppContext } from "../context/app-context";
 import useRefreshToken from "./useRefreshToken";
+import jwtDecode from "jwt-decode";
 
 const useAuth = () => {
   const [state, dispatch] = useAppContext();
@@ -10,10 +10,30 @@ const useAuth = () => {
   const refresh = useRefreshToken();
 
   const auth = async () => {
-    const authentication = await refresh();
+    try {
+      const response = await axios.get("auth/token", { withCredentials: true });
 
-    if (authentication) {
-      dispatch({ type: "SET_LOADING", payload: false });
+      const accessToken = response.data.data.accessToken;
+      const decoded = jwtDecode(accessToken);
+
+      console.log(state.token.bearer);
+
+      if (state.token.bearer === "") {
+        console.log("generate token baru");
+        dispatch({
+          type: "SET_TOKEN",
+          payload: {
+            bearer: response.data.data.accessToken,
+            exp: decoded.exp,
+          },
+        });
+      }
+
+      return true;
+    } catch (err) {
+      console.log(err);
+      navigate("/login");
+      return false;
     }
   };
 
