@@ -28,8 +28,13 @@ function Login() {
         { withCredentials: true }
       );
 
-      dispatch({ type: "SET_TOKEN", payload: response.data.data.token });
-
+      dispatch({
+        type: "SET_TOKEN",
+        payload: {
+          bearer: response.data.data.token,
+          exp: jwt_decoded(response.data.data.token).exp,
+        },
+      });
       setMessage({ message: response.data.message, color: "success" });
 
       navigate("/dashboard");

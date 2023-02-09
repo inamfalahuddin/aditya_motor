@@ -6,32 +6,30 @@ import IconUser from "../../images/icon-user-dark.svg";
 import useAuth from "../../hooks/useAuth";
 import Loading from "../../components/Loading";
 import Template from "../Template";
-import axios, { axiosJwt } from "../../api/axios";
 import Spiner from "../../components/Spiner";
+import useAxiosPrivate from "../../hooks/usePrivate";
 
 function Mekanik() {
   const [state, dispatch] = useAppContext();
-  const auth = useAuth();
-
   const [dataMekanik, setDataMekanik] = useState([]);
+  const auth = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "mekanik" });
+
+    auth();
   }, []);
 
   useEffect(() => {
-    if (state.token.bearer === "") {
-      auth();
-    }
-
-    if (state.token.bearer) {
+    if (state.token.bearer !== "") {
       getMekanik();
     }
   }, [state.token.bearer]);
 
   const getMekanik = async () => {
     try {
-      const response = await axiosJwt.get("mekanik/all", {
+      const response = await axiosPrivate.get("mekanik/all", {
         headers: {
           Authorization: `Bearer ${state.token.bearer}`,
         },
@@ -42,8 +40,6 @@ function Mekanik() {
       console.log(err);
     }
   };
-
-  console.log(dataMekanik);
 
   return state.isLoading ? (
     <Loading />

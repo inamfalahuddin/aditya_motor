@@ -3,21 +3,19 @@ import { useNavigate } from "react-router-dom";
 import CardData from "../../components/CardData";
 import Loading from "../../components/Loading";
 import { useAppContext } from "../../context/app-context";
-import useAuth from "../../hooks/useAuth";
+import useRefreshToken from "../../hooks/useRefreshToken";
 import LogoBrand from "../../images/logo-aditya-motor.png";
 import Template from "../Template";
 
 function Dasbhoard() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
-  const auth = useAuth();
+  const auth = useRefreshToken();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "dashboard" });
 
-    if (state.token.bearer === "") {
-      auth();
-    }
+    auth();
   }, []);
 
   return state.isLoading ? (
