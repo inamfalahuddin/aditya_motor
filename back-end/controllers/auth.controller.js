@@ -23,13 +23,13 @@ const login = (req, res) => {
         }
 
         const accessToken = jwt.sign(
-          { email, role },
+          { id_customer, role },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "200s" }
+          { expiresIn: "5s" }
         );
 
         const refreshToken = jwt.sign(
-          { email, role },
+          { id_customer, role },
           process.env.REFRESH_TOKEN_SECRET,
           { expiresIn: "1d" }
         );
@@ -70,6 +70,8 @@ const register = (req, res) => {
   } = req.body;
 
   const idCustomer = generateIdCustomer();
+  const salt = bcrypt.genSaltSync();
+  const hashPassword = bcrypt.hashSync(password, salt);
 
   db.query(
     `INSERT INTO customer SET ?`,
@@ -80,7 +82,7 @@ const register = (req, res) => {
         alamat,
         no_tlp,
         email,
-        password,
+        password: hashPassword,
       },
     ],
     (err, rows, fields) => {
@@ -177,12 +179,12 @@ const refresh = (req, res) => {
               if (err) {
                 return response(res, 403, "Forbidden");
               } else {
-                const { id_customer, role } = rows;
+                const { id_customer, role } = rows[0];
 
                 const accessToken = jwt.sign(
                   { id_customer, role },
                   process.env.ACCESS_TOKEN_SECRET,
-                  { expiresIn: "300s" }
+                  { expiresIn: "5s" }
                 );
 
                 return response(res, 200, "Success", { accessToken });
