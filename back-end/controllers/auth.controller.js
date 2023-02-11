@@ -25,7 +25,7 @@ const login = (req, res) => {
         const accessToken = jwt.sign(
           { id_customer, role },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "5s" }
+          { expiresIn: "20s" }
         );
 
         const refreshToken = jwt.sign(
@@ -184,7 +184,7 @@ const refresh = (req, res) => {
                 const accessToken = jwt.sign(
                   { id_customer, role },
                   process.env.ACCESS_TOKEN_SECRET,
-                  { expiresIn: "5s" }
+                  { expiresIn: "20s" }
                 );
 
                 return response(res, 200, "Success", { accessToken });

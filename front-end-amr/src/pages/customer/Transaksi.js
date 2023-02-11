@@ -1,14 +1,68 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import Toolbar from "../../components/Toolbar";
 import Action from "../../components/Action";
+import useRefreshToken from "../../hooks/useRefreshToken";
+import useAxiosPrivate from "../../hooks/usePrivate";
+import jwt_decode from "jwt-decode";
 
 function Transaksi() {
   const [state, dispatch] = useAppContext();
+  const [dataTransaksi, setDataTransaksi] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
+  const refresh = useRefreshToken();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "transaksi" });
+    if (state.token.bearer === "") {
+      refresh();
+    }
   }, []);
+
+  useEffect(() => {
+    if (state.token.bearer) {
+      const decode = jwt_decode(state.token.bearer);
+
+      if (decode.role === "admin") {
+        getTransaksiAll();
+      } else {
+        getTransaksiById(decode.id_customer);
+      }
+    }
+  }, [state.token]);
+
+  const getTransaksiAll = async () => {
+    try {
+      const response = await axiosPrivate.get("transaksi/all", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataTransaksi(response.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getTransaksiById = async (id) => {
+    console.log(id);
+    try {
+      const response = await axiosPrivate.get(`transaksi/user/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataTransaksi(response.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log(dataTransaksi);
 
   return (
     <div>
@@ -28,17 +82,26 @@ function Transaksi() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1.</td>
-                <td>30, Januari 2023</td>
-                <td>Andika Lubis</td>
-                <td>B300999</td>
-                <td>Yamaha</td>
-                <td>Yoga Aditya</td>
-                <td>
-                  <Action />
-                </td>
-              </tr>
+              {dataTransaksi.length === 0 ? (
+                <tr className="text-center">
+                  <td colSpan={7}>Tidak ada transaksi</td>
+                </tr>
+              ) : (
+                dataTransaksi &&
+                dataTransaksi.map((data, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}.</td>
+                    <td>{data.tanggal}</td>
+                    <td className="text-capitalize">{data.username}</td>
+                    <td>{data.no_polisi}</td>
+                    <td>{data.merk_kendaraan}</td>
+                    <td>{data.nama_mekanik}</td>
+                    <td>
+                      <Action />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

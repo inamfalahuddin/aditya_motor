@@ -3,27 +3,20 @@ import { useAppContext } from "../../context/app-context";
 import Action from "../../components/Action";
 import Toolbar from "../../components/Toolbar";
 import IconUser from "../../images/icon-user-dark.svg";
-import useAuth from "../../hooks/useAuth";
-import Loading from "../../components/Loading";
-import Template from "../Template";
 import Spiner from "../../components/Spiner";
 import useAxiosPrivate from "../../hooks/usePrivate";
+import useAuth from "../../hooks/useAuth";
 
 function Mekanik() {
   const [state, dispatch] = useAppContext();
   const [dataMekanik, setDataMekanik] = useState([]);
-  const auth = useAuth();
   const axiosPrivate = useAxiosPrivate();
+  const auth = useAuth();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "mekanik" });
-
-    const authentication = auth();
-    authentication.then((auth) => {
-      if (auth) {
-        dispatch({ type: "SET_LOADING", payload: false });
-      }
-    });
+    auth();
+    getMekanik();
   }, []);
 
   const getMekanik = async () => {
@@ -40,10 +33,8 @@ function Mekanik() {
     }
   };
 
-  return state.isLoading ? (
-    <Loading />
-  ) : (
-    <Template>
+  return (
+    <div>
       <div className="card">
         <Toolbar title={state.pages.title} to={`/${state.pages.title}/add`} />
         <div className="card-body m-0 p-0">
@@ -89,7 +80,7 @@ function Mekanik() {
           </table>
         </div>
       </div>
-    </Template>
+    </div>
   );
 }
 

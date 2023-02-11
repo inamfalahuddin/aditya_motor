@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { Fragment } from "react";
-import { AppProvider } from "./context/app-context";
+import { AppProvider, useAppContext } from "./context/app-context";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -38,7 +38,9 @@ function App() {
           path="/dashboard"
           element={
             <AppProvider>
-              <Dasbhoard />
+              <Template>
+                <Dasbhoard />
+              </Template>
             </AppProvider>
           }
         />
@@ -86,7 +88,9 @@ function App() {
           path="/mekanik"
           element={
             <AppProvider>
-              <Mekanik />
+              <Template>
+                <Mekanik />
+              </Template>
             </AppProvider>
           }
         />

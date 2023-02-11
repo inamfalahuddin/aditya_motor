@@ -1,8 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Action from "../../components/Action";
+import Loading from "../../components/Loading";
 import Toolbar from "../../components/Toolbar";
+import { useAppContext } from "../../context/app-context";
+import Rupiah from "../../helper/Rupiah";
+import useAxiosPrivate from "../../hooks/usePrivate";
+import useRefreshToken from "../../hooks/useRefreshToken";
+import Template from "../Template";
 
 function Barang() {
+  const [state, dispatch] = useAppContext();
+  const [dataBarang, setDataBarang] = useState();
+  const axiosPrivate = useAxiosPrivate();
+  const refresh = useRefreshToken();
+
+  useEffect(() => {
+    dispatch({ type: "SET_TITLE", payload: "barang" });
+
+    if (state.token.bearer === "") {
+      refresh();
+    }
+
+    getBarang();
+  }, []);
+
+  const getBarang = async () => {
+    try {
+      const response = await axiosPrivate.get("barang/all", {
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataBarang(response.data.data);
+    } catch (err) {
+      console.log(err.response.message);
+    }
+  };
+
   return (
     <div>
       <div className="card">
@@ -20,16 +55,27 @@ function Barang() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td style={{ verticalAlign: "middle" }}>1.</td>
-                <td style={{ verticalAlign: "middle" }}>Hitam</td>
-                <td style={{ verticalAlign: "middle" }}>Hitam</td>
-                <td style={{ verticalAlign: "middle" }}>Yamaha</td>
-                <td style={{ verticalAlign: "middle" }}>Sepeda Motor</td>
-                <td style={{ verticalAlign: "middle" }}>
-                  <Action />
-                </td>
-              </tr>
+              {dataBarang &&
+                dataBarang.map((data, index) => {
+                  return (
+                    <tr key={index}>
+                      <td style={{ verticalAlign: "middle" }}>{index + 1}.</td>
+                      <td style={{ verticalAlign: "middle" }}>
+                        {data.kode_barang}
+                      </td>
+                      <td style={{ verticalAlign: "middle" }}>
+                        {data.nama_barang}
+                      </td>
+                      <td style={{ verticalAlign: "middle" }}>
+                        Rp. {Rupiah(data.harga_barang)}
+                      </td>
+                      <td style={{ verticalAlign: "middle" }}>{data.qty}</td>
+                      <td style={{ verticalAlign: "middle" }}>
+                        <Action />
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

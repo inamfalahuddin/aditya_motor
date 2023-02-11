@@ -16,6 +16,7 @@ const intialState = {
     bearer: "",
     exp: 0,
   },
+  role: "",
 };
 
 const reducer = (state, action) => {
@@ -29,6 +30,8 @@ const reducer = (state, action) => {
       return { ...state, isLoading: action.payload };
     case "SET_TOKEN":
       return { ...state, token: action.payload };
+    case "SET_ROLE":
+      return { ...state, role: action.payload };
     default:
       throw new Error();
   }

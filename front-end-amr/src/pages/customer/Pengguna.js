@@ -3,13 +3,19 @@ import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 function Pengguna() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pengguna" });
+
+    if (state.token.bearer === "") {
+      auth();
+    }
   }, []);
 
   return (

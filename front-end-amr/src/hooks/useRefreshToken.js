@@ -12,16 +12,15 @@ const useRefreshToken = () => {
       const response = await axios.get("auth/token", { withCredentials: true });
       const decoded = jwtDecode(response.data.data.accessToken);
 
-      if (state.token.bearer === "") {
-        console.log("generate token baru");
-        dispatch({
-          type: "SET_TOKEN",
-          payload: {
-            bearer: response.data.data.accessToken,
-            exp: decoded.exp,
-          },
-        });
-      }
+      dispatch({
+        type: "SET_TOKEN",
+        payload: {
+          bearer: response.data.data.accessToken,
+          exp: decoded.exp,
+        },
+      });
+
+      dispatch({ type: "SET_LOADING", payload: false });
 
       return true;
     } catch (err) {

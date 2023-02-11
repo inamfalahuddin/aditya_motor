@@ -11,23 +11,21 @@ const useAuth = () => {
 
   const auth = async () => {
     try {
-      const response = await axios.get("auth/token", { withCredentials: true });
+      const response = await axios.get("auth/token", {
+        withCredentials: true,
+      });
 
       const accessToken = response.data.data.accessToken;
       const decoded = jwtDecode(accessToken);
 
-      console.log(state.token.bearer);
-
-      if (state.token.bearer === "") {
-        console.log("generate token baru");
-        dispatch({
-          type: "SET_TOKEN",
-          payload: {
-            bearer: response.data.data.accessToken,
-            exp: decoded.exp,
-          },
-        });
-      }
+      console.log("generate token baru");
+      dispatch({
+        type: "SET_TOKEN",
+        payload: {
+          bearer: response.data.data.accessToken,
+          exp: decoded.exp,
+        },
+      });
 
       return true;
     } catch (err) {

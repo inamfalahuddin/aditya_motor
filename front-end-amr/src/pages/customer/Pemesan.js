@@ -1,20 +1,42 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
-import Button from "../../components/Button";
-import IconAdd from "../../images/icon-add.svg";
-import IconPrint from "../../images/icon-print.svg";
 import IconDetail from "../../images/icon-detail-dark.svg";
 import IconEdit from "../../images/icon-edit-dark.svg";
 import IconDelete from "../../images/icon-temp.svg";
 import Toolbar from "../../components/Toolbar";
-import Action from "../../components/Action";
+import useAxiosPrivate from "../../hooks/usePrivate";
+import useRefreshToken from "../../hooks/useRefreshToken";
 
 function Pemesan() {
   const [state, dispatch] = useAppContext();
+  const [dataPesanan, setDataPesanan] = useState();
+  const axiosPrivate = useAxiosPrivate();
+  const refresh = useRefreshToken();
 
   useEffect(() => {
-    dispatch({ type: "SET_TITLE", payload: "pemesanan" });
+    dispatch({ type: "SET_TITLE", payload: "kendaraan" });
+
+    if (state.token.bearer === "") {
+      refresh();
+    }
+
+    getDataPesanan();
   }, []);
+
+  const getDataPesanan = async () => {
+    try {
+      const response = await axiosPrivate.get("pesanan/all", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataPesanan(response.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -35,20 +57,24 @@ function Pemesan() {
               </tr>
             </thead>
             <tbody className="border-start border-end">
-              <tr>
-                <td>1.</td>
-                <td>Andika Lubis</td>
-                <td>Hitam</td>
-                <td>Yamaha</td>
-                <td>Sepeda Motor</td>
-                <td>2005</td>
-                <td>150 CC</td>
-                <td>
-                  <img className="pe-2" src={IconDetail} alt="detail" />
-                  <img className="px-2" src={IconEdit} alt="edit" />
-                  <img className="px-2" src={IconDelete} alt="delete" />
-                </td>
-              </tr>
+              {console.log(dataPesanan)}
+              {dataPesanan &&
+                dataPesanan.map((data, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}.</td>
+                    <td>{data.nama_customer}</td>
+                    <td>{data.alamat}</td>
+                    <td>{data.no_hp}</td>
+                    <td>{data.pelayanan}</td>
+                    <td>{data.no_antrian}</td>
+                    <td>{data.status}</td>
+                    <td>
+                      <img className="pe-2" src={IconDetail} alt="detail" />
+                      <img className="px-2" src={IconEdit} alt="edit" />
+                      <img className="px-2" src={IconDelete} alt="delete" />
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

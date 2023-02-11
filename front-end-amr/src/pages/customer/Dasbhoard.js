@@ -15,18 +15,11 @@ function Dasbhoard() {
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "dashboard" });
 
-    const authentication = auth();
-    authentication.then((auth) => {
-      if (auth) {
-        dispatch({ type: "SET_LOADING", payload: false });
-      }
-    });
+    auth();
   }, []);
 
-  return state.isLoading ? (
-    <Loading />
-  ) : (
-    <Template>
+  return (
+    <div>
       <img className="my-5" src={LogoBrand} alt="logo brand" />
       <div className="row">
         <div className="col-md-6" onClick={() => navigate("/kendaraan")}>
@@ -39,7 +32,7 @@ function Dasbhoard() {
           <CardData title="transaksi" />
         </div>
       </div>
-    </Template>
+    </div>
   );
 }
 

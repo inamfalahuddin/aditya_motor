@@ -7,18 +7,33 @@ import IconLogout from "../images/logout-icon.svg";
 import IconPengguna from "../images/user-icon.svg";
 import { useAppContext } from "../context/app-context";
 import axios from "../api/axios";
+import jwt_decode from "jwt-decode";
+import Loading from "../components/Loading";
 
 function Sidebar() {
   const [state, dispatch] = useAppContext();
   const [matches, setMatches] = useState(
     window.matchMedia("(min-width: 992px)").matches
   );
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     window
       .matchMedia("(min-width: 992px)")
       .addEventListener("change", (e) => setMatches(e.matches));
   }, []);
+
+  useEffect(() => {
+    const token = state.token.bearer;
+
+    if (token) {
+      const decode = jwt_decode(token);
+
+      dispatch({ type: "SET_ROLE", payload: decode.role });
+    }
+
+    setRole(state.role);
+  }, [state.role, state.token]);
 
   const Logout = useCallback(async (e) => {
     try {
@@ -32,7 +47,9 @@ function Sidebar() {
     }
   }, []);
 
-  return (
+  return !role ? (
+    <Loading />
+  ) : (
     <div
       className="bg-danger py-4 text-white position-fixed bottom-0 top-0 left-0 right-0"
       style={{
@@ -58,41 +75,71 @@ function Sidebar() {
             <img src={IconDashboard} alt="dashboard" width={20} />
             <span className="ms-3">Dasbhoard</span>
           </Link>
-          <Link
-            to="/mekanik"
-            className="list-group-item bg-danger text-white item-hover"
-          >
-            <img src={IconData} alt="barang" width={20} />
-            <span className="ms-3">Data Mekanik</span>
-          </Link>
-          <Link
-            to="/barang"
-            className="list-group-item bg-danger text-white  item-hover"
-          >
-            <img src={IconData} alt="Barang" width={20} />
-            <span className="ms-3">Data Barang</span>
-          </Link>
-          <Link
-            to="/kendaraan"
-            className="list-group-item bg-danger text-white  item-hover"
-          >
-            <img src={IconData} alt="dashboard" width={20} />
-            <span className="ms-3">Data Kendaraan</span>
-          </Link>
-          <Link
-            to="/pemesanan"
-            className="list-group-item bg-danger text-white  item-hover"
-          >
-            <img src={IconData} alt="dashboard" width={20} />
-            <span className="ms-3">Pemesanan</span>
-          </Link>
-          <Link
-            to="/transaksi"
-            className="list-group-item bg-danger text-white  item-hover"
-          >
-            <img src={IconData} alt="dashboard" width={20} />
-            <span className="ms-3">Transaksi</span>
-          </Link>
+          {role === "admin" ? (
+            <>
+              <Link
+                to="/mekanik"
+                className="list-group-item bg-danger text-white item-hover"
+              >
+                <img src={IconData} alt="barang" width={20} />
+                <span className="ms-3">Data Mekanik</span>
+              </Link>
+              <Link
+                to="/barang"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="Barang" width={20} />
+                <span className="ms-3">Data Barang</span>
+              </Link>
+              <Link
+                to="/pemesanan"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="Barang" width={20} />
+                <span className="ms-3">Data Pesanan</span>
+              </Link>
+              <Link
+                to="/transaksi"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="Barang" width={20} />
+                <span className="ms-3">Data Transaksi</span>
+              </Link>
+              <Link
+                to="/suplier"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="Barang" width={20} />
+                <span className="ms-3">Data Suplier</span>
+              </Link>
+            </>
+          ) : null}
+          {role === "user" ? (
+            <>
+              <Link
+                to="/kendaraan"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="dashboard" width={20} />
+                <span className="ms-3">Data Kendaraan</span>
+              </Link>
+              <Link
+                to="/pemesanan"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="dashboard" width={20} />
+                <span className="ms-3">Pemesanan</span>
+              </Link>
+              <Link
+                to="/transaksi"
+                className="list-group-item bg-danger text-white  item-hover"
+              >
+                <img src={IconData} alt="dashboard" width={20} />
+                <span className="ms-3">Transaksi</span>
+              </Link>
+            </>
+          ) : null}
+
           <div className="list-group-item bg-danger text-white">
             <span style={{ fontSize: ".85rem" }}>Pengaturan</span>
             <Link
@@ -104,7 +151,7 @@ function Sidebar() {
             </Link>
           </div>
           <Link
-            to="/login"
+            to="/"
             className="list-group-item bg-danger text-white item-hover"
             onClick={Logout}
           >
