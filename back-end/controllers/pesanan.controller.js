@@ -1,5 +1,6 @@
 const response = require("../utils/response");
 const db = require("../config/db.con");
+const dateFormat = require("../utils/date");
 
 const getPesananAll = (req, res) => {
   db.query(`SELECT * FROM pesanan`, (err, rows, fields) => {
@@ -24,7 +25,47 @@ const getPesananById = (req, res) => {
       } else {
         if (rows.length > 0) {
           db.query(
-            `SELECT * FROM pesanan WHERE id_pesanan=${id}`,
+            `SELECT a.id_customer, a.username, b.id_pesanan, b.alamat, b.no_hp, b.no_polisi, b.merk_kendaraan, b.permasalahan, b.pelayanan, b.tanggal, b.jam, b.status, b.no_antrian FROM customer a
+            JOIN pesanan b ON a.id_customer=b.id_customer
+            WHERE b.id_pesanan=${id}`,
+            (err, rows, fields) => {
+              if (err)
+                return response(res, 500, {
+                  code: err.code,
+                  sqlMessage: err.sqlMessage,
+                });
+
+              return response(res, 200, "Berhasil", {
+                ...rows[0],
+                tanggal: dateFormat(rows[0].tanggal),
+              });
+            }
+          );
+        } else {
+          return response(res, 404, `Tidak ada data dengan id ${id}`);
+        }
+      }
+    }
+  );
+};
+
+const getPesananByCustId = (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    `SELECT id_pesanan FROM pesanan WHERE id_customer=${id}`,
+    (err, rows, fields) => {
+      if (err) {
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      } else {
+        if (rows.length > 0) {
+          db.query(
+            `SELECT a.id_customer, a.username, b.id_pesanan, b.alamat, b.no_hp, b.no_polisi, b.merk_kendaraan, b.permasalahan, b.pelayanan, b.tanggal, b.jam, b.status, b.no_antrian FROM customer a
+            JOIN pesanan b ON a.id_customer=b.id_customer
+            WHERE b.id_customer=${id}`,
             (err, rows, fields) => {
               if (err)
                 return response(res, 500, {
@@ -157,6 +198,7 @@ const deletePesanan = (req, res) => {
 module.exports = {
   getPesananAll,
   getPesananById,
+  getPesananByCustId,
   addPesanan,
   updatePesanan,
   deletePesanan,

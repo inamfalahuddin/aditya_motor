@@ -1,14 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/usePrivate";
+import jwt_decode from "jwt-decode";
 
 function Pengguna() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
   const auth = useAuth();
+  const axiosPrivate = useAxiosPrivate();
+  const [dataPengguna, setDataPengguna] = useState([]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pengguna" });
@@ -17,6 +21,29 @@ function Pengguna() {
       auth();
     }
   }, []);
+
+  useEffect(() => {
+    if (state.token.bearer) {
+      const decode = jwt_decode(state.token.bearer);
+
+      getDataPengguna(decode.id_customer);
+    }
+  }, [state.token.bearer]);
+
+  const getDataPengguna = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`customer/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataPengguna(response.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="card">
@@ -32,8 +59,8 @@ function Pengguna() {
             </label>
           </div>
           <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-              Andika Lubis
+            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+              {dataPengguna[0] && dataPengguna[0].username}
             </span>
           </div>
         </div>
@@ -45,7 +72,7 @@ function Pengguna() {
           </div>
           <div className="col-10">
             <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-              Andika Lubis
+              {dataPengguna[0] && dataPengguna[0].alamat}
             </span>
           </div>
         </div>

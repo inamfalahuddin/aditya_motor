@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import { useAppContext } from "../context/app-context";
 import IconAdd from "../images/icon-add.svg";
 import IconPrint from "../images/icon-print.svg";
 
 function Toolbar({ title, to }) {
+  const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
 
   const redirect = () => {
@@ -13,11 +15,11 @@ function Toolbar({ title, to }) {
 
   return (
     <div className="card-header d-flex justify-content-between align-items-center bg-white py-4">
-      <span>Data Mekanik</span>
+      <span>Data {state.pages.title}</span>
       <Button color="primary" onclick={redirect}>
         <img className="me-2" src={IconAdd} alt="add" />
         <span className="text-capitalize" style={{ fontSize: ".85rem" }}>
-          tambah data {title}
+          tambah data {state.pages.title}
         </span>
       </Button>
       <Button color="success">

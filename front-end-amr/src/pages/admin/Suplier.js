@@ -1,38 +1,35 @@
 import React, { useEffect, useState } from "react";
 import Action from "../../components/Action";
-import Loading from "../../components/Loading";
 import Toolbar from "../../components/Toolbar";
 import { useAppContext } from "../../context/app-context";
-import Rupiah from "../../helper/Rupiah";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import useRefreshToken from "../../hooks/useRefreshToken";
-import Template from "../Template";
 
-function Barang() {
+function Suplier() {
   const [state, dispatch] = useAppContext();
-  const [dataBarang, setDataBarang] = useState();
+  const [dataSuplier, setDataSuplier] = useState();
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
 
   useEffect(() => {
-    dispatch({ type: "SET_TITLE", payload: "barang" });
+    dispatch({ type: "SET_TITLE", payload: "suplier" });
 
     if (state.token.bearer === "") {
       refresh();
     }
 
-    getBarang();
+    getDataSuplier();
   }, []);
 
-  const getBarang = async () => {
+  const getDataSuplier = async () => {
     try {
-      const response = await axiosPrivate.get("barang/all", {
+      const response = await axiosPrivate.get("suplier/all", {
         headers: {
           Authorization: `Bearer ${state.token.bearer}`,
         },
       });
 
-      setDataBarang(response.data.data);
+      setDataSuplier(response.data.data);
     } catch (err) {
       console.log(err.response.message);
     }
@@ -41,35 +38,29 @@ function Barang() {
   return (
     <div>
       <div className="card">
-        <Toolbar to="/barang/add" />
+        <Toolbar title={state.pages.title} to={`/${state.pages.title}/add`} />
         <div className="card-body m-0 p-0">
           <table className="table table-hover border-white">
             <thead className="bg-danger text-white">
               <tr>
                 <td>No.</td>
-                <td>Kode Barang</td>
-                <td>Nama Barang</td>
-                <td>Harga Barang</td>
-                <td>Qty</td>
+                <td>Nama Toko</td>
+                <td>Alamat</td>
+                <td>No HP</td>
                 <td>Action</td>
               </tr>
             </thead>
             <tbody>
-              {dataBarang &&
-                dataBarang.map((data, index) => {
+              {dataSuplier &&
+                dataSuplier.map((data, index) => {
                   return (
                     <tr key={index}>
                       <td style={{ verticalAlign: "middle" }}>{index + 1}.</td>
                       <td style={{ verticalAlign: "middle" }}>
-                        {data.kode_barang}
+                        {data.nama_suplier}
                       </td>
-                      <td style={{ verticalAlign: "middle" }}>
-                        {data.nama_barang}
-                      </td>
-                      <td style={{ verticalAlign: "middle" }}>
-                        Rp. {Rupiah(data.harga_barang)}
-                      </td>
-                      <td style={{ verticalAlign: "middle" }}>{data.qty}</td>
+                      <td style={{ verticalAlign: "middle" }}>{data.alamat}</td>
+                      <td style={{ verticalAlign: "middle" }}>{data.no_hp}</td>
                       <td style={{ verticalAlign: "middle" }}>
                         <Action />
                       </td>
@@ -84,4 +75,4 @@ function Barang() {
   );
 }
 
-export default Barang;
+export default Suplier;

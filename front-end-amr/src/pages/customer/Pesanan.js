@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
-import IconDetail from "../../images/icon-detail-dark.svg";
-import IconEdit from "../../images/icon-edit-dark.svg";
-import IconDelete from "../../images/icon-temp.svg";
 import Toolbar from "../../components/Toolbar";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import useRefreshToken from "../../hooks/useRefreshToken";
+import Action from "../../components/Action";
+import jwtDecode from "jwt-decode";
+import Alert from "../../components/Alert";
 
 function Pemesan() {
   const [state, dispatch] = useAppContext();
@@ -14,25 +14,38 @@ function Pemesan() {
   const refresh = useRefreshToken();
 
   useEffect(() => {
-    dispatch({ type: "SET_TITLE", payload: "kendaraan" });
+    dispatch({ type: "SET_TITLE", payload: "pesanan" });
 
     if (state.token.bearer === "") {
       refresh();
     }
-
-    getDataPesanan();
   }, []);
+
+  useEffect(() => {
+    getDataPesanan();
+  }, [state.token.bearer]);
+
+  useEffect(() => {
+    setDataPesanan(state.data.pesanan);
+  }, [state.data.pesanan]);
 
   const getDataPesanan = async () => {
     try {
-      const response = await axiosPrivate.get("pesanan/all", {
+      const idCust = jwtDecode(state.token.bearer).id_customer;
+      const response = await axiosPrivate.get(`pesanan/cust/${idCust}`, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${state.token.bearer}`,
         },
       });
 
-      setDataPesanan(response.data.data);
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          pesanan: response.data.data,
+        },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -40,8 +53,12 @@ function Pemesan() {
 
   return (
     <div>
+      {state.message.message !== undefined ? (
+        <Alert data={state.message} />
+      ) : null}
+
       <div className="card">
-        <Toolbar />
+        <Toolbar to="/pesanan/add" />
         <div className="card-body m-0 p-0">
           <table className="table table-hover border-white">
             <thead className="border-start border-end bg-danger text-white">
@@ -57,24 +74,32 @@ function Pemesan() {
               </tr>
             </thead>
             <tbody className="border-start border-end">
-              {console.log(dataPesanan)}
-              {dataPesanan &&
+              {dataPesanan && dataPesanan.length > 0 ? (
                 dataPesanan.map((data, index) => (
                   <tr key={index}>
                     <td>{index + 1}.</td>
-                    <td>{data.nama_customer}</td>
+                    <td>{data.username}</td>
                     <td>{data.alamat}</td>
                     <td>{data.no_hp}</td>
                     <td>{data.pelayanan}</td>
                     <td>{data.no_antrian}</td>
                     <td>{data.status}</td>
                     <td>
-                      <img className="pe-2" src={IconDetail} alt="detail" />
-                      <img className="px-2" src={IconEdit} alt="edit" />
-                      <img className="px-2" src={IconDelete} alt="delete" />
+                      <Action
+                        detail={`/pesanan/detail/${data.id_pesanan}`}
+                        edit={`/pesanan/edit/${data.id_pesanan}`}
+                        remove={`/pesanan/${data.id_pesanan}`}
+                      />
                     </td>
                   </tr>
-                ))}
+                ))
+              ) : (
+                <tr className="text-center">
+                  <td colSpan={8} className="pt-4">
+                    Tidak ada data
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

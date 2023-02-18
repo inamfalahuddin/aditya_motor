@@ -1,4 +1,5 @@
 const db = require("../config/db.con");
+const removeSpaces = require("../utils/removeSpaces");
 const response = require("../utils/response");
 
 const getKendaraanAll = (req, res) => {
@@ -43,6 +44,39 @@ const getKendaraanById = (req, res) => {
   );
 };
 
+const getKendaraanByCust = (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    `SELECT id_kendaraan FROM kendaraan WHERE id_customer=${id}`,
+    (err, rows, fields) => {
+      if (err) {
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      } else {
+        if (rows.length > 0) {
+          db.query(
+            `SELECT * FROM kendaraan WHERE id_customer=${id}`,
+            (err, rows, fields) => {
+              if (err)
+                return response(res, 500, {
+                  code: err.code,
+                  sqlMessage: err.sqlMessage,
+                });
+
+              return response(res, 200, "Berhasil", rows);
+            }
+          );
+        } else {
+          return response(res, 404, `Tidak ada data dengan id ${id}`);
+        }
+      }
+    }
+  );
+};
+
 const addKendaraan = (req, res) => {
   const data = req.body;
 
@@ -51,7 +85,8 @@ const addKendaraan = (req, res) => {
     [
       {
         ...data,
-        nomor_polisi: removeSpaces(data.no_polisi),
+        // nomor_polisi: removeSpaces(data.no_polisi),
+        nomor_polisi: removeSpaces(data.nomor_polisi.toUpperCase()),
       },
     ],
     (err, rows, fields) => {
@@ -138,6 +173,7 @@ const deleteKendaraan = (req, res) => {
 module.exports = {
   getKendaraanAll,
   getKendaraanById,
+  getKendaraanByCust,
   addKendaraan,
   updateKendaraan,
   deleteKendaraan,

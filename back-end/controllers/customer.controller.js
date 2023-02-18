@@ -32,7 +32,7 @@ const getCustomerById = (req, res) => {
       } else {
         if (rows.length > 0) {
           db.query(
-            `SELECT id_customer, username, email, alamat, no_tlp, no_polisi, merk_kendaraan FROM customer WHERE id_customer=${id}`,
+            `SELECT id_customer, username, email, alamat, no_tlp FROM customer WHERE id_customer=${id}`,
             (err, rows, fields) => {
               if (err)
                 return response(res, 500, {

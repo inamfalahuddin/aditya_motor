@@ -15,7 +15,9 @@ function Dasbhoard() {
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "dashboard" });
 
-    auth();
+    return () => {
+      auth();
+    };
   }, []);
 
   return (
@@ -25,8 +27,8 @@ function Dasbhoard() {
         <div className="col-md-6" onClick={() => navigate("/kendaraan")}>
           <CardData title="data kendaraan" />
         </div>
-        <div className="col-md-6" onClick={() => navigate("/pemesanan")}>
-          <CardData title="pemesanan" />
+        <div className="col-md-6" onClick={() => navigate("/pesanan")}>
+          <CardData title="pesanan" />
         </div>
         <div className="col-md-6" onClick={() => navigate("/transaksi")}>
           <CardData title="transaksi" />

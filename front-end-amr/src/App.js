@@ -10,13 +10,21 @@ import Notfound from "./pages/Notfound";
 import Dasbhoard from "./pages/customer/Dasbhoard";
 import Template from "./pages/Template";
 import Kendaraan from "./pages/customer/Kendaraan";
-import Pemesan from "./pages/customer/Pemesan";
+import Pesanan from "./pages/customer/Pesanan";
 import Transaksi from "./pages/customer/Transaksi";
 import Pengguna from "./pages/customer/Pengguna";
 import Mekanik from "./pages/admin/Mekanik";
 import Barang from "./pages/admin/Barang";
 import AddMekanik from "./pages/admin/AddMekanik";
 import DetailMekanik from "./pages/admin/DetailMekanik";
+import Suplier from "./pages/admin/Suplier";
+import AddBarang from "./pages/admin/AddBarang";
+import AddSuplier from "./pages/admin/AddSuplier";
+import AddKendaraan from "./pages/customer/AddKendaraan";
+import DetailKendaraan from "./pages/customer/DetailKendaraan";
+import EditKendaraan from "./pages/customer/EditKendraan";
+import DetailPesanan from "./pages/customer/DetailPesanan";
+import AddPesanan from "./pages/customer/AddPesanan";
 
 function App() {
   return (
@@ -55,11 +63,61 @@ function App() {
           }
         />
         <Route
-          path="/pemesanan"
+          path="/kendaraan/add"
           element={
             <AppProvider>
               <Template>
-                <Pemesan />
+                <AddKendaraan />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/kendaraan/detail/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <DetailKendaraan />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/kendaraan/edit/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <EditKendaraan />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/pesanan"
+          element={
+            <AppProvider>
+              <Template>
+                <Pesanan />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/pesanan/add"
+          element={
+            <AppProvider>
+              <Template>
+                <AddPesanan />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/pesanan/detail/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <DetailPesanan />
               </Template>
             </AppProvider>
           }
@@ -120,6 +178,36 @@ function App() {
             <AppProvider>
               <Template>
                 <Barang />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/barang/add"
+          element={
+            <AppProvider>
+              <Template>
+                <AddBarang />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/suplier"
+          element={
+            <AppProvider>
+              <Template>
+                <Suplier />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/suplier/add"
+          element={
+            <AppProvider>
+              <Template>
+                <AddSuplier />
               </Template>
             </AppProvider>
           }

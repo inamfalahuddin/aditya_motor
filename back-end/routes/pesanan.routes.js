@@ -5,6 +5,7 @@ const {
   getPesananById,
   updatePesanan,
   deletePesanan,
+  getPesananByCustId,
 } = require("../controllers/pesanan.controller");
 const auth = require("../middleware/auth-token");
 
@@ -14,6 +15,7 @@ const router = express.Router();
 router.post("/v1/pesanan/", auth, addPesanan);
 router.get("/v1/pesanan/all", auth, getPesananAll);
 router.get("/v1/pesanan/:id", auth, getPesananById);
+router.get("/v1/pesanan/cust/:id", auth, getPesananByCustId);
 router.put("/v1/pesanan/:id", auth, updatePesanan);
 router.delete("/v1/pesanan/:id", auth, deletePesanan);
 

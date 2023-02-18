@@ -17,6 +17,11 @@ const intialState = {
     exp: 0,
   },
   role: "",
+  message: {},
+  data: {
+    kendaraan: [],
+    pesanan: [],
+  },
 };
 
 const reducer = (state, action) => {
@@ -32,6 +37,10 @@ const reducer = (state, action) => {
       return { ...state, token: action.payload };
     case "SET_ROLE":
       return { ...state, role: action.payload };
+    case "SET_MESSAGE":
+      return { ...state, message: action.payload };
+    case "SET_DATA":
+      return { ...state, data: action.payload };
     default:
       throw new Error();
   }

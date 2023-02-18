@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoBrand from "../images/logo-aditya-motor.png";
 import Button from "../components/Button";
 import Alert from "../components/Alert";
-import axios from "../api/axios";
+import axios, { axiosPrivate } from "../api/axios";
 import { useAppContext } from "../context/app-context";
 import jwt_decoded from "jwt-decode";
+import useAuth from "../hooks/useAuth";
+import useRefreshToken from "../hooks/useRefreshToken";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -14,6 +16,15 @@ function Login() {
 
   const navigate = useNavigate("");
   const [state, dispatch] = useAppContext();
+  const auth = useRefreshToken();
+
+  useEffect(() => {
+    const userToken = auth();
+
+    userToken.then((res) => {
+      res ? navigate("/dashboard") : navigate("/login");
+    });
+  }, []);
 
   const Auth = async (e) => {
     e.preventDefault();
@@ -28,23 +39,22 @@ function Login() {
         { withCredentials: true }
       );
 
+      const accessToken = response?.data.data?.token;
+
       dispatch({
         type: "SET_TOKEN",
         payload: {
-          bearer: response.data.data.token,
+          bearer: accessToken,
           exp: jwt_decoded(response.data.data.token).exp,
         },
       });
-
-      const accessToken = response?.data.data?.token;
-      const roles = jwt_decoded(accessToken).role;
 
       setMessage({ message: response.data.message, color: "success" });
       navigate("/dashboard");
     } catch (err) {
       // console.log(err);
       setMessage({ message: err.response.data.message, color: "danger" });
-      navigate("/login");
+      // navigate("/login");
     }
   };
 

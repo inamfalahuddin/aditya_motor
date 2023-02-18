@@ -49,7 +49,7 @@ function Transaksi() {
   const getTransaksiById = async (id) => {
     console.log(id);
     try {
-      const response = await axiosPrivate.get(`transaksi/user/${id}`, {
+      const response = await axiosPrivate.get(`transaksi/${id}`, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${state.token.bearer}`,
@@ -62,8 +62,6 @@ function Transaksi() {
     }
   };
 
-  console.log(dataTransaksi);
-
   return (
     <div>
       <div className="card">
@@ -74,7 +72,7 @@ function Transaksi() {
               <tr>
                 <td>No.</td>
                 <td>Tanggal</td>
-                <td>Nama Lengkap</td>
+                <td>Username</td>
                 <td>No Polisi</td>
                 <td>Merk Kendaraan</td>
                 <td>Nama Mekanik</td>
@@ -92,10 +90,10 @@ function Transaksi() {
                   <tr key={index}>
                     <td>{index + 1}.</td>
                     <td>{data.tanggal}</td>
-                    <td className="text-capitalize">{data.username}</td>
+                    <td>{data.username}</td>
                     <td>{data.no_polisi}</td>
-                    <td>{data.merk_kendaraan}</td>
-                    <td>{data.nama_mekanik}</td>
+                    <td className="text-capitalize">{data.merk_kendaraan}</td>
+                    <td className="text-capitalize">{data.nama_mekanik}</td>
                     <td>
                       <Action />
                     </td>

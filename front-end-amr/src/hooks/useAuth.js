@@ -18,7 +18,6 @@ const useAuth = () => {
       const accessToken = response.data.data.accessToken;
       const decoded = jwtDecode(accessToken);
 
-      console.log("generate token baru");
       dispatch({
         type: "SET_TOKEN",
         payload: {

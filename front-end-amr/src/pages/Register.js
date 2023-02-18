@@ -142,7 +142,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setUsername(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -157,7 +156,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setAlamat(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -172,7 +170,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setNoTlp(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -187,7 +184,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setNoPolisi(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -202,7 +198,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setMerkKendaraan(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -217,7 +212,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setEmail(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <div className="mb-3 text-start">
@@ -232,7 +226,6 @@ function Register() {
                     onChange={useCallback((e) => {
                       setPassword(e.target.value);
                     }, [])}
-                    required
                   />
                 </div>
                 <Button color="primary" onclick={Register}>

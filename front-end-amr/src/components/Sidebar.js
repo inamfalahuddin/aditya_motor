@@ -92,7 +92,7 @@ function Sidebar() {
                 <span className="ms-3">Data Barang</span>
               </Link>
               <Link
-                to="/pemesanan"
+                to="/pesanan"
                 className="list-group-item bg-danger text-white  item-hover"
               >
                 <img src={IconData} alt="Barang" width={20} />
@@ -124,7 +124,7 @@ function Sidebar() {
                 <span className="ms-3">Data Kendaraan</span>
               </Link>
               <Link
-                to="/pemesanan"
+                to="/pesanan"
                 className="list-group-item bg-danger text-white  item-hover"
               >
                 <img src={IconData} alt="dashboard" width={20} />
