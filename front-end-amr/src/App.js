@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { Fragment } from "react";
-import { AppProvider, useAppContext } from "./context/app-context";
+import { AppProvider } from "./context/app-context";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -25,6 +25,9 @@ import DetailKendaraan from "./pages/customer/DetailKendaraan";
 import EditKendaraan from "./pages/customer/EditKendraan";
 import DetailPesanan from "./pages/customer/DetailPesanan";
 import AddPesanan from "./pages/customer/AddPesanan";
+import EditPesanan from "./pages/customer/EditPesanan";
+import AddTransaksi from "./pages/customer/AddTransaksi";
+import DetailTransaksi from "./pages/customer/DetailTransaksi";
 
 function App() {
   return (
@@ -123,11 +126,41 @@ function App() {
           }
         />
         <Route
+          path="/pesanan/edit/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <EditPesanan />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
           path="/transaksi"
           element={
             <AppProvider>
               <Template>
                 <Transaksi />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/transaksi/add"
+          element={
+            <AppProvider>
+              <Template>
+                <AddTransaksi />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/transaksi/detail/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <DetailTransaksi />
               </Template>
             </AppProvider>
           }

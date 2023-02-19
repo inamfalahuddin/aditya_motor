@@ -16,12 +16,14 @@ function Toolbar({ title, to }) {
   return (
     <div className="card-header d-flex justify-content-between align-items-center bg-white py-4">
       <span>Data {state.pages.title}</span>
-      <Button color="primary" onclick={redirect}>
-        <img className="me-2" src={IconAdd} alt="add" />
-        <span className="text-capitalize" style={{ fontSize: ".85rem" }}>
-          tambah data {state.pages.title}
-        </span>
-      </Button>
+      {state.pages.title === "transaksi" ? null : (
+        <Button color="primary" onclick={redirect}>
+          <img className="me-2" src={IconAdd} alt="add" />
+          <span className="text-capitalize" style={{ fontSize: ".85rem" }}>
+            tambah data {state.pages.title}
+          </span>
+        </Button>
+      )}
       <Button color="success">
         <img className="me-2" src={IconPrint} alt="add" />
         <span style={{ fontSize: ".85rem" }}>Print</span>

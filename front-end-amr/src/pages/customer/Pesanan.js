@@ -12,9 +12,15 @@ function Pemesan() {
   const [dataPesanan, setDataPesanan] = useState();
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pesanan" });
+
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
 
     if (state.token.bearer === "") {
       refresh();
@@ -23,6 +29,10 @@ function Pemesan() {
 
   useEffect(() => {
     getDataPesanan();
+
+    if (state.token.bearer) {
+      setRole(jwtDecode(state.token.bearer).role);
+    }
   }, [state.token.bearer]);
 
   useEffect(() => {
@@ -78,17 +88,30 @@ function Pemesan() {
                 dataPesanan.map((data, index) => (
                   <tr key={index}>
                     <td>{index + 1}.</td>
-                    <td>{data.username}</td>
-                    <td>{data.alamat}</td>
-                    <td>{data.no_hp}</td>
-                    <td>{data.pelayanan}</td>
-                    <td>{data.no_antrian}</td>
-                    <td>{data.status}</td>
+                    <td className="text-capitalize">{data.username}</td>
+                    <td className="text-capitalize">{data.alamat}</td>
+                    <td className="text-capitalize">{data.no_hp}</td>
+                    <td className="text-capitalize">{data.pelayanan}</td>
+                    <td className="text-capitalize">{data.no_antrian}</td>
+                    <td className="text-capitalize">
+                      <span
+                        className={`badge bg-${
+                          data.status === "pending"
+                            ? "warning text-dark"
+                            : data.status === "progres"
+                            ? "primary"
+                            : "success  "
+                        }`}
+                      >
+                        {data.status}
+                      </span>
+                    </td>
                     <td>
                       <Action
                         detail={`/pesanan/detail/${data.id_pesanan}`}
                         edit={`/pesanan/edit/${data.id_pesanan}`}
                         remove={`/pesanan/${data.id_pesanan}`}
+                        accessed={role}
                       />
                     </td>
                   </tr>

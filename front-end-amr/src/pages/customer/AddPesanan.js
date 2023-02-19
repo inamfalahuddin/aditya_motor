@@ -5,8 +5,8 @@ import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
-import jwtDecode from "jwt-decode";
 import Alert from "../../components/Alert";
+import jwtDecode from "jwt-decode";
 
 function AddPesanan() {
   const [state, dispatch] = useAppContext();
@@ -18,11 +18,9 @@ function AddPesanan() {
   const [alamat, setAlamat] = useState("");
   const [noHp, setNoHp] = useState("");
   const [noPolisi, setNoPolisi] = useState("");
-  const [merk, setMerk] = useState(0);
-  const [permasalahan, setPermasalahan] = useState(0);
-  const [pelayanan, setPelayanan] = useState("");
-  const [tanggal, setTanggal] = useState("Otomatis");
-  const [jam, setJam] = useState("Otomatis");
+  const [merk, setMerk] = useState("");
+  const [permasalahan, setPermasalahan] = useState("");
+  const [pelayanan, setPelayanan] = useState("booking");
 
   const [message, setMessage] = useState({});
 
@@ -32,13 +30,13 @@ function AddPesanan() {
     auth();
   }, []);
 
-  const addDataKendaraan = async () => {
+  const addDataPesanan = async () => {
     try {
       if (formValidation()) {
         const response = await axiosPrivate.post(
           "/pesanan",
           {
-            nama_customer: nama,
+            id_customer: jwtDecode(state.token.bearer).id_customer,
             alamat: alamat,
             no_hp: noHp,
             no_polisi: noPolisi,
@@ -47,9 +45,18 @@ function AddPesanan() {
             pelayanan: pelayanan,
           },
           {
-            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${state.token.bearer}`,
+            },
           }
         );
+
+        setAlamat("");
+        setNoHp("");
+        setNoPolisi("");
+        setMerk("");
+        setPermasalahan("");
+        setPelayanan("");
 
         setMessage({ message: response.data.message, color: "success" });
       }
@@ -59,63 +66,50 @@ function AddPesanan() {
   };
 
   const formValidation = () => {
-    if (noPolisi === "") {
-      setMessage({ message: "Nomor Polisi wajib di isi", color: "warning" });
+    if (alamat === "") {
+      setMessage({
+        message: "alamat wajib di isi",
+        color: "warning",
+      });
       return false;
     } else {
-      if (nama === "") {
+      if (noHp === "") {
         setMessage({
-          message: "Nama wajib di isi",
+          message: "Nomor hp wajib di isi",
           color: "warning",
         });
         return false;
       } else {
-        if (alamat === "") {
+        if (noPolisi === "") {
           setMessage({
-            message: "alamat wajib di isi",
+            message: "Nomor Polisi wajib di isi",
             color: "warning",
           });
           return false;
         } else {
-          if (noHp === "") {
+          if (merk === "") {
             setMessage({
-              message: "Nomor hp wajib di isi",
+              message: "Merk kendaraan wajib di isi",
               color: "warning",
             });
             return false;
           } else {
-            if (noPolisi === "") {
+            if (permasalahan === "") {
               setMessage({
-                message: "Nomor Polisi wajib di isi",
+                message: "Permasalahan bakar wajib di isi",
                 color: "warning",
               });
               return false;
             } else {
-              if (merk === "") {
+              if (pelayanan === "") {
                 setMessage({
-                  message: "Merk kendaraan wajib di isi",
+                  message: "Pelayanan bakar wajib di isi",
                   color: "warning",
                 });
                 return false;
               } else {
-                if (permasalahan === "") {
-                  setMessage({
-                    message: "Permasalahan bakar wajib di isi",
-                    color: "warning",
-                  });
-                  return false;
-                } else {
-                  if (pelayanan === "") {
-                    setMessage({
-                      message: "Pelayanan bakar wajib di isi",
-                      color: "warning",
-                    });
-                    return false;
-                  } else {
-                    setMessage("");
-                    return true;
-                  }
-                }
+                setMessage("");
+                return true;
               }
             }
           }
@@ -128,27 +122,12 @@ function AddPesanan() {
     <div className="card">
       <div className="card-header bg-danger text-white">
         <img src={IconData} alt="icon pengguna" />
-        <span className="ms-3">Tambah Data Peseanan</span>
+        <span className="ms-3">Tambah Data Pesenan</span>
       </div>
       <div className="card-body">
         {message.message !== undefined ? <Alert data={message} /> : null}
 
         {/* <form> */}
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label className="col-form-label">Nama Lengkap</label>
-          </div>
-          <div className="col-10">
-            <input
-              className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="text"
-              value={nama}
-              onChange={useCallback((e) => {
-                setNama(e.target.value);
-              }, [])}
-            />
-          </div>
-        </div>
         <div className="row g-3 px-4 mb-4">
           <div className="col-2">
             <label className="col-form-label">Alamat</label>
@@ -207,7 +186,7 @@ function AddPesanan() {
           <div className="col-10">
             <input
               className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="number"
+              type="text"
               value={merk}
               onChange={useCallback((e) => {
                 setMerk(e.target.value);
@@ -239,48 +218,17 @@ function AddPesanan() {
             </label>
           </div>
           <div className="col-10">
-            <input
-              className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="text"
+            <select
+              className="form-select"
+              aria-label="Default select example"
               value={pelayanan}
               onChange={useCallback((e) => {
                 setPelayanan(e.target.value);
               }, [])}
-            />
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Tanggal
-            </label>
-          </div>
-          <div className="col-10">
-            <input
-              className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="text"
-              value={tanggal}
-              onChange={useCallback((e) => {
-                setTanggal(e.target.value);
-              }, [])}
-            />
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Jam
-            </label>
-          </div>
-          <div className="col-10">
-            <input
-              className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="text"
-              value={jam}
-              onChange={useCallback((e) => {
-                setJam(e.target.value);
-              }, [])}
-            />
+            >
+              <option value="booking">Booking</option>
+              <option value="home service">Home Services</option>
+            </select>
           </div>
         </div>
         <div className="row g-3 px-4 mb-4">
@@ -289,14 +237,14 @@ function AddPesanan() {
             <Button
               className="me-3"
               color="primary"
-              onclick={() => addDataKendaraan()}
+              onclick={() => addDataPesanan()}
             >
               Tambah
             </Button>
             <Button
               className="me-3"
               color="danger"
-              onclick={() => navigate("/kendaraan")}
+              onclick={() => navigate("/pesanan")}
             >
               Kembali
             </Button>

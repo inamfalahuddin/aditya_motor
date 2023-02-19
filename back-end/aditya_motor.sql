@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 07 Feb 2023 pada 04.18
+-- Waktu pembuatan: 19 Feb 2023 pada 12.06
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 8.1.12
 
@@ -40,8 +40,8 @@ CREATE TABLE `auth` (
 --
 
 INSERT INTO `auth` (`id_customer`, `role`, `token`, `createdAt`, `updatedAt`) VALUES
-(255841, 'user', '', '2023-02-07 03:16:30', '0000-00-00 00:00:00'),
-(710843, 'user', '', '2023-02-07 03:16:30', '0000-00-00 00:00:00'),
+(255841, 'user', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6MjU1ODQxLCJyb2xlIjoidXNlciIsImlhdCI6MTY3Njc1OTczMSwiZXhwIjoxNjc2ODQ2MTMxfQ.nhYNKq3XdmCMKUAosIYk1zyYEy6N55Oytxyi_1AN918', '2023-02-18 22:35:31', '0000-00-00 00:00:00'),
+(710843, 'admin', '', '2023-02-17 01:33:26', '0000-00-00 00:00:00'),
 (182924, 'user', NULL, '2023-02-07 03:16:30', '0000-00-00 00:00:00'),
 (321711, 'admin', NULL, '2023-02-07 03:16:47', '0000-00-00 00:00:00'),
 (512867, 'user', NULL, '2023-02-07 03:16:30', '0000-00-00 00:00:00');
@@ -119,6 +119,15 @@ CREATE TABLE `kendaraan` (
   `bahan_bakar` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `kendaraan`
+--
+
+INSERT INTO `kendaraan` (`id_kendaraan`, `id_customer`, `nomor_polisi`, `warna_kendaraan`, `merk_kendaraan`, `jenis_model`, `tahun_kendaraan`, `isi_silinder`, `bahan_bakar`) VALUES
+(487524, 255841, 'ed8748er', 'putih', 'honda', 'beat strit', 2020, '140', 'bensin'),
+(487526, 255841, 'AB3456HD', 'hitam', 'honda', 'vario', 2015, '120', 'bensin'),
+(487527, 255841, 'E87656HD', 'merah', 'honda', 'vario', 2008, '120', 'bensin');
+
 -- --------------------------------------------------------
 
 --
@@ -175,8 +184,8 @@ INSERT INTO `owner` (`id_owner`, `username`, `email`, `password`) VALUES
 
 CREATE TABLE `pesanan` (
   `id_pesanan` int(11) NOT NULL,
-  `nama_customer` varchar(30) NOT NULL,
-  `alamat` varchar(30) NOT NULL,
+  `id_customer` int(11) NOT NULL,
+  `alamat` varchar(200) NOT NULL,
   `no_hp` varchar(30) NOT NULL,
   `no_polisi` varchar(30) NOT NULL,
   `merk_kendaraan` varchar(30) NOT NULL,
@@ -192,53 +201,10 @@ CREATE TABLE `pesanan` (
 -- Dumping data untuk tabel `pesanan`
 --
 
-INSERT INTO `pesanan` (`id_pesanan`, `nama_customer`, `alamat`, `no_hp`, `no_polisi`, `merk_kendaraan`, `permasalahan`, `pelayanan`, `tanggal`, `jam`, `status`, `no_antrian`) VALUES
-(2, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '02:46:47', 'pending', 5),
-(3, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-30', '02:48:16', 'pending', 5),
-(6, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:02:01', 'pending', 3),
-(7, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:02:08', 'pending', 4),
-(10, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:03:24', 'pending', 6),
-(12, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:04:22', 'pending', 7),
-(13, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:04:42', 'pending', 8),
-(14, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:05:05', 'pending', 1),
-(15, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:05:48', 'pending', 9),
-(16, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:06:03', 'pending', 6),
-(17, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:06:23', 'pending', 1),
-(18, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:07:05', 'pending', 10),
-(19, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:08:47', 'pending', 11),
-(20, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:12:02', 'pending', 12),
-(21, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:12:37', 'pending', 13),
-(22, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:14:33', 'pending', 14),
-(23, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:15:06', 'pending', 15),
-(24, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2022-12-31', '03:15:23', 'pending', 16),
-(25, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2023-01-01', '10:18:45', 'pending', 1),
-(26, 'Kokompor', 'Pabuaran Wetan', '083816014304', 'E 21572 XZ', 'Honda', 'Rem pakem', 'booking', '2023-01-01', '10:19:37', 'pending', 2);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `suplier`
---
-
-CREATE TABLE `suplier` (
-  `id_suplier` int(11) NOT NULL,
-  `nama_suplier` varchar(50) NOT NULL,
-  `alamat` varchar(50) NOT NULL,
-  `no_hp` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `suplier`
---
-
-INSERT INTO `suplier` (`id_suplier`, `nama_suplier`, `alamat`, `no_hp`) VALUES
-(1, 'toko indah', 'gebang', '18374'),
-(2, 'toko makmur', 'sindang', '239847'),
-(3, 'toko mesin', 'waled', '2344'),
-(4, 'toko wajan', 'adskhfajk', '928374'),
-(5, 'toko', 'ciledug', '829374'),
-(6, 'toko jiwa', 'pabuaran', '9323'),
-(10, 'Kokompor', 'Pabuaran Wetan', '083816014304');
+INSERT INTO `pesanan` (`id_pesanan`, `id_customer`, `alamat`, `no_hp`, `no_polisi`, `merk_kendaraan`, `permasalahan`, `pelayanan`, `tanggal`, `jam`, `status`, `no_antrian`) VALUES
+(34, 255841, 'dusun 02 desa kudumulya rt/rw 005/003 kec.babakan kab.cirebon 45191', '8745123456', 'D78451DA', 'yamaha', 'ganti kanvas rem', 'booking', '2023-02-18', '11:14:43', 'progres', 6),
+(41, 255841, 'Dusun 02 Desa Kudumulya Rt/Rw 005/003 Kec.Babakan Kab.Cirebon 45191	', '0824505210', 'D45782GH', 'scopy', 'ganti lampu', 'booking', '2023-02-19', '06:10:42', 'selesai', 1),
+(42, 255841, 'Dusun 02 Desa Kudumulya Rt/Rw 005/003 Kec.Babakan Kab.Cirebon 45191	', '0875478751330', 'AB78542BG', 'mio j', 'buluk', 'home service', '2023-02-19', '06:14:46', 'pending', 2);
 
 -- --------------------------------------------------------
 
@@ -247,16 +213,22 @@ INSERT INTO `suplier` (`id_suplier`, `nama_suplier`, `alamat`, `no_hp`) VALUES
 --
 
 CREATE TABLE `transaksi` (
-  `id_transaksi` int(11) NOT NULL,
+  `id_transaksi` int(5) NOT NULL,
   `id_customer` int(11) NOT NULL,
   `id_mekanik` int(11) NOT NULL,
-  `id_barang` int(11) NOT NULL,
   `id_pesanan` int(11) NOT NULL,
-  `tanggal` date NOT NULL,
-  `qty` int(11) NOT NULL,
-  `harga_barang` int(11) NOT NULL,
-  `total` int(11) NOT NULL
+  `id_barang` int(11) NOT NULL,
+  `qty` int(11) DEFAULT NULL,
+  `total` float DEFAULT NULL,
+  `tanggal` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `transaksi`
+--
+
+INSERT INTO `transaksi` (`id_transaksi`, `id_customer`, `id_mekanik`, `id_pesanan`, `id_barang`, `qty`, `total`, `tanggal`) VALUES
+(174523, 255841, 3, 34, 4, 1, 200000, '2023-02-19 03:52:52');
 
 --
 -- Indexes for dumped tables
@@ -303,75 +275,40 @@ ALTER TABLE `owner`
 -- Indeks untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  ADD PRIMARY KEY (`id_pesanan`);
-
---
--- Indeks untuk tabel `suplier`
---
-ALTER TABLE `suplier`
-  ADD PRIMARY KEY (`id_suplier`);
+  ADD PRIMARY KEY (`id_pesanan`),
+  ADD KEY `id_customer` (`id_customer`);
 
 --
 -- Indeks untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
   ADD PRIMARY KEY (`id_transaksi`),
-  ADD KEY `id_customer` (`id_customer`,`id_mekanik`,`id_barang`,`id_pesanan`),
+  ADD KEY `id_customer` (`id_customer`,`id_pesanan`,`id_barang`),
   ADD KEY `id_pesanan` (`id_pesanan`),
-  ADD KEY `id_mekanik` (`id_mekanik`),
-  ADD KEY `id_barang` (`id_barang`);
+  ADD KEY `id_barang` (`id_barang`),
+  ADD KEY `id_mekanik` (`id_mekanik`);
 
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT untuk tabel `barang`
---
-ALTER TABLE `barang`
-  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- AUTO_INCREMENT untuk tabel `customer`
---
-ALTER TABLE `customer`
-  MODIFY `id_customer` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=984322;
-
---
 -- AUTO_INCREMENT untuk tabel `kendaraan`
 --
 ALTER TABLE `kendaraan`
-  MODIFY `id_kendaraan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- AUTO_INCREMENT untuk tabel `mekanik`
---
-ALTER TABLE `mekanik`
-  MODIFY `id_mekanik` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2457822;
-
---
--- AUTO_INCREMENT untuk tabel `owner`
---
-ALTER TABLE `owner`
-  MODIFY `id_owner` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_kendaraan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=487528;
 
 --
 -- AUTO_INCREMENT untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
-
---
--- AUTO_INCREMENT untuk tabel `suplier`
---
-ALTER TABLE `suplier`
-  MODIFY `id_suplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id_transaksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5521217;
+  MODIFY `id_transaksi` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174524;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -387,7 +324,7 @@ ALTER TABLE `auth`
 -- Ketidakleluasaan untuk tabel `kendaraan`
 --
 ALTER TABLE `kendaraan`
-  ADD CONSTRAINT `kendaraan_ibfk_1` FOREIGN KEY (`id_customer`) REFERENCES `customer` (`id_customer`) ON DELETE CASCADE;
+  ADD CONSTRAINT `kendaraan_ibfk_1` FOREIGN KEY (`id_customer`) REFERENCES `auth` (`id_customer`);
 
 --
 -- Ketidakleluasaan untuk tabel `transaksi`
@@ -395,8 +332,8 @@ ALTER TABLE `kendaraan`
 ALTER TABLE `transaksi`
   ADD CONSTRAINT `transaksi_ibfk_1` FOREIGN KEY (`id_customer`) REFERENCES `customer` (`id_customer`),
   ADD CONSTRAINT `transaksi_ibfk_2` FOREIGN KEY (`id_pesanan`) REFERENCES `pesanan` (`id_pesanan`),
-  ADD CONSTRAINT `transaksi_ibfk_3` FOREIGN KEY (`id_mekanik`) REFERENCES `mekanik` (`id_mekanik`),
-  ADD CONSTRAINT `transaksi_ibfk_4` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id_barang`);
+  ADD CONSTRAINT `transaksi_ibfk_3` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id_barang`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transaksi_ibfk_4` FOREIGN KEY (`id_mekanik`) REFERENCES `mekanik` (`id_mekanik`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

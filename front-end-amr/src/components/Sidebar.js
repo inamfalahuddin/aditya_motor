@@ -12,10 +12,10 @@ import Loading from "../components/Loading";
 
 function Sidebar() {
   const [state, dispatch] = useAppContext();
+  const [role, setRole] = useState("");
   const [matches, setMatches] = useState(
     window.matchMedia("(min-width: 992px)").matches
   );
-  const [role, setRole] = useState("");
 
   useEffect(() => {
     window

@@ -19,6 +19,8 @@ const dateFormat = (data) => {
   const indexedOfMonth = Number(date.split("-")[1] - 1);
   const indexedOfYear = Number(date.split("-")[0]);
 
+  console.log(date)
+
   return `${indexedOfDay}, ${month[indexedOfMonth]} ${indexedOfYear}`;
 };
 

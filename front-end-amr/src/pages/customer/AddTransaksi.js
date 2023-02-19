@@ -2,46 +2,41 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
+import jwtDecode from "jwt-decode";
 import Alert from "../../components/Alert";
 
-function EditKendaraan() {
+function AddTransaksi() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
   const auth = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
-  const [idKendaraan, setIdKendaraan] = useState("");
   const [noPolisi, setNoPolisi] = useState("");
   const [warna, setWarna] = useState("");
   const [merk, setMerk] = useState("");
   const [jenis, setJenis] = useState("");
-  const [tahun, setTahun] = useState("");
-  const [cyilinder, setCyilinder] = useState("");
+  const [tahun, setTahun] = useState(0);
+  const [cyilinder, setCyilinder] = useState(0);
   const [bahanbakar, setBahanbakar] = useState("");
 
   const [message, setMessage] = useState({});
 
-  const { id } = useParams();
-
   useEffect(() => {
-    dispatch({ type: "SET_TITLE", payload: "edit kendaraan" });
+    dispatch({ type: "SET_TITLE", payload: "tambah kendaraan" });
 
     auth();
   }, []);
 
-  useEffect(() => {
-    getDetailDataKendaraan(id);
-  }, [state.token.bearer]);
-
   const addDataKendaraan = async () => {
     try {
       if (formValidation()) {
-        const response = await axiosPrivate.put(
-          `/kendaraan/${idKendaraan}`,
+        const response = await axiosPrivate.post(
+          "/kendaraan",
           {
+            id_customer: jwtDecode(state.token.bearer).id_customer,
             nomor_polisi: noPolisi,
             warna_kendaraan: warna,
             merk_kendaraan: merk,
@@ -52,40 +47,21 @@ function EditKendaraan() {
           },
           {
             withCredentials: true,
-            headers: {
-              Authorization: `Bearer ${state.token.bearer}`,
-            },
           }
         );
+
+        setNoPolisi("");
+        setWarna("");
+        setMerk("");
+        setJenis("");
+        setTahun("");
+        setCyilinder("");
+        setBahanbakar("");
 
         setMessage({ message: response.data.message, color: "success" });
       }
     } catch (err) {
       setMessage({ message: err.response.data.message, color: "danger" });
-    }
-  };
-
-  const getDetailDataKendaraan = async (id) => {
-    try {
-      const response = await axiosPrivate.get(`kendaraan/${id}`, {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${state.token.bearer}`,
-        },
-      });
-
-      const data = response.data.data[0];
-
-      setIdKendaraan(data.id_kendaraan);
-      setNoPolisi(data.nomor_polisi);
-      setWarna(data.warna_kendaraan);
-      setMerk(data.merk_kendaraan);
-      setJenis(data.jenis_model);
-      setTahun(data.tahun_kendaraan);
-      setCyilinder(data.isi_silinder);
-      setBahanbakar(data.bahan_bakar);
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -151,7 +127,7 @@ function EditKendaraan() {
     <div className="card">
       <div className="card-header bg-danger text-white">
         <img src={IconData} alt="icon pengguna" />
-        <span className="ms-3">Edit Data Kendaraan</span>
+        <span className="ms-3">Tambah Data Kendaraan</span>
       </div>
       <div className="card-body">
         {message.message !== undefined ? <Alert data={message} /> : null}
@@ -285,7 +261,7 @@ function EditKendaraan() {
             <Button
               className="me-3"
               color="danger"
-              onclick={() => navigate("/kendaraan")}
+              onclick={() => navigate("/transaksi")}
             >
               Kembali
             </Button>
@@ -297,4 +273,4 @@ function EditKendaraan() {
   );
 }
 
-export default EditKendaraan;
+export default AddTransaksi;

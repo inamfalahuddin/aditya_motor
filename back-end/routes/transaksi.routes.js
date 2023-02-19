@@ -13,7 +13,7 @@ const router = express.Router();
 // Suplier
 router.post("/v1/transaksi/", auth, addTransaksi);
 router.get("/v1/transaksi/all", auth, getTransaksiAll);
-router.get("/v1/transaksi/:id", auth, getTransaksiById);
+router.get("/v1/transaksi/:id", getTransaksiById);
 router.get("/v1/transaksi/user/:id", auth, getTransaksiByUserId);
 router.delete("/v1/transaksi/:id", auth, deleteTransaksi);
 

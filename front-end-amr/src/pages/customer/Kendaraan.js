@@ -16,6 +16,11 @@ function Kendaraan() {
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "kendaraan" });
 
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
+
     if (state.token.bearer === "") {
       refresh();
     }
@@ -28,8 +33,6 @@ function Kendaraan() {
   useEffect(() => {
     setDataKendaraan(state.data.kendaraan);
   }, [state.data]);
-
-  console.log(state);
 
   const getKendaraan = async () => {
     try {

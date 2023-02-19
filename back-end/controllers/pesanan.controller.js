@@ -1,6 +1,7 @@
 const response = require("../utils/response");
 const db = require("../config/db.con");
 const dateFormat = require("../utils/date");
+const removeSpaces = require("../utils/removeSpaces");
 
 const getPesananAll = (req, res) => {
   db.query(`SELECT * FROM pesanan`, (err, rows, fields) => {
@@ -104,10 +105,10 @@ const addPesanan = (req, res) => {
         `INSERT INTO pesanan SET ?`,
         [
           {
-            nama_customer: data.nama_customer,
+            id_customer: data.id_customer,
             alamat: data.alamat,
             no_hp: data.no_hp,
-            no_polisi: data.no_polisi,
+            no_polisi: removeSpaces(data.no_polisi.toUpperCase()),
             merk_kendaraan: data.merk_kendaraan,
             permasalahan: data.permasalahan,
             pelayanan: data.pelayanan,
