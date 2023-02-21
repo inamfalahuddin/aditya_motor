@@ -2,7 +2,8 @@ import React from "react";
 import { useAppContext } from "../context/app-context";
 
 function Alert({ data }) {
-  const [state, dispatch] = useAppContext();
+  // const [state, dispatch] = useAppContext();
+
   return (
     // <div className={`alert alert-${data.color}`} role="alert">
     //   {data.message}
@@ -19,7 +20,7 @@ function Alert({ data }) {
         data-bs-dismiss="alert"
         aria-label="Close"
         onClick={() => {
-          dispatch({ type: "SET_MESSAGE", payload: {} });
+          // dispatch({ type: "SET_MESSAGE", payload: {} });
         }}
       ></button>
     </div>

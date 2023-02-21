@@ -128,6 +128,7 @@ function Register() {
             </div>
             <div className="card-body text-center">
               {message.message !== undefined ? <Alert data={message} /> : null}
+              {console.log(message)}
 
               <form>
                 <div className="mb-3 text-start">

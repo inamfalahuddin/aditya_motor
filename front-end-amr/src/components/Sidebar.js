@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import UserProfile from "../images/user-profile.svg";
 import IconDashboard from "../images/dashboard-icon.svg";
@@ -6,12 +6,16 @@ import IconData from "../images/icon-data.svg";
 import IconLogout from "../images/logout-icon.svg";
 import IconPengguna from "../images/user-icon.svg";
 import { useAppContext } from "../context/app-context";
-import axios from "../api/axios";
+import axios, { axiosPrivate } from "../api/axios";
 import jwt_decode from "jwt-decode";
 import Loading from "../components/Loading";
+import useAxiosPrivate from "../hooks/usePrivate";
 
 function Sidebar() {
+  const axiosPrivate = useAxiosPrivate();
+
   const [state, dispatch] = useAppContext();
+  const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
   const [matches, setMatches] = useState(
     window.matchMedia("(min-width: 992px)").matches
@@ -31,8 +35,6 @@ function Sidebar() {
 
       dispatch({ type: "SET_ROLE", payload: decode.role });
     }
-
-    setRole(state.role);
   }, [state.role, state.token]);
 
   const Logout = useCallback(async (e) => {
@@ -46,6 +48,30 @@ function Sidebar() {
       console.log(err);
     }
   }, []);
+
+  const getUserName = async (e) => {
+    try {
+      const id = jwt_decode(state.token.bearer).id_customer;
+      const response = await axiosPrivate.get(`customer/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+      const data = response.data.data;
+
+      setUsername(data[0].username);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useMemo(() => {
+    setRole(state.role);
+    if (username === "") {
+      getUserName();
+    }
+  }, [state.token]);
 
   return !role ? (
     <Loading />
@@ -62,8 +88,10 @@ function Sidebar() {
     >
       <div className="side-head text-center my-5">
         <img className="d-inline-block" src={UserProfile} alt="user-profile" />
-        <h5 className="mt-3 text-center">Nama Customer</h5>
-        <p className="mb-3 text-center">Customer</p>
+        <h5 className="mt-3 text-center text-capitalize px-2">
+          {username && username}
+        </h5>
+        <p className="mb-3 text-center text-capitalize">{role && role}</p>
       </div>
 
       <div className="side-body">

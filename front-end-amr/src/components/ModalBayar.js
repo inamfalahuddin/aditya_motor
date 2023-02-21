@@ -1,26 +1,21 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useAppContext } from "../context/app-context";
 import Button from "./Button";
 
 function ModalBayar() {
+  const [state, dispatch] = useAppContext();
+
   return (
     <div>
-      {/* Button trigger modal */}
-      <button
-        type="button"
-        className="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
-      >
-        Launch demo modal
-      </button>
-      {/* Modal */}
       <div
-        className="modal fade show"
+        className={`modal fade ${
+          state.isModal ? "show bg-dark bg-opacity-25" : ""
+        }`}
         id="exampleModal"
         tabIndex={-1}
         aria-labelledby="exampleModalLabel"
         aria-hidden="false"
-        style={{ display: "block" }}
+        style={{ display: `${state.isModal ? "block" : "none"}` }}
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
@@ -31,17 +26,18 @@ function ModalBayar() {
               >
                 Memilih metode pembayaran !
               </h5>
-              {/* <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              /> */}
             </div>
             <div className="modal-body d-flex justify-content-center gap-3 py-5">
               <Button color="success">Cash</Button>
               <Button color="primary">Debit</Button>
-              <Button color="danger">Kembali</Button>
+              <Button
+                color="danger"
+                onclick={useCallback(() => {
+                  dispatch({ type: "SET_MODAL", payload: false });
+                }, [])}
+              >
+                Kembali
+              </Button>
             </div>
           </div>
         </div>

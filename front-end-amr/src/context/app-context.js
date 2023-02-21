@@ -22,6 +22,7 @@ const intialState = {
     kendaraan: [],
     pesanan: [],
   },
+  isModal: false,
 };
 
 const reducer = (state, action) => {
@@ -41,6 +42,8 @@ const reducer = (state, action) => {
       return { ...state, message: action.payload };
     case "SET_DATA":
       return { ...state, data: action.payload };
+    case "SET_MODAL":
+      return { ...state, isModal: action.payload };
     default:
       throw new Error();
   }

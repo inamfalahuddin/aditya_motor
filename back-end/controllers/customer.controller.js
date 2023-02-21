@@ -121,11 +121,7 @@ const updateCustomer = (req, res) => {
           db.query(
             `UPDATE customer SET 
              username='${data.username}',
-             alamat='${data.alamat}',
-             no_tlp='${data.no_tlp}',
-             no_polisi='${removeSpaces(data.no_polisi)}',
-             merk_kendaraan='${data.merk_kendaraan}',
-             email='${data.email}'   
+             alamat='${data.alamat}'
              WHERE id_customer=${id}`,
             (err, rows, fields) => {
               if (err)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
@@ -13,6 +13,9 @@ function Pengguna() {
   const auth = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [dataPengguna, setDataPengguna] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
+  const [username, setUsername] = useState("");
+  const [alamat, setAlamat] = useState("");
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pengguna" });
@@ -38,8 +41,43 @@ function Pengguna() {
           Authorization: `Bearer ${state.token.bearer}`,
         },
       });
+      const data = response.data.data;
 
-      setDataPengguna(response.data.data);
+      setUsername(data[0].username);
+      setAlamat(data[0].alamat);
+      setDataPengguna(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateDataPengguna = async (e) => {
+    try {
+      if (isEdit) {
+        const id = jwt_decode(state.token.bearer).id_customer;
+        const response = await axiosPrivate.put(
+          `customer/${id}`,
+          {
+            username: username,
+            alamat: alamat,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${state.token.bearer}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          const response = await axiosPrivate.get(`customer/${id}`, {
+            headers: {
+              Authorization: `Bearer ${state.token.bearer}`,
+            },
+          });
+
+          setDataPengguna(response.data.data);
+        }
+      }
     } catch (err) {
       console.log(err);
     }
@@ -59,9 +97,20 @@ function Pengguna() {
             </label>
           </div>
           <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
-              {dataPengguna[0] && dataPengguna[0].username}
-            </span>
+            {isEdit ? (
+              <input
+                className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                type="text"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+              />
+            ) : (
+              <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                {dataPengguna[0] && dataPengguna[0].username}
+              </span>
+            )}
           </div>
         </div>
         <div className="row g-3 px-4 align-items-center mb-4">
@@ -71,9 +120,20 @@ function Pengguna() {
             </label>
           </div>
           <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-              {dataPengguna[0] && dataPengguna[0].alamat}
-            </span>
+            {isEdit ? (
+              <input
+                className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                type="text"
+                value={alamat}
+                onChange={(e) => {
+                  setAlamat(e.target.value);
+                }}
+              />
+            ) : (
+              <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                {dataPengguna[0] && dataPengguna[0].alamat}
+              </span>
+            )}
           </div>
         </div>
         <div className="row g-3 px-4 align-items-center mb-4">
@@ -86,7 +146,14 @@ function Pengguna() {
             >
               Kembali
             </Button>
-            <Button className="me-3" color="primary">
+            <Button
+              className="me-3"
+              color="primary"
+              onclick={useCallback(() => {
+                setIsEdit(!isEdit);
+                updateDataPengguna();
+              }, [isEdit, username, alamat])}
+            >
               Edit
             </Button>
           </div>

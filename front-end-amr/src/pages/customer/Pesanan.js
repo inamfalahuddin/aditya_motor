@@ -28,12 +28,16 @@ function Pemesan() {
   }, []);
 
   useEffect(() => {
-    getDataPesanan();
-
     if (state.token.bearer) {
       setRole(jwtDecode(state.token.bearer).role);
     }
-  }, [state.token.bearer]);
+
+    if (role === "admin") {
+      getAllDataPesanan();
+    } else {
+      getDataPesanan();
+    }
+  }, [state.token.bearer, role]);
 
   useEffect(() => {
     setDataPesanan(state.data.pesanan);
@@ -43,6 +47,28 @@ function Pemesan() {
     try {
       const idCust = jwtDecode(state.token.bearer).id_customer;
       const response = await axiosPrivate.get(`pesanan/cust/${idCust}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          pesanan: response.data.data,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getAllDataPesanan = async () => {
+    try {
+      const idCust = jwtDecode(state.token.bearer).id_customer;
+      const response = await axiosPrivate.get(`pesanan/all`, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${state.token.bearer}`,
@@ -84,6 +110,7 @@ function Pemesan() {
               </tr>
             </thead>
             <tbody className="border-start border-end">
+              {console.log(dataPesanan)}
               {dataPesanan && dataPesanan.length > 0 ? (
                 dataPesanan.map((data, index) => (
                   <tr key={index}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
@@ -47,6 +47,10 @@ function DetailTransaksi() {
       console.log(err);
     }
   };
+
+  const btnBayar = useCallback(() => {
+    dispatch({ type: "SET_MODAL", payload: !state.isModal });
+  }, []);
 
   return (
     <>
@@ -176,13 +180,16 @@ function DetailTransaksi() {
                 className="me-3"
                 color="success"
                 //   onclick={() => navigate("/transaksi")}
+                onclick={btnBayar}
               >
                 Bayar
               </Button>
               <Button
                 className="me-3"
                 color="danger"
-                onclick={() => navigate("/transaksi")}
+                onclick={() => {
+                  navigate("/transaksi");
+                }}
               >
                 Kembali
               </Button>

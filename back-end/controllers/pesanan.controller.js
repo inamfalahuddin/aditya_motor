@@ -4,7 +4,8 @@ const dateFormat = require("../utils/date");
 const removeSpaces = require("../utils/removeSpaces");
 
 const getPesananAll = (req, res) => {
-  db.query(`SELECT * FROM pesanan`, (err, rows, fields) => {
+  db.query( `SELECT a.id_customer, a.username, b.id_pesanan, b.alamat, b.no_hp, b.no_polisi, b.merk_kendaraan, b.permasalahan, b.pelayanan, b.tanggal, b.jam, b.status, b.no_antrian FROM customer a
+            JOIN pesanan b ON a.id_customer=b.id_customer`, (err, rows, fields) => {
     if (err)
       return response(res, 500, { code: err.code, sqlMessage: err.sqlMessage });
 

@@ -18,7 +18,6 @@ const getTransaksiAll = (req, res) => {
           sqlMessage: err.sqlMessage,
         });
 
-      // console.log(result);
       const result = rows.map((row) => ({
         ...row,
         tanggal: dateFormat(row.tanggal),
@@ -50,7 +49,6 @@ const getTransaksiById = (req, res) => {
           sqlMessage: err.sqlMessage,
         });
 
-      // console.log(result);
       const result = rows.map((row) => ({
         ...row,
         tanggal: dateFormat(row.tanggal),
