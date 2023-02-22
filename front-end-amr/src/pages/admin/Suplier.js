@@ -51,22 +51,37 @@ function Suplier() {
               </tr>
             </thead>
             <tbody>
-              {dataSuplier &&
+              {dataSuplier && dataSuplier.length > 0 ? (
                 dataSuplier.map((data, index) => {
                   return (
                     <tr key={index}>
                       <td style={{ verticalAlign: "middle" }}>{index + 1}.</td>
-                      <td style={{ verticalAlign: "middle" }}>
-                        {data.nama_suplier}
+                      <td
+                        className="text-capitalize"
+                        style={{ verticalAlign: "middle" }}
+                      >
+                        {data.nama_toko}
                       </td>
-                      <td style={{ verticalAlign: "middle" }}>{data.alamat}</td>
+                      <td
+                        className="text-capitalize"
+                        style={{ verticalAlign: "middle" }}
+                      >
+                        {data.alamat}
+                      </td>
                       <td style={{ verticalAlign: "middle" }}>{data.no_hp}</td>
                       <td style={{ verticalAlign: "middle" }}>
                         <Action />
                       </td>
                     </tr>
                   );
-                })}
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center pt-4">
+                    Tidak ada data
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

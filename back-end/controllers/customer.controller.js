@@ -5,7 +5,9 @@ const removeSpaces = require("../utils/removeSpaces");
 
 const getCustomer = (req, res) => {
   db.query(
-    `SELECT id_customer, username, email, alamat, no_tlp, no_polisi, merk_kendaraan FROM customer`,
+    `SELECT a.id_customer, a.username, a.email, a.alamat, a.no_tlp, b.nomor_polisi, b.merk_kendaraan FROM customer a
+    JOIN kendaraan b
+    ON a.id_customer=b.id_customer`,
     (err, rows, fields) => {
       if (err)
         return response(res, 500, {
@@ -169,6 +171,8 @@ const deleteCustomer = (req, res) => {
     }
   );
 };
+
+const searchCustomer = (req, res) => {};
 
 module.exports = {
   getCustomer,

@@ -33,9 +33,9 @@ function Pemesan() {
     }
 
     if (role === "admin") {
-      getAllDataPesanan();
+      state.token.bearer && getAllDataPesanan();
     } else {
-      getDataPesanan();
+      state.token.bearer && getDataPesanan();
     }
   }, [state.token.bearer, role]);
 
@@ -110,7 +110,6 @@ function Pemesan() {
               </tr>
             </thead>
             <tbody className="border-start border-end">
-              {console.log(dataPesanan)}
               {dataPesanan && dataPesanan.length > 0 ? (
                 dataPesanan.map((data, index) => (
                   <tr key={index}>

@@ -68,8 +68,11 @@ function Sidebar() {
 
   useMemo(() => {
     setRole(state.role);
-    if (username === "") {
-      getUserName();
+
+    if (state.token.bearer) {
+      if (username === "") {
+        getUserName();
+      }
     }
   }, [state.token]);
 
