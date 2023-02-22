@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 19 Feb 2023 pada 12.06
+-- Waktu pembuatan: 22 Feb 2023 pada 01.52
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 8.1.12
 
@@ -40,11 +40,11 @@ CREATE TABLE `auth` (
 --
 
 INSERT INTO `auth` (`id_customer`, `role`, `token`, `createdAt`, `updatedAt`) VALUES
-(255841, 'user', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6MjU1ODQxLCJyb2xlIjoidXNlciIsImlhdCI6MTY3Njc1OTczMSwiZXhwIjoxNjc2ODQ2MTMxfQ.nhYNKq3XdmCMKUAosIYk1zyYEy6N55Oytxyi_1AN918', '2023-02-18 22:35:31', '0000-00-00 00:00:00'),
-(710843, 'admin', '', '2023-02-17 01:33:26', '0000-00-00 00:00:00'),
-(182924, 'user', NULL, '2023-02-07 03:16:30', '0000-00-00 00:00:00'),
-(321711, 'admin', NULL, '2023-02-07 03:16:47', '0000-00-00 00:00:00'),
-(512867, 'user', NULL, '2023-02-07 03:16:30', '0000-00-00 00:00:00');
+(255841, 'user', '', '2023-02-21 22:01:29', '0000-00-00 00:00:00'),
+(710843, 'admin', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6NzEwODQzLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2NzcwMTY5MTAsImV4cCI6MTY3NzEwMzMxMH0.OJy9HOEqaTwjYkHVQSTb6o1elUBfy6IWSN_SMAYgWyE', '2023-02-21 22:01:50', '0000-00-00 00:00:00'),
+(152238, 'user', NULL, '2023-02-19 22:45:46', '0000-00-00 00:00:00'),
+(267451, 'user', '', '2023-02-20 04:35:26', '0000-00-00 00:00:00'),
+(872343, 'user', NULL, '2023-02-19 23:20:17', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -91,15 +91,11 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id_customer`, `username`, `alamat`, `no_tlp`, `email`, `password`) VALUES
-(182924, 'budi setiawan', 'desa kudumulya kec. babakan kab. cirebon', '083816014304', 'budi@gmail.com', 'budi'),
-(255841, 'fathan', 'Bojong gebang', '083816014356', 'patan@mail.com', '$2b$10$UJC9hOb6GSApLqqYffXkoO49FTj8lzZ3UNYSzkUJF4QVNTCI8Jami'),
-(290501, 'budi setiawan', 'desa kudumulya kec. babakan kab. cirebon', '083816014304', 'budi@gmail.com', 'budi'),
-(321711, 'canu cartanu', 'kdk', '87', 'canu@mail.com', 'canu'),
-(495092, 'budi setiawan', 'desa kudumulya kec. babakan kab. cirebon', '083816014304', 'budi@gmail.com', 'budi'),
-(512867, 'gajah', 'kudukuras', '9928', 'gajah@mail.com', 'gajah'),
-(679947, 'budi setiawan', 'desa kudumulya kec. babakan kab. cirebon', '083816014304', 'budi@gmail.com', 'budi'),
-(710843, 'Fathanilah', 'Bojong gebang', '083816014356', 'budi@mail.com', '$2b$10$To8lcafTvoCuALxNMvsGyOMim/v5GAbsf1orgo03c8MbGffZC0CF2'),
-(979465, 'budi setiawan', 'desa kudumulya kec. babakan kab. cirebon', '083816014304', 'budi@gmail.com', 'budi');
+(152238, 'budi sembada', 'bojong gebang', '083816014304', 'budi@gmail.com', '$2b$10$HPhRoj45u2WWak4w7G0zaeFq47a9.ufCUJS8LJpCD8MEUIjB6zHrW'),
+(255841, 'fathan sembada', 'pabuaran wetan', '083816014356', 'patan@mail.com', '$2b$10$UJC9hOb6GSApLqqYffXkoO49FTj8lzZ3UNYSzkUJF4QVNTCI8Jami'),
+(267451, 'riska widianti', 'sumber kidul', '087878455478', 'riska@mail.com', '$2b$10$8pJMJ4TXuNfqBQRKBtDgpO38MbMjKSpBCwxJovJy/q0H/arnUn47e'),
+(710843, 'budi setiawan BS', 'kudumulya', '083816014356', 'budi@mail.com', '$2b$10$To8lcafTvoCuALxNMvsGyOMim/v5GAbsf1orgo03c8MbGffZC0CF2'),
+(872343, 'asdflj', 'asdflj ', '54464', 'asdfasdf6', '$2b$10$zccBZ.DFVY6vPQI4CtlDHOpb0vRQGbkYuXQfWnd1rKFrPUsdrZZLq');
 
 -- --------------------------------------------------------
 
@@ -202,9 +198,32 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id_pesanan`, `id_customer`, `alamat`, `no_hp`, `no_polisi`, `merk_kendaraan`, `permasalahan`, `pelayanan`, `tanggal`, `jam`, `status`, `no_antrian`) VALUES
-(34, 255841, 'dusun 02 desa kudumulya rt/rw 005/003 kec.babakan kab.cirebon 45191', '8745123456', 'D78451DA', 'yamaha', 'ganti kanvas rem', 'booking', '2023-02-18', '11:14:43', 'progres', 6),
+(34, 710843, 'dusun 02 desa kudumulya rt/rw 005/003 kec.babakan kab.cirebon 45191', '8745123456', 'D78451DA', 'yamaha', 'ganti kanvas rem', 'booking', '2023-02-18', '11:14:43', 'selesai', 6),
 (41, 255841, 'Dusun 02 Desa Kudumulya Rt/Rw 005/003 Kec.Babakan Kab.Cirebon 45191	', '0824505210', 'D45782GH', 'scopy', 'ganti lampu', 'booking', '2023-02-19', '06:10:42', 'selesai', 1),
-(42, 255841, 'Dusun 02 Desa Kudumulya Rt/Rw 005/003 Kec.Babakan Kab.Cirebon 45191	', '0875478751330', 'AB78542BG', 'mio j', 'buluk', 'home service', '2023-02-19', '06:14:46', 'pending', 2);
+(42, 710843, 'Dusun 02 Desa Kudumulya Rt/Rw 005/003 Kec.Babakan Kab.Cirebon 45191	', '0875478751330', 'AB78542BG', 'mio j', 'buluk', 'booking', '2023-02-19', '06:14:46', 'pending', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `suplier`
+--
+
+CREATE TABLE `suplier` (
+  `id_suplier` int(11) NOT NULL,
+  `nama_toko` varchar(100) NOT NULL,
+  `alamat` varchar(200) NOT NULL,
+  `no_hp` varchar(13) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `suplier`
+--
+
+INSERT INTO `suplier` (`id_suplier`, `nama_toko`, `alamat`, `no_hp`) VALUES
+(45778, 'Toko Dea', 'Dusun 04 Desa Kudumulya RT/RW 005/004 Kec. Babakan Kab. Cirebon 45191', '083845647897'),
+(45786, 'Kelontong 1', 'Pabuaran Wetan', '083816014304'),
+(45787, 'Kelontong 2', 'Pabuaran Wetan', '083816014304'),
+(45797, 'adf', 'sdfafd', '2120');
 
 -- --------------------------------------------------------
 
@@ -279,6 +298,12 @@ ALTER TABLE `pesanan`
   ADD KEY `id_customer` (`id_customer`);
 
 --
+-- Indeks untuk tabel `suplier`
+--
+ALTER TABLE `suplier`
+  ADD PRIMARY KEY (`id_suplier`);
+
+--
 -- Indeks untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
@@ -303,6 +328,12 @@ ALTER TABLE `kendaraan`
 --
 ALTER TABLE `pesanan`
   MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+
+--
+-- AUTO_INCREMENT untuk tabel `suplier`
+--
+ALTER TABLE `suplier`
+  MODIFY `id_suplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45798;
 
 --
 -- AUTO_INCREMENT untuk tabel `transaksi`
