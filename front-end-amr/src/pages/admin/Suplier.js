@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Action from "../../components/Action";
 import Toolbar from "../../components/Toolbar";
 import { useAppContext } from "../../context/app-context";
+import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import useRefreshToken from "../../hooks/useRefreshToken";
 
@@ -9,14 +10,12 @@ function Suplier() {
   const [state, dispatch] = useAppContext();
   const [dataSuplier, setDataSuplier] = useState();
   const axiosPrivate = useAxiosPrivate();
-  const refresh = useRefreshToken();
+  const auth = useAuth();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "suplier" });
 
-    if (state.token.bearer === "") {
-      refresh();
-    }
+    auth();
 
     getDataSuplier();
   }, []);
@@ -70,7 +69,11 @@ function Suplier() {
                       </td>
                       <td style={{ verticalAlign: "middle" }}>{data.no_hp}</td>
                       <td style={{ verticalAlign: "middle" }}>
-                        <Action />
+                        <Action
+                          detail={`/suplier/detail/${data.id_suplier}`}
+                          edit={`/suplier/edit/${data.id_suplier}`}
+                          remove={`/suplier/${data.id_suplier}`}
+                        />
                       </td>
                     </tr>
                   );

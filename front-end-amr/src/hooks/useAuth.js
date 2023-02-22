@@ -18,6 +18,8 @@ const useAuth = () => {
       const accessToken = response.data.data.accessToken;
       const decoded = jwtDecode(accessToken);
 
+      console.log(decoded.role);
+
       dispatch({
         type: "SET_TOKEN",
         payload: {
