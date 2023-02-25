@@ -4,7 +4,7 @@ import { useAppContext } from "../context/app-context";
 import useRefreshToken from "./useRefreshToken";
 import jwtDecode from "jwt-decode";
 
-const useAuth = () => {
+const useAuthorized = () => {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate("");
   const refresh = useRefreshToken();
@@ -26,6 +26,9 @@ const useAuth = () => {
         },
       });
 
+      console.log("ok tai ya");
+      console.log(decoded.role);
+
       return true;
     } catch (err) {
       console.log(err);
@@ -37,4 +40,4 @@ const useAuth = () => {
   return auth;
 };
 
-export default useAuth;
+export default useAuthorized;

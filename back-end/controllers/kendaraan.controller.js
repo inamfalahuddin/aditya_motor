@@ -6,7 +6,6 @@ const getKendaraanAll = (req, res) => {
   db.query(`SELECT * FROM kendaraan`, (err, rows, fields) => {
     if (err)
       return response(res, 500, { code: err.code, sqlMessage: err.sqlMessage });
-
     return response(res, 200, "Berhasil", rows, { jumlah_data: rows.length });
   });
 };
@@ -85,7 +84,6 @@ const addKendaraan = (req, res) => {
     [
       {
         ...data,
-        // nomor_polisi: removeSpaces(data.no_polisi),
         nomor_polisi: removeSpaces(data.nomor_polisi.toUpperCase()),
       },
     ],

@@ -5,7 +5,6 @@ const getBarangAll = (req, res) => {
   db.query(`SELECT * FROM barang`, (err, rows, fields) => {
     if (err)
       return response(res, 500, { code: err.code, sqlMessage: err.sqlMessage });
-
     return response(res, 200, "Berhasil", rows, { jumlah_data: rows.length });
   });
 };
@@ -46,15 +45,19 @@ const getBarangById = (req, res) => {
 const addBarang = (req, res) => {
   const data = req.body;
 
-  db.query(`INSERT INTO barang SET ?`, [data], (err, rows, fields) => {
-    if (err)
-      return response(res, 500, {
-        code: err.code,
-        sqlMessage: err.sqlMessage,
-      });
+  db.query(
+    `INSERT INTO barang SET ?`,
+    [{ ...data, id_barang: Math.floor(1000 + Math.random() * 9000) }],
+    (err, rows, fields) => {
+      if (err)
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
 
-    return response(res, 200, "Berhasil menambahkan data");
-  });
+      return response(res, 200, "Berhasil menambahkan data");
+    }
+  );
 };
 
 const updateBarang = (req, res) => {

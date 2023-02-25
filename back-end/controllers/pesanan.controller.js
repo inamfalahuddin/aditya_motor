@@ -4,13 +4,18 @@ const dateFormat = require("../utils/date");
 const removeSpaces = require("../utils/removeSpaces");
 
 const getPesananAll = (req, res) => {
-  db.query( `SELECT a.id_customer, a.username, b.id_pesanan, b.alamat, b.no_hp, b.no_polisi, b.merk_kendaraan, b.permasalahan, b.pelayanan, b.tanggal, b.jam, b.status, b.no_antrian FROM customer a
-            JOIN pesanan b ON a.id_customer=b.id_customer`, (err, rows, fields) => {
-    if (err)
-      return response(res, 500, { code: err.code, sqlMessage: err.sqlMessage });
-
-    return response(res, 200, "Berhasil", rows, { jumlah_data: rows.length });
-  });
+  db.query(
+    `SELECT a.id_customer, a.username, b.id_pesanan, b.alamat, b.no_hp, b.no_polisi, b.merk_kendaraan, b.permasalahan, b.pelayanan, b.tanggal, b.jam, b.status, b.no_antrian FROM customer a
+            JOIN pesanan b ON a.id_customer=b.id_customer`,
+    (err, rows, fields) => {
+      if (err)
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      return response(res, 200, "Berhasil", rows, { jumlah_data: rows.length });
+    }
+  );
 };
 
 const getPesananById = (req, res) => {
@@ -88,10 +93,8 @@ const getPesananByCustId = (req, res) => {
 
 const addPesanan = (req, res) => {
   const data = req.body;
-
   const date = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
   const today = date.toISOString().slice(0, 10);
-
   const time = new Date();
   const currentTime = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
 
@@ -156,6 +159,20 @@ const updatePesanan = (req, res) => {
                   code: err.code,
                   sqlMessage: err.sqlMessage,
                 });
+
+              // db.query(
+              //   `SELECT status FROM pesanan WHERE id_pesanan=${id}`,
+              //   (err, rows, fields) => {
+              //     if (err)
+              //       return response(res, 500, {
+              //         code: err.code,
+              //         sqlMessage: err.sqlMessage,
+              //       });
+
+              //     console.log(rows[0].status);
+              //   }
+              // );
+
               return response(res, 200, `Berhasil memperbarui data '${id}'`);
             }
           );

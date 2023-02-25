@@ -1,5 +1,8 @@
+import jwtDecode from "jwt-decode";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Action from "../../components/Action";
+import Alert from "../../components/Alert";
 import Loading from "../../components/Loading";
 import Toolbar from "../../components/Toolbar";
 import { useAppContext } from "../../context/app-context";
@@ -13,6 +16,7 @@ function Barang() {
   const [dataBarang, setDataBarang] = useState();
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
+  const navigate = useNavigate("");
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "barang" });
@@ -24,6 +28,19 @@ function Barang() {
     getBarang();
   }, []);
 
+  useEffect(() => {
+    getBarang();
+
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    if (decode.role === "user") {
+      navigate(`/dashboard`);
+    }
+  }, [state.token.bearer]);
+
+  useEffect(() => {
+    setDataBarang(state.data.barang);
+  }, [state.data.barang]);
+
   const getBarang = async () => {
     try {
       const response = await axiosPrivate.get("barang/all", {
@@ -32,7 +49,13 @@ function Barang() {
         },
       });
 
-      setDataBarang(response.data.data);
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          barang: response.data.data,
+        },
+      });
     } catch (err) {
       console.log(err.response.message);
     }
@@ -40,6 +63,10 @@ function Barang() {
 
   return (
     <div>
+      {state.message.message !== undefined ? (
+        <Alert data={state.message} />
+      ) : null}
+
       <div className="card">
         <Toolbar to="/barang/add" />
         <div className="card-body m-0 p-0">
@@ -63,7 +90,10 @@ function Barang() {
                       <td style={{ verticalAlign: "middle" }}>
                         {data.kode_barang}
                       </td>
-                      <td style={{ verticalAlign: "middle" }}>
+                      <td
+                        className="text-capitalize"
+                        style={{ verticalAlign: "middle" }}
+                      >
                         {data.nama_barang}
                       </td>
                       <td style={{ verticalAlign: "middle" }}>
@@ -71,7 +101,11 @@ function Barang() {
                       </td>
                       <td style={{ verticalAlign: "middle" }}>{data.qty}</td>
                       <td style={{ verticalAlign: "middle" }}>
-                        <Action />
+                        <Action
+                          detail={`none`}
+                          edit={`/barang/edit/${data.id_barang}`}
+                          remove={`/barang/${data.id_barang}`}
+                        />
                       </td>
                     </tr>
                   );

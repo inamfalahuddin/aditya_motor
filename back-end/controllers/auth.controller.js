@@ -59,15 +59,7 @@ const login = (req, res) => {
 };
 
 const register = (req, res) => {
-  const {
-    username,
-    alamat,
-    no_tlp,
-    no_polisi,
-    merk_kendaraan,
-    email,
-    password,
-  } = req.body;
+  const { username, alamat, no_tlp, email, password } = req.body;
 
   const idCustomer = generateIdCustomer();
   const salt = bcrypt.genSaltSync();

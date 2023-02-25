@@ -3,6 +3,7 @@ import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import jwtDecode from "jwt-decode";
 
 function AddMekanik() {
   const [state, dispatch] = useAppContext();
@@ -11,6 +12,13 @@ function AddMekanik() {
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "tambah mekanik" });
   }, []);
+
+  useEffect(() => {
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    if (decode.role === "user") {
+      navigate(`/dashboard`);
+    }
+  }, [state.token.bearer]);
 
   return (
     <div className="card">

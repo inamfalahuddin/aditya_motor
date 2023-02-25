@@ -5,7 +5,6 @@ const getMekanikAll = (req, res) => {
   db.query(`SELECT * FROM mekanik`, (err, rows, fields) => {
     if (err)
       return response(res, 500, { code: err.code, sqlMessage: err.sqlMessage });
-
     return response(res, 200, "Berhasil", rows);
   });
 };

@@ -28,6 +28,10 @@ import AddPesanan from "./pages/customer/AddPesanan";
 import EditPesanan from "./pages/customer/EditPesanan";
 import AddTransaksi from "./pages/customer/AddTransaksi";
 import DetailTransaksi from "./pages/customer/DetailTransaksi";
+import EditSuplier from "./pages/admin/EditSuplier";
+import DetailSuplier from "./pages/admin/DetailSuplier";
+import DetailBarang from "./pages/admin/DetailBarang";
+import EditBarang from "./pages/admin/EditBarang";
 
 function App() {
   return (
@@ -226,6 +230,26 @@ function App() {
           }
         />
         <Route
+          path="/barang/detail/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <DetailBarang />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/barang/edit/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <EditBarang />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
           path="/suplier"
           element={
             <AppProvider>
@@ -241,6 +265,26 @@ function App() {
             <AppProvider>
               <Template>
                 <AddSuplier />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/suplier/edit/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <EditSuplier />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/suplier/detail/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <DetailSuplier />
               </Template>
             </AppProvider>
           }

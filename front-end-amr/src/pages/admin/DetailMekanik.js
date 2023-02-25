@@ -5,6 +5,7 @@ import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import UserProfile from "../../images/icon-user-dark.svg";
+import jwtDecode from "jwt-decode";
 
 function DetailMekanik() {
   const [state, dispatch] = useAppContext();
@@ -12,6 +13,13 @@ function DetailMekanik() {
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "tambah mekanik" });
+  }, []);
+
+  useEffect(() => {
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    if (decode.role === "user") {
+      navigate(`/dashboard`);
+    }
   }, []);
 
   return (

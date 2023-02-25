@@ -31,7 +31,7 @@ function Toolbar({ title, to }) {
       <div className="row g-3 align-items-center">
         <div className="col-auto">
           <input
-            type="password"
+            type="text"
             id="inputPassword6"
             className="form-control py-1 px-2"
             aria-describedby="passwordHelpInline"

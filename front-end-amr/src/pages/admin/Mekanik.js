@@ -6,18 +6,28 @@ import IconUser from "../../images/icon-user-dark.svg";
 import Spiner from "../../components/Spiner";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import useAuth from "../../hooks/useAuth";
+import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 function Mekanik() {
   const [state, dispatch] = useAppContext();
   const [dataMekanik, setDataMekanik] = useState([]);
   const axiosPrivate = useAxiosPrivate();
   const auth = useAuth();
+  const navigate = useNavigate("");
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "mekanik" });
     auth();
     getMekanik();
   }, []);
+
+  useEffect(() => {
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    if (decode.role === "user") {
+      navigate(`/dashboard`);
+    }
+  }, [state.token.bearer]);
 
   const getMekanik = async () => {
     try {

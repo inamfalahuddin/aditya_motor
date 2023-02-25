@@ -39,8 +39,15 @@ function Action({ detail, edit, remove, accessed }) {
           payload: { message: resDelete.data.message, color: "success" },
         });
 
-        reFetchData(`kendaraan/cust/${id}`, "SET_KENDARAAN");
-        reFetchData(`pesanan/cust/${id}`, "SET_PESANAN");
+        if (remove.split("/")[1] === "kendaraan") {
+          reFetchData(`kendaraan/cust/${id}`, "SET_KENDARAAN");
+        } else if (remove.split("/")[1] === "pesanan") {
+          reFetchData(`pesanan/cust/${id}`, "SET_PESANAN");
+        } else if (remove.split("/")[1] === "suplier") {
+          reFetchData(`suplier/all`, "SET_SUPLIER");
+        } else if (remove.split("/")[1] === "barang") {
+          reFetchData(`barang/all`, "SET_BARANG");
+        }
       }
     } catch (err) {
       console.log(err);
@@ -48,7 +55,7 @@ function Action({ detail, edit, remove, accessed }) {
   };
 
   const reFetchData = async (url, type) => {
-    const id = jwtDecode(state.token.bearer).id_customer;
+    // const id = jwtDecode(state.token.bearer).id_customer;
     const response = await axiosPrivate.get(url, {
       headers: {
         Authorization: `Bearer ${state.token.bearer}`,
@@ -72,6 +79,22 @@ function Action({ detail, edit, remove, accessed }) {
             pesanan: response.data.data,
           },
         });
+      case "SET_SUPLIER":
+        return disptach({
+          type: "SET_DATA",
+          payload: {
+            ...state.data,
+            suplier: response.data.data,
+          },
+        });
+      case "SET_BARANG":
+        return disptach({
+          type: "SET_DATA",
+          payload: {
+            ...state.data,
+            barang: response.data.data,
+          },
+        });
       default:
         throw new Error();
     }
@@ -90,7 +113,9 @@ function Action({ detail, edit, remove, accessed }) {
       ) : (
         <>
           <img
-            className="pe-2 cursor-pointer"
+            className={`pe-2 cursor-pointer ${
+              detail === "none" ? "d-none" : ""
+            }`}
             src={IconDetail}
             alt="detail"
             style={{ cursor: "pointer" }}

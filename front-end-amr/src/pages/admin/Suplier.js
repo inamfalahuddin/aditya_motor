@@ -1,24 +1,39 @@
+import jwtDecode from "jwt-decode";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Action from "../../components/Action";
+import Alert from "../../components/Alert";
 import Toolbar from "../../components/Toolbar";
 import { useAppContext } from "../../context/app-context";
 import useAuth from "../../hooks/useAuth";
+import useAuthorized from "../../hooks/useAuthorization";
 import useAxiosPrivate from "../../hooks/usePrivate";
-import useRefreshToken from "../../hooks/useRefreshToken";
 
 function Suplier() {
   const [state, dispatch] = useAppContext();
   const [dataSuplier, setDataSuplier] = useState();
   const axiosPrivate = useAxiosPrivate();
   const auth = useAuth();
+  const navigate = useNavigate("");
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "suplier" });
 
     auth();
-
-    getDataSuplier();
   }, []);
+
+  useEffect(() => {
+    setDataSuplier(state.data.suplier);
+  }, [state.data.suplier]);
+
+  useEffect(() => {
+    getDataSuplier();
+
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    if (decode.role === "user") {
+      navigate(`/dashboard`);
+    }
+  }, [state.token.bearer]);
 
   const getDataSuplier = async () => {
     try {
@@ -28,7 +43,13 @@ function Suplier() {
         },
       });
 
-      setDataSuplier(response.data.data);
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          suplier: response.data.data,
+        },
+      });
     } catch (err) {
       console.log(err.response.message);
     }
@@ -36,6 +57,10 @@ function Suplier() {
 
   return (
     <div>
+      {state.message.message !== undefined ? (
+        <Alert data={state.message} />
+      ) : null}
+
       <div className="card">
         <Toolbar title={state.pages.title} to={`/${state.pages.title}/add`} />
         <div className="card-body m-0 p-0">

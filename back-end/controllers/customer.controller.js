@@ -1,7 +1,7 @@
 const response = require("../utils/response");
 const db = require("../config/db.con");
 const bcrypt = require("bcrypt");
-const removeSpaces = require("../utils/removeSpaces");
+// const removeSpaces = require("../utils/removeSpaces");
 
 const getCustomer = (req, res) => {
   db.query(
@@ -79,7 +79,6 @@ const addCustomer = (req, res) => {
             if (err) return response(res, 500, err.message);
             db.query(
               `INSERT INTO auth SET ?`,
-
               [
                 {
                   id_customer: generateID,
