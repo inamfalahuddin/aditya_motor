@@ -150,16 +150,23 @@ const updatePesanan = (req, res) => {
         });
       } else {
         if (rows.length > 0) {
+          console.log("ini : " + data.id_customer);
           db.query(
-            `UPDATE pesanan SET ? WHERE id_pesanan=${id}`,
-            [data],
+            `UPDATE pesanan SET 
+            alamat='${data.alamat}', 
+            no_hp='${data.no_hp}', 
+            no_polisi='${data.no_polisi}', 
+            merk_kendaraan='${data.merk_kendaraan}', 
+            permasalahan='${data.permasalahan}', 
+            pelayanan='${data.pelayanan}', 
+            status='${data.status}' 
+            WHERE id_pesanan=${id}`,
             (err, rows, fields) => {
               if (err)
                 return response(res, 500, {
                   code: err.code,
                   sqlMessage: err.sqlMessage,
                 });
-
               // db.query(
               //   `SELECT status FROM pesanan WHERE id_pesanan=${id}`,
               //   (err, rows, fields) => {
@@ -168,11 +175,9 @@ const updatePesanan = (req, res) => {
               //         code: err.code,
               //         sqlMessage: err.sqlMessage,
               //       });
-
               //     console.log(rows[0].status);
               //   }
               // );
-
               return response(res, 200, `Berhasil memperbarui data '${id}'`);
             }
           );
@@ -214,6 +219,24 @@ const deletePesanan = (req, res) => {
   );
 };
 
+const getNamaPesananSelesai = (req, res) => {
+  const { id } = req.query;
+
+  db.query(
+    `SELECT a.id_pesanan, b.username, a.jam FROM pesanan a 
+    JOIN customer b ON a.id_customer=b.id_customer
+    WHERE a.status='selesai' GROUP BY a.id_pesanan`,
+    (err, rows, fields) => {
+      if (err)
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      return response(res, 200, "Berhasil", rows, { jumlah_data: rows.length });
+    }
+  );
+};
+
 module.exports = {
   getPesananAll,
   getPesananById,
@@ -221,4 +244,5 @@ module.exports = {
   addPesanan,
   updatePesanan,
   deletePesanan,
+  getNamaPesananSelesai,
 };

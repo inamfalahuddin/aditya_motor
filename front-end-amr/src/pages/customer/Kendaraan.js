@@ -6,12 +6,14 @@ import useAxiosPrivate from "../../hooks/usePrivate";
 import useRefreshToken from "../../hooks/useRefreshToken";
 import jwtDecode from "jwt-decode";
 import Alert from "../../components/Alert";
+import { useNavigate } from "react-router-dom";
 
 function Kendaraan() {
   const [state, dispatch] = useAppContext();
   const [dataKendaraan, setDataKendaraan] = useState([]);
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
+  const navigate = useNavigate("");
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "kendaraan" });
@@ -28,6 +30,16 @@ function Kendaraan() {
 
   useEffect(() => {
     getKendaraan();
+
+    // const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    // if (decode.role === "user") {
+    //   navigate(`/dashboard`);
+    // }
+
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    if (decode.role === "admin") {
+      navigate(`/dashboard`);
+    }
   }, [state.token.bearer]);
 
   useEffect(() => {

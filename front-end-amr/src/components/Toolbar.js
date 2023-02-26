@@ -1,4 +1,5 @@
-import React from "react";
+import jwtDecode from "jwt-decode";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { useAppContext } from "../context/app-context";
@@ -8,15 +9,21 @@ import IconPrint from "../images/icon-print.svg";
 function Toolbar({ title, to }) {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
+  const [role, setRole] = useState("");
 
   const redirect = () => {
     navigate(to);
   };
 
+  useEffect(() => {
+    const decode = state.token.bearer && jwtDecode(state.token.bearer);
+    setRole(decode.role);
+  }, [state.token.bearer]);
+
   return (
     <div className="card-header d-flex justify-content-between align-items-center bg-white py-4">
       <span>Data {state.pages.title}</span>
-      {state.pages.title === "transaksi" ? null : (
+      {role === "user" && state.pages.title === "transaksi" ? null : (
         <Button color="primary" onclick={redirect}>
           <img className="me-2" src={IconAdd} alt="add" />
           <span className="text-capitalize" style={{ fontSize: ".85rem" }}>

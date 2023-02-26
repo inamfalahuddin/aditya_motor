@@ -42,8 +42,6 @@ function Sidebar() {
       const response = await axios.delete("auth/logout", {
         withCredentials: true,
       });
-
-      console.log(response);
     } catch (err) {
       console.log(err);
     }

@@ -78,8 +78,6 @@ function EditPesanan() {
 
       const data = response.data.data;
 
-      console.log(data);
-
       setIdPesanan(data.id_pesanan);
       setAlamat(data.alamat);
       setNoHp(data.no_hp);
