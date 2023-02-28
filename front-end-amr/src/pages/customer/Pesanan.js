@@ -32,10 +32,12 @@ function Pemesan() {
       setRole(jwtDecode(state.token.bearer).role);
     }
 
-    if (role === "admin") {
-      state.token.bearer && getAllDataPesanan();
-    } else {
-      state.token.bearer && getDataPesanan();
+    if (role) {
+      if (role === "admin") {
+        state.token.bearer && getAllDataPesanan();
+      } else {
+        state.token.bearer && getDataPesanan();
+      }
     }
   }, [state.token.bearer, role]);
 
@@ -67,7 +69,6 @@ function Pemesan() {
 
   const getAllDataPesanan = async () => {
     try {
-      const idCust = jwtDecode(state.token.bearer).id_customer;
       const response = await axiosPrivate.get(`pesanan/all`, {
         withCredentials: true,
         headers: {

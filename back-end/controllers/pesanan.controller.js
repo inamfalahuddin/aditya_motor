@@ -150,7 +150,6 @@ const updatePesanan = (req, res) => {
         });
       } else {
         if (rows.length > 0) {
-          console.log("ini : " + data.id_customer);
           db.query(
             `UPDATE pesanan SET 
             alamat='${data.alamat}', 
@@ -223,9 +222,10 @@ const getNamaPesananSelesai = (req, res) => {
   const { id } = req.query;
 
   db.query(
-    `SELECT a.id_pesanan, b.username, a.jam FROM pesanan a 
-    JOIN customer b ON a.id_customer=b.id_customer
-    WHERE a.status='selesai' GROUP BY a.id_pesanan`,
+    `SELECT a.id_pesanan, c.id_customer, c.username, a.jam FROM pesanan a 
+      LEFT JOIN transaksi b ON a.id_pesanan=b.id_pesanan 
+      JOIN customer c ON a.id_customer=c.id_customer
+      WHERE b.id_pesanan IS NULL`,
     (err, rows, fields) => {
       if (err)
         return response(res, 500, {

@@ -25,6 +25,7 @@ function AddTransaksi() {
   const [mekanik, setMekanik] = useState([]);
   const [id, setId] = useState("");
   const [dataTransaksi, setDataTransaksi] = useState({});
+  const [barangParse, setBarangParse] = useState([]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "tambah transaksi" });
@@ -43,9 +44,14 @@ function AddTransaksi() {
     const total = barang.map((data) => {
       sum += JSON.parse(data).harga;
     });
+
     setHarga(sum);
     updateBarang();
-  }, [barang]);
+
+    barang.map((val) => {
+      setBarangParse([...barangParse, JSON.parse(val)]);
+    });
+  }, [barang, harga]);
 
   useEffect(() => {
     getDataPesanan();
@@ -63,9 +69,9 @@ function AddTransaksi() {
 
     setDataTransaksi({
       ...dataTransaksi,
-      barang: barang,
+      barang: JSON.stringify(barangParse),
       qty: barang.length,
-      permasalahan: pesanan.permasalahan,
+      total: harga,
     });
   };
 
@@ -80,6 +86,10 @@ function AddTransaksi() {
       setMekanik(response.data.data);
     } catch (err) {
       console.log(err);
+      setMessage({
+        message: err.response.data.message.sqlMessage,
+        color: "danger",
+      });
     }
   };
 
@@ -95,7 +105,10 @@ function AddTransaksi() {
         setPesanan(response.data.data);
       }
     } catch (err) {
-      console.log(err);
+      setMessage({
+        message: err.response.data.message.sqlMessage,
+        color: "danger",
+      });
     }
   };
 
@@ -109,7 +122,10 @@ function AddTransaksi() {
 
       setNamaPemesan(response.data.data);
     } catch (err) {
-      console.log(err);
+      setMessage({
+        message: err.response.data.message.sqlMessage,
+        color: "danger",
+      });
     }
   };
 
@@ -123,226 +139,259 @@ function AddTransaksi() {
 
       setNamaBarang(response.data.data);
     } catch (err) {
-      console.log(err.response.message);
+      setMessage({
+        message: err.response.data.message.sqlMessage,
+        color: "danger",
+      });
     }
   };
 
   const addTransaksi = async () => {
-    console.log(dataTransaksi);
+    try {
+      const response = await axiosPrivate.post(`transaksi/`, dataTransaksi, {
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+      console.log(response.data.message);
+      setMessage({
+        message: response.data.message,
+        color: "success",
+      });
+    } catch (err) {
+      setMessage({
+        message: err.response.data.message.sqlMessage,
+        color: "danger",
+      });
+    }
   };
 
   return (
-    <div className="card">
-      <div className="card-header bg-danger text-white">
-        <img src={IconData} alt="icon pengguna" />
-        <span className="ms-3">Tambah Data Transaksi</span>
-      </div>
-      <div className="card-body">
-        {message.message !== undefined ? <Alert data={message} /> : null}
+    <>
+      {message.message !== undefined ? <Alert data={message} /> : null}
 
-        {/* <form> */}
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label className="col-form-label">ID - Nama Pemesan</label>
-          </div>
-          <div className="col-10">
-            <select
-              className="form-select"
-              aria-label="Default select example"
-              onChange={(e) => {
-                setId(e.target.value);
-                setDataTransaksi({
-                  ...dataTransaksi,
-                  id: e.target.value,
-                });
-              }}
-            >
-              <option value={""}>--- Pilih Pesanan ---</option>
-              {namaPemesan.map((data, i) => (
-                <option key={i} value={data.id_pesanan}>
-                  {data.id_pesanan} - {data.username} - {data.jam}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="card">
+        <div className="card-header bg-danger text-white">
+          <img src={IconData} alt="icon pengguna" />
+          <span className="ms-3">Tambah Data Transaksi</span>
         </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label className="col-form-label">Nama Barang</label>
-          </div>
-          <div className="col-10">
-            <div className="row px-2">
-              <div className="col-8 border rounded p-2">
-                {barang.map((data, i) => (
-                  <span
+        <div className="card-body">
+          {/* <form> */}
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label className="col-form-label">ID - Nama Pemesan</label>
+            </div>
+            <div className="col-10">
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                onChange={(e) => {
+                  setId(JSON.parse(e.target.value).idPesanan);
+                  setDataTransaksi({
+                    ...dataTransaksi,
+                    id_pesanan: JSON.parse(e.target.value).idPesanan,
+                    id_customer: JSON.parse(e.target.value).idCustomer,
+                  });
+                }}
+              >
+                <option value={""}>--- Pilih Pesanan ---</option>
+                {namaPemesan.map((data, i) => (
+                  <option
                     key={i}
-                    className="bg-light rounded px-2 py-1 m-1 d-inline-block"
-                    style={{ cursor: "pointer" }}
-                    index={JSON.parse(data).id}
-                    onClick={updateBarang}
+                    value={JSON.stringify({
+                      idPesanan: data.id_pesanan,
+                      idCustomer: data.id_customer,
+                    })}
                   >
-                    {JSON.parse(data).nama}
-                  </span>
+                    {data.id_pesanan} - {data.username} - {data.jam}
+                  </option>
                 ))}
-              </div>
-              <div className="col-4">
-                <select
-                  className="form-select"
-                  aria-label="Default select example"
-                  onChange={(e) => {
-                    setBarang([...barang, e.target.value]);
-                  }}
-                >
-                  {namaBarang &&
-                    namaBarang.map((data, i) => (
-                      <option
-                        key={i}
-                        value={JSON.stringify({
-                          id: data.id_barang,
-                          nama: data.nama_barang,
-                          harga: data.harga_barang,
-                        })}
-                      >
-                        {data.nama_barang}
-                      </option>
-                    ))}
-                </select>
+              </select>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label className="col-form-label">Nama Barang</label>
+            </div>
+            <div className="col-10">
+              <div className="row px-2">
+                <div className="col-8 border rounded p-2">
+                  {barang.map((data, i) => (
+                    <span
+                      key={i}
+                      className="bg-light rounded px-2 py-1 m-1 d-inline-block"
+                      style={{ cursor: "pointer" }}
+                      index={JSON.parse(data).id}
+                      onClick={updateBarang}
+                    >
+                      {JSON.parse(data).nama}
+                    </span>
+                  ))}
+                </div>
+                <div className="col-4">
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    onChange={(e) => {
+                      if (e.target.value !== "") {
+                        setBarang([...barang, e.target.value]);
+                      }
+                    }}
+                  >
+                    <option value={""}>--- Pilih Barang ---</option>
+                    {namaBarang &&
+                      namaBarang.map((data, i) => (
+                        <option
+                          key={i}
+                          value={JSON.stringify({
+                            id: data.id_barang,
+                            nama: data.nama_barang,
+                            harga: data.harga_barang,
+                          })}
+                        >
+                          {data.nama_barang}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Nama Mekanik
+              </label>
+            </div>
+            <div className="col-10">
+              <select
+                className="form-select text-capitalize"
+                aria-label="Default select example"
+                onChange={(e) => {
+                  setDataTransaksi({
+                    ...dataTransaksi,
+                    id_mekanik: JSON.parse(e.target.value).idMekanik,
+                  });
+                }}
+              >
+                <option value={""}>--- Pilih Nama Mekanik ---</option>
+                {mekanik.map((data, i) => (
+                  <option
+                    className="text-capitalize"
+                    key={i}
+                    value={JSON.stringify({
+                      idMekanik: data.id_mekanik,
+                    })}
+                  >
+                    {data.nama_mekanik}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Merk Kendaraan
+              </label>
+            </div>
+            <div className="col-10">
+              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
+                {pesanan.length !== 0 ? pesanan.merk_kendaraan : "tidak ada"}
+              </span>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                No Polisi
+              </label>
+            </div>
+            <div className="col-10">
+              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
+                {pesanan.length !== 0 ? pesanan.no_polisi : "tidak ada"}
+              </span>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Qty
+              </label>
+            </div>
+            <div className="col-10">
+              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
+                {barang.length}
+              </span>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Permasalahan
+              </label>
+            </div>
+            <div className="col-10">
+              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
+                {pesanan.length !== 0 ? pesanan.permasalahan : "tidak ada"}
+              </span>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Harga Barang
+              </label>
+            </div>
+            <div className="col-10">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Nama Barang</th>
+                    <th scope="col">Harga</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {barang &&
+                    barang.map((data, i) => (
+                      <tr key={i}>
+                        <th scope="row">{i + 1}</th>
+                        <td>{JSON.parse(data).nama}</td>
+                        <td>{Rupiah(JSON.parse(data).harga)}</td>
+                      </tr>
+                    ))}
+                  <tr>
+                    <td colSpan={2}>Total</td>
+                    <td>Rp. {harga === 0 ? 0 : Rupiah(harga)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2"></div>
+            <div className="col-10">
+              <Button
+                className="me-3"
+                color="primary"
+                onclick={() => addTransaksi()}
+              >
+                Buat Transaksi
+              </Button>
+              <Button
+                className="me-3"
+                color="danger"
+                onclick={() => navigate("/transaksi")}
+              >
+                Kembali
+              </Button>
+            </div>
+          </div>
+          {/* </form> */}
         </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Nama Mekanik
-            </label>
-          </div>
-          <div className="col-10">
-            <select
-              className="form-select text-capitalize"
-              aria-label="Default select example"
-              onChange={(e) => {
-                setDataTransaksi({
-                  ...dataTransaksi,
-                  id_mekanik: e.target.value,
-                });
-              }}
-            >
-              <option value={""}>--- Pilih Nama Mekanik ---</option>
-              {mekanik.map((data, i) => (
-                <option
-                  className="text-capitalize"
-                  key={i}
-                  value={data.id_mekanik}
-                >
-                  {data.nama_mekanik}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Merk Kendaraan
-            </label>
-          </div>
-          <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
-              {pesanan.length !== 0 ? pesanan.merk_kendaraan : "tidak ada"}
-            </span>
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              No Polisi
-            </label>
-          </div>
-          <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
-              {pesanan.length !== 0 ? pesanan.no_polisi : "tidak ada"}
-            </span>
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Qty
-            </label>
-          </div>
-          <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
-              {barang.length}
-            </span>
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Permasalahan
-            </label>
-          </div>
-          <div className="col-10">
-            <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control">
-              {pesanan.length !== 0 ? pesanan.permasalahan : "tidak ada"}
-            </span>
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Harga Barang
-            </label>
-          </div>
-          <div className="col-10">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">No.</th>
-                  <th scope="col">Nama Barang</th>
-                  <th scope="col">Harga</th>
-                </tr>
-              </thead>
-              <tbody>
-                {barang &&
-                  barang.map((data, i) => (
-                    <tr key={i}>
-                      <th scope="row">{i + 1}</th>
-                      <td>{JSON.parse(data).nama}</td>
-                      <td>{Rupiah(JSON.parse(data).harga)}</td>
-                    </tr>
-                  ))}
-                <tr>
-                  <td colSpan={2}>Total</td>
-                  <td>Rp. {harga === 0 ? 0 : Rupiah(harga)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2"></div>
-          <div className="col-10">
-            <Button
-              className="me-3"
-              color="primary"
-              onclick={() => addTransaksi()}
-            >
-              Buat Transaksi
-            </Button>
-            <Button
-              className="me-3"
-              color="danger"
-              onclick={() => navigate("/transaksi")}
-            >
-              Kembali
-            </Button>
-          </div>
-        </div>
-        {/* </form> */}
       </div>
-    </div>
+    </>
   );
 }
 

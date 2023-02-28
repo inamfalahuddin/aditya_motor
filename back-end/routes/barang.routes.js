@@ -11,7 +11,7 @@ const auth = require("../middleware/auth-token");
 const router = express.Router();
 
 // Barang
-router.post("/v1/barang/", addBarang);
+router.post("/v1/barang/", auth, addBarang);
 router.get("/v1/barang/all", auth, getBarangAll);
 router.get("/v1/barang/:id", auth, getBarangById);
 router.put("/v1/barang/:id", auth, updateBarang);

@@ -4,12 +4,10 @@ const dateFormat = require("../utils/date");
 
 const getTransaksiAll = (req, res) => {
   db.query(
-    `SELECT a.id_transaksi, a.tanggal, b.username, e.no_polisi, e.merk_kendaraan, c.nama_mekanik, d.nama_barang, a.qty, d.harga_barang, e.permasalahan, a.total
-     FROM transaksi a
-     JOIN customer b ON a.id_customer=b.id_customer
-     JOIN mekanik c ON a.id_mekanik=c.id_mekanik
-     JOIN barang d ON a.id_barang=d.id_barang
-     JOIN pesanan e ON a.id_pesanan=e.id_pesanan`,
+    `SELECT a.id_transaksi, a.tanggal, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
+    JOIN customer b ON a.id_customer=b.id_customer
+    JOIN pesanan c ON a.id_pesanan=c.id_pesanan
+    JOIN mekanik d ON a.id_mekanik=d.id_mekanik`,
     (err, rows, fields) => {
       if (err)
         return response(res, 500, {
@@ -33,13 +31,11 @@ const getTransaksiById = (req, res) => {
   const { id } = req.params;
 
   db.query(
-    `SELECT a.id_transaksi, b.username, e.no_polisi, e.merk_kendaraan, c.nama_mekanik, d.nama_barang, d.harga_barang, a.qty, d.harga_barang, e.permasalahan, e.tanggal, a.total
-               FROM transaksi a
-               JOIN customer b ON a.id_customer=b.id_customer
-               JOIN mekanik c ON a.id_mekanik=c.id_mekanik
-               JOIN barang d ON a.id_barang=d.id_barang
-               JOIN pesanan e ON a.id_pesanan=e.id_pesanan
-               WHERE a.id_transaksi='${id}'
+    `SELECT a.id_transaksi, a.tanggal, b.username, c.no_polisi, c.merk_kendaraan, c.permasalahan, d.nama_mekanik, a.barang, a.total, a.qty FROM transaksi a
+      JOIN customer b ON a.id_customer=b.id_customer
+      JOIN pesanan c ON a.id_pesanan=c.id_pesanan
+      JOIN mekanik d ON a.id_mekanik=d.id_mekanik
+      WHERE a.id_transaksi='${id}'
      `,
     (err, rows, fields) => {
       if (err)
@@ -107,14 +103,12 @@ const getTransaksiByUserId = (req, res) => {
       } else {
         if (rows.length > 0) {
           db.query(
-            `SELECT a.id_transaksi, b.username, e.no_polisi, e.merk_kendaraan, c.nama_mekanik, d.nama_barang, a.qty, d.harga_barang, e.permasalahan, e.tanggal, a.total
-               FROM transaksi a
-               JOIN customer b ON a.id_customer=b.id_customer
-               JOIN mekanik c ON a.id_mekanik=c.id_mekanik
-               JOIN barang d ON a.id_barang=d.id_barang
-               JOIN pesanan e ON a.id_pesanan=e.id_pesanan
-               WHERE a.id_customer='${id}'
-               `,
+            `SELECT a.id_transaksi, a.tanggal, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
+            JOIN customer b ON a.id_customer=b.id_customer
+            JOIN pesanan c ON a.id_pesanan=c.id_pesanan
+            JOIN mekanik d ON a.id_mekanik=d.id_mekanik
+            WHERE a.id_customer='${id}'
+            `,
             (err, rows, fields) => {
               if (err)
                 return response(res, 500, {

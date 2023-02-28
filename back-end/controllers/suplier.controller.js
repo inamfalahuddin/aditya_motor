@@ -46,8 +46,6 @@ const getSuplierById = (req, res) => {
 const addSuplier = (req, res) => {
   const data = req.body;
 
-  console.log(data);
-
   db.query(`INSERT INTO suplier SET ?`, [data], (err, rows, fields) => {
     if (err)
       return response(res, 500, {

@@ -5,7 +5,6 @@ import Button from "../../components/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
-import jwt_decode from "jwt-decode";
 import Rupiah from "../../helper/Rupiah";
 import ModalBayar from "../../components/ModalBayar";
 
@@ -111,14 +110,36 @@ function DetailTransaksi() {
           </div>
           <div className="row g-3 px-4 align-items-center mb-4">
             <div className="col-2">
-              <label htmlFor="inputPassword6" className="col-form-label">
-                Nama Barang
-              </label>
+              <label className="col-form-label">Detail Barang</label>
             </div>
             <div className="col-10">
-              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-                {dataDetail && dataDetail.nama_barang}
-              </span>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Nama Barang</th>
+                    <th scope="col">Harga</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataDetail.barang &&
+                    JSON.parse(dataDetail.barang).map((data, i) => (
+                      <tr key={i}>
+                        <th scope="row">{i + 1}</th>
+                        <td>{data.nama}</td>
+                        <td>{Rupiah(data.harga)}</td>
+                      </tr>
+                    ))}
+                  <tr>
+                    <td colSpan={2} className="fw-bold">
+                      Total
+                    </td>
+                    <td className="fw-bold">
+                      Rp. {dataDetail.total && Rupiah(dataDetail.total)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
           <div className="row g-3 px-4 align-items-center mb-4">
@@ -130,20 +151,6 @@ function DetailTransaksi() {
             <div className="col-10">
               <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
                 {dataDetail && dataDetail.qty}
-              </span>
-            </div>
-          </div>
-          <div className="row g-3 px-4 align-items-center mb-4">
-            <div className="col-2">
-              <label htmlFor="inputPassword6" className="col-form-label">
-                Harga Barang
-              </label>
-            </div>
-            <div className="col-10">
-              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
-                {dataDetail && dataDetail.harga_barang !== undefined
-                  ? Rupiah(dataDetail.harga_barang)
-                  : 0}
               </span>
             </div>
           </div>
