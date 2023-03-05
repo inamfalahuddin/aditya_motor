@@ -1,9 +1,11 @@
 import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/app-context";
 import Button from "./Button";
 
-function ModalBayar() {
+function ModalBayar({ id }) {
   const [state, dispatch] = useAppContext();
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -29,7 +31,12 @@ function ModalBayar() {
             </div>
             <div className="modal-body d-flex justify-content-center gap-3 py-5">
               <Button color="success">Cash</Button>
-              <Button color="primary">Debit</Button>
+              <Button
+                color="primary"
+                onclick={() => navigate(`/pembayaran/${id}`)}
+              >
+                Debit
+              </Button>
               <Button
                 color="danger"
                 onclick={useCallback(() => {

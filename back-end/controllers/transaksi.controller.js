@@ -155,6 +155,41 @@ const addTransaksi = (req, res) => {
   );
 };
 
+const updateTransaksi = (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  db.query(
+    `SELECT id_transaksi FROM transaksi WHERE id_transaksi=${id}`,
+    (err, rows, fields) => {
+      if (err) {
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+      } else {
+        if (rows.length > 0) {
+          db.query(
+            `UPDATE transaksi SET ? WHERE id_transaksi=${id}`,
+            [data],
+            (err, rows, fields) => {
+              if (err)
+                return response(res, 500, {
+                  code: err.code,
+                  sqlMessage: err.sqlMessage,
+                });
+
+              return response(res, 200, `Berhasil memperbarui data '${id}'`);
+            }
+          );
+        } else {
+          return response(res, 404, `Tidak ada data dengan id ${id}`);
+        }
+      }
+    }
+  );
+};
+
 const deleteTransaksi = (req, res) => {
   const { id } = req.params;
 
@@ -190,5 +225,6 @@ module.exports = {
   getTransaksiById,
   getTransaksiByUserId,
   addTransaksi,
+  updateTransaksi,
   deleteTransaksi,
 };

@@ -53,7 +53,7 @@ function DetailTransaksi() {
 
   return (
     <>
-      <ModalBayar />
+      <ModalBayar id={dataDetail.id_transaksi} />
       <div className="card">
         <div className="card-header bg-danger text-white">
           <img src={IconData} alt="icon pengguna" />
@@ -166,20 +166,7 @@ function DetailTransaksi() {
               </span>
             </div>
           </div>
-          <div className="row g-3 px-4 align-items-center mb-4">
-            <div className="col-2">
-              <label htmlFor="inputPassword6" className="col-form-label">
-                Total
-              </label>
-            </div>
-            <div className="col-10">
-              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
-                {dataDetail && dataDetail.total !== undefined
-                  ? Rupiah(dataDetail.total)
-                  : 0}{" "}
-              </span>
-            </div>
-          </div>
+
           <div className="row g-3 px-4 align-items-center mb-4">
             <div className="col-2"></div>
             <div className="col-10">

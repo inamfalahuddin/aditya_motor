@@ -32,6 +32,8 @@ import EditSuplier from "./pages/admin/EditSuplier";
 import DetailSuplier from "./pages/admin/DetailSuplier";
 import DetailBarang from "./pages/admin/DetailBarang";
 import EditBarang from "./pages/admin/EditBarang";
+import EditTransaksi from "./pages/customer/EditTransaksi";
+import Pembayaran from "./pages/customer/Pembayaran";
 
 function App() {
   return (
@@ -165,6 +167,26 @@ function App() {
             <AppProvider>
               <Template>
                 <DetailTransaksi />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/transaksi/edit/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <EditTransaksi />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/pembayaran/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <Pembayaran />
               </Template>
             </AppProvider>
           }

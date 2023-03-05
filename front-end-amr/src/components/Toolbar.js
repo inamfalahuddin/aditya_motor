@@ -31,7 +31,7 @@ function Toolbar({ title, to }) {
           </span>
         </Button>
       )}
-      <Button color="success">
+      <Button color="success" onclick={() => window.print()}>
         <img className="me-2" src={IconPrint} alt="add" />
         <span style={{ fontSize: ".85rem" }}>Print</span>
       </Button>

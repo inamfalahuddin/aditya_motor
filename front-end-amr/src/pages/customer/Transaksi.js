@@ -35,6 +35,10 @@ function Transaksi() {
     }
   }, [state.token.bearer]);
 
+  useEffect(() => {
+    setDataTransaksi(state.data.transaksi);
+  }, [state.data]);
+
   const getTransaksiAll = async () => {
     try {
       const response = await axiosPrivate.get("transaksi/all", {
@@ -44,7 +48,14 @@ function Transaksi() {
         },
       });
 
-      setDataTransaksi(response.data.data);
+      // setDataTransaksi(response.data.data);
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          transaksi: response.data.data,
+        },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -60,7 +71,13 @@ function Transaksi() {
         },
       });
 
-      setDataTransaksi(response.data.data);
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          transaksi: response.data.data,
+        },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -88,7 +105,7 @@ function Transaksi() {
               </tr>
             </thead>
             <tbody>
-              {dataTransaksi.length === 0 ? (
+              {dataTransaksi && dataTransaksi.length === 0 ? (
                 <tr className="text-center">
                   <td colSpan={7}>Tidak ada transaksi</td>
                 </tr>

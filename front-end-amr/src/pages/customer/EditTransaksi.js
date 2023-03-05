@@ -2,14 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
-import jwtDecode from "jwt-decode";
 import Alert from "../../components/Alert";
 import Rupiah from "../../helper/Rupiah";
 
-function AddTransaksi() {
+function EditBarang() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
   const auth = useAuth();
@@ -26,15 +25,18 @@ function AddTransaksi() {
   const [id, setId] = useState("");
   const [dataTransaksi, setDataTransaksi] = useState({});
   const [barangParse, setBarangParse] = useState([]);
+  const [getTransaksi, setGetTransaksi] = useState([]);
+
+  const { id: idTransaksi } = useParams();
 
   useEffect(() => {
-    dispatch({ type: "SET_TITLE", payload: "tambah transaksi" });
+    dispatch({ type: "SET_TITLE", payload: "edit transaksi" });
 
     auth();
+    getDataTransaksi();
   }, []);
 
   useEffect(() => {
-    getNamaPemesan();
     getBarang();
     getMekanik();
   }, [state.token.bearer]);
@@ -47,10 +49,6 @@ function AddTransaksi() {
 
     setHarga(sum);
     updateBarang();
-
-    // barang.map((val) => {
-    //   setBarangParse([...barangParse, JSON.parse(val)]);
-    // });
   }, [barang, harga]);
 
   useEffect(() => {
@@ -119,23 +117,6 @@ function AddTransaksi() {
     }
   };
 
-  const getNamaPemesan = async () => {
-    try {
-      const response = await axiosPrivate.get("/pesanan/completed", {
-        headers: {
-          Authorization: `Bearer ${state.token.bearer}`,
-        },
-      });
-
-      setNamaPemesan(response.data.data);
-    } catch (err) {
-      setMessage({
-        message: err.response.data.message.sqlMessage,
-        color: "danger",
-      });
-    }
-  };
-
   const getBarang = async () => {
     try {
       const response = await axiosPrivate.get("barang/all", {
@@ -153,18 +134,38 @@ function AddTransaksi() {
     }
   };
 
-  const addTransaksi = async () => {
+  const editTransaksi = async () => {
     try {
-      const response = await axiosPrivate.post(`transaksi/`, dataTransaksi, {
-        headers: {
-          Authorization: `Bearer ${state.token.bearer}`,
-        },
-      });
-      console.log(response.data.message);
+      const response = await axiosPrivate.put(
+        `transaksi/${idTransaksi}`,
+        dataTransaksi,
+        {
+          headers: {
+            Authorization: `Bearer ${state.token.bearer}`,
+          },
+        }
+      );
       setMessage({
         message: response.data.message,
         color: "success",
       });
+    } catch (err) {
+      setMessage({
+        message: err.response.data.message.sqlMessage,
+        color: "danger",
+      });
+    }
+  };
+
+  const getDataTransaksi = async () => {
+    try {
+      const response = await axiosPrivate.get(`/transaksi/${idTransaksi}`);
+      const data = response.data.data[0];
+
+      setGetTransaksi(data);
+      setBarangParse(JSON.parse(data.barang));
+      setNamaPemesan(data.username);
+      // setBarangParse(...barangParse, response.data.data[0].barang);
     } catch (err) {
       setMessage({
         message: err.response.data.message.sqlMessage,
@@ -180,7 +181,7 @@ function AddTransaksi() {
       <div className="card">
         <div className="card-header bg-danger text-white">
           <img src={IconData} alt="icon pengguna" />
-          <span className="ms-3">Tambah Data Transaksi</span>
+          <span className="ms-3">Edit Data Transaksi</span>
         </div>
         <div className="card-body">
           {/* <form> */}
@@ -189,31 +190,9 @@ function AddTransaksi() {
               <label className="col-form-label">ID - Nama Pemesan</label>
             </div>
             <div className="col-10">
-              <select
-                className="form-select"
-                aria-label="Default select example"
-                onChange={(e) => {
-                  setId(JSON.parse(e.target.value).idPesanan);
-                  setDataTransaksi({
-                    ...dataTransaksi,
-                    id_pesanan: JSON.parse(e.target.value).idPesanan,
-                    id_customer: JSON.parse(e.target.value).idCustomer,
-                  });
-                }}
-              >
-                <option value={""}>--- Pilih Pesanan ---</option>
-                {namaPemesan.map((data, i) => (
-                  <option
-                    key={i}
-                    value={JSON.stringify({
-                      idPesanan: data.id_pesanan,
-                      idCustomer: data.id_customer,
-                    })}
-                  >
-                    {data.id_pesanan} - {data.username} - {data.jam}
-                  </option>
-                ))}
-              </select>
+              <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control text-capitalize">
+                {dataTransaksi.length !== 0 ? namaPemesan : "tidak ada"}
+              </span>
             </div>
           </div>
           <div className="row g-3 px-4 mb-4">
@@ -223,17 +202,19 @@ function AddTransaksi() {
             <div className="col-10">
               <div className="row px-2">
                 <div className="col-8 border rounded p-2">
-                  {barangParse.map((data, i) => (
-                    <span
-                      key={i}
-                      className="bg-light rounded px-2 py-1 m-1 d-inline-block"
-                      style={{ cursor: "pointer" }}
-                      index={i}
-                      onClick={updateBarang}
-                    >
-                      {data.nama}
-                    </span>
-                  ))}
+                  {barangParse.length > 0
+                    ? barangParse.map((data, i) => (
+                        <span
+                          key={i}
+                          className="bg-light rounded px-2 py-1 m-1 d-inline-block"
+                          style={{ cursor: "pointer" }}
+                          index={i}
+                          onClick={updateBarang}
+                        >
+                          {data.nama}
+                        </span>
+                      ))
+                    : "Tidak ada data"}
                 </div>
                 <div className="col-4">
                   <select
@@ -289,6 +270,7 @@ function AddTransaksi() {
                     value={JSON.stringify({
                       idMekanik: data.id_mekanik,
                     })}
+                    selected={getTransaksi.nama_mekanik === data.nama_mekanik}
                   >
                     {data.nama_mekanik}
                   </option>
@@ -382,7 +364,7 @@ function AddTransaksi() {
               <Button
                 className="me-3"
                 color="primary"
-                onclick={() => addTransaksi()}
+                onclick={() => editTransaksi()}
               >
                 Buat Transaksi
               </Button>
@@ -402,4 +384,4 @@ function AddTransaksi() {
   );
 }
 
-export default AddTransaksi;
+export default EditBarang;
