@@ -10,8 +10,6 @@ function Register() {
   const [username, setUsername] = useState("");
   const [alamat, setAlamat] = useState("");
   const [noTlp, setNoTlp] = useState("");
-  const [noPolisi, setNoPolisi] = useState("");
-  const [merkKendaraan, setMerkKendaraan] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -24,8 +22,6 @@ function Register() {
           username,
           alamat,
           no_tlp: noTlp,
-          no_polisi: noPolisi,
-          merk_kendaraan: merkKendaraan,
           email,
           password,
         });
@@ -33,8 +29,6 @@ function Register() {
         setUsername("");
         setAlamat("");
         setNoTlp("");
-        setNoPolisi("");
-        setMerkKendaraan("");
         setEmail("");
         setPassword("");
         setMessage({ message: response.data.message, color: "success" });
@@ -58,32 +52,19 @@ function Register() {
           setMessage({ message: "noTlp wajib di isi", color: "warning" });
           return false;
         } else {
-          if (noPolisi === "") {
-            setMessage({ message: "noPolisi wajib di isi", color: "warning" });
+          if (email === "") {
+            setMessage({ message: "email wajib di isi", color: "warning" });
             return false;
           } else {
-            if (merkKendaraan === "") {
+            if (password === "") {
               setMessage({
-                message: "merkKendaraan wajib di isi",
+                message: "password wajib di isi",
                 color: "warning",
               });
               return false;
             } else {
-              if (email === "") {
-                setMessage({ message: "email wajib di isi", color: "warning" });
-                return false;
-              } else {
-                if (password === "") {
-                  setMessage({
-                    message: "password wajib di isi",
-                    color: "warning",
-                  });
-                  return false;
-                } else {
-                  setMessage("");
-                  return true;
-                }
-              }
+              setMessage("");
+              return true;
             }
           }
         }
@@ -128,8 +109,6 @@ function Register() {
             </div>
             <div className="card-body text-center">
               {message.message !== undefined ? <Alert data={message} /> : null}
-              {console.log(message)}
-
               <form>
                 <div className="mb-3 text-start">
                   <label htmlFor="exampleInputEmail1" className="form-label">
@@ -170,34 +149,6 @@ function Register() {
                     value={noTlp}
                     onChange={useCallback((e) => {
                       setNoTlp(e.target.value);
-                    }, [])}
-                  />
-                </div>
-                <div className="mb-3 text-start">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
-                    No Polisi
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    aria-describedby="emailHelp"
-                    value={noPolisi}
-                    onChange={useCallback((e) => {
-                      setNoPolisi(e.target.value);
-                    }, [])}
-                  />
-                </div>
-                <div className="mb-3 text-start">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
-                    Merk Kendaraan
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    aria-describedby="emailHelp"
-                    value={merkKendaraan}
-                    onChange={useCallback((e) => {
-                      setMerkKendaraan(e.target.value);
                     }, [])}
                   />
                 </div>
