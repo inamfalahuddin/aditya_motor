@@ -299,6 +299,20 @@ function AddTransaksi() {
           <div className="row g-3 px-4 mb-4">
             <div className="col-2">
               <label htmlFor="inputPassword6" className="col-form-label">
+                Biaya Operasional
+              </label>
+            </div>
+            <div className="col-10">
+              <input
+                type="number"
+                className="border py-2 px-4 rounded-2 d-inline-block w-100 form-control"
+                placeholder="200000"
+              />
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
                 Merk Kendaraan
               </label>
             </div>
@@ -347,7 +361,7 @@ function AddTransaksi() {
           <div className="row g-3 px-4 mb-4">
             <div className="col-2">
               <label htmlFor="inputPassword6" className="col-form-label">
-                Harga Barang
+                Rincian Biaya
               </label>
             </div>
             <div className="col-10">
