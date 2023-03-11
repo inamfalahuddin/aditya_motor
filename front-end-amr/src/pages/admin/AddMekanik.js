@@ -5,26 +5,17 @@ import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import useAuth from "../../hooks/useAuth";
+import axios from "../../api/axios";
 
 function AddMekanik() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
   const auth = useAuth();
 
-  const [username, setUsername] = useState();
-  const [alamat, setAlamat] = useState();
-  const [noHp, setNoHp] = useState();
-  const [jabatan, setJabatan] = useState();
-  const [file, setFile] = useState();
-
-  const [dataSelect, setDataSelect] = useState({
-    username: "",
-    alamat: "",
-    noHp: "",
-    jabatan: "",
-    file: "",
-  });
-
+  const [username, setUsername] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [noHp, setNoHp] = useState("");
+  const [jabatan, setJabatan] = useState("");
   const [selectedFile, setSelectedFile] = useState("");
 
   useEffect(() => {
@@ -43,16 +34,27 @@ function AddMekanik() {
   const submit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-    data.append("file", selectedFile);
-    console.warn(selectedFile);
+    const dataFile = new FormData();
+    dataFile.append("username", username);
+    dataFile.append("alamat", alamat);
+    dataFile.append("no_hp", noHp);
+    dataFile.append("jabatan", jabatan);
+    dataFile.append("foto", selectedFile);
 
-    setDataSelect({
-      ...dataSelect,
-      file: selectedFile,
-    });
+    try {
+      const response = await axios({
+        method: "post",
+        url: "/mekanik",
+        data: dataFile,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    console.log(dataSelect);
+      console.log(dataFile);
+
+      // console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -73,12 +75,9 @@ function AddMekanik() {
               <input
                 className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
                 type="text"
-                value={dataSelect.nama}
+                value={username}
                 onChange={useCallback((e) => {
-                  setDataSelect({
-                    ...dataSelect,
-                    username: e.target.value,
-                  });
+                  setUsername(e.target.value);
                 }, [])}
               />
             </div>
@@ -93,12 +92,9 @@ function AddMekanik() {
               <textarea
                 className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
                 type="text"
-                value={dataSelect.alamat}
+                value={alamat}
                 onChange={useCallback((e) => {
-                  setDataSelect({
-                    ...dataSelect,
-                    alamat: e.target.value,
-                  });
+                  setAlamat(e.target.value);
                 }, [])}
               />
             </div>
@@ -113,12 +109,9 @@ function AddMekanik() {
               <input
                 className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
                 type="number"
-                value={dataSelect.noHp}
+                value={noHp}
                 onChange={useCallback((e) => {
-                  setDataSelect({
-                    ...dataSelect,
-                    noHp: e.target.value,
-                  });
+                  setNoHp(e.target.value);
                 }, [])}
               />
             </div>
@@ -133,12 +126,9 @@ function AddMekanik() {
               <input
                 className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
                 type="text"
-                value={dataSelect.jabatan}
+                value={jabatan}
                 onChange={useCallback((e) => {
-                  setDataSelect({
-                    ...dataSelect,
-                    jabatan: e.target.value,
-                  });
+                  setJabatan(e.target.value);
                 }, [])}
               />
             </div>
@@ -153,6 +143,7 @@ function AddMekanik() {
               <input
                 className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
                 type="file"
+                name="foto"
                 onChange={(e) => {
                   setSelectedFile(e.target.files[0]);
                 }}

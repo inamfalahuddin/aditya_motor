@@ -1,6 +1,9 @@
 const response = require("../utils/response");
 const db = require("../config/db.con");
 
+const sharp = require("sharp");
+const path = require("path");
+
 const getMekanikAll = (req, res) => {
   db.query(`SELECT * FROM mekanik`, (err, rows, fields) => {
     if (err)
@@ -42,18 +45,51 @@ const getMekanikById = (req, res) => {
   );
 };
 
-const addMekanik = (req, res) => {
+const addMekanik = async (req, res) => {
   const data = req.body;
 
-  db.query(`INSERT INTO mekanik SET ?`, [data], (err, rows, fields) => {
-    if (err)
-      return response(res, 500, {
-        code: err.code,
-        sqlMessage: err.sqlMessage,
-      });
+  try {
+    await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toFile(path.join(__dirname, "..", `/uploads/${req.file.originalname}`));
 
-    return response(res, 200, "Berhasil menambahkan data");
-  });
+    db.query(
+      `INSERT INTO mekanik SET ?`,
+      [
+        {
+          nama_mekanik: data.username,
+          alamat: data.alamat,
+          no_hp: data.no_hp,
+          jabatan: data.jabatan,
+          foto: path.join(__dirname, "..", `/uploads/${req.file.originalname}`),
+        },
+      ],
+      (err, rows, fields) => {
+        if (err)
+          // return response(res, 500, {
+          //   code: err.code,
+          //   sqlMessage: err.sqlMessage,
+          // });
+          console.log(err.sqlMessage);
+
+        // return response(res, 200, "Berhasil menambahkan data");
+        // return res.status(201).send("Berhasil menambahkan data");
+      }
+    );
+
+    // return response(res, 201, "Berhasil menambahkan image");
+
+    return res
+      .status(201)
+      .set({
+        "Content-Type": "multipart/form-data",
+      })
+      .send("Image uploaded succesfully");
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
 };
 
 const updateMekanik = (req, res) => {

@@ -11,10 +11,12 @@ const transaksiRoute = require("./routes/transaksi.routes");
 const loginRoute = require("./routes/auth.routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const app = express();
+const sharp = require("sharp");
+
+const multer = require("multer");
 
 dotenv.config();
-
-const app = express();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -22,9 +24,40 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: `http://${process.env.HOST}:3000`
+    origin: `http://${process.env.HOST}:3000`,
   })
 );
+
+// trying upload image to server
+const upload = multer({
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload a valid image file"));
+    }
+    cb(undefined, true);
+  },
+});
+
+app.post("/v1/upload", upload.single("image-upload"), async (req, res) => {
+  try {
+    await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toFile(__dirname + `/uploads/${req.file.originalname}`);
+
+    const pathFile = `${__dirname}/uploads/${req.file.originalname}`;
+
+    console.log(pathFile);
+
+    res.status(201).send("Image uploaded succesfully");
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
 
 // routes
 app.use(loginRoute);
