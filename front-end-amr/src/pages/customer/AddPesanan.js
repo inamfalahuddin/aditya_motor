@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
@@ -14,7 +14,6 @@ function AddPesanan() {
   const auth = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
-  const [nama, setNama] = useState("");
   const [alamat, setAlamat] = useState("");
   const [noHp, setNoHp] = useState("");
   const [noPolisi, setNoPolisi] = useState("");
@@ -22,13 +21,20 @@ function AddPesanan() {
   const [permasalahan, setPermasalahan] = useState("");
   const [pelayanan, setPelayanan] = useState("booking");
 
+  const jenis = useRef("");
+
   const [message, setMessage] = useState({});
+  const [dataKendaraan, setDataKendaraan] = useState([]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "tambah pesanan" });
 
     auth();
   }, []);
+
+  useEffect(() => {
+    getKendaraan();
+  }, [state.token.bearer]);
 
   const addDataPesanan = async () => {
     try {
@@ -118,6 +124,31 @@ function AddPesanan() {
     }
   };
 
+  const getKendaraan = async () => {
+    try {
+      const id = jwtDecode(state.token.bearer).id_customer;
+
+      const response = await axiosPrivate.get(`kendaraan/cust/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataKendaraan(response.data.data);
+
+      // dispatch({
+      //   type: "SET_DATA",
+      //   payload: {
+      //     ...state.data,
+      //     kendaraan: response.data.data,
+      //   },
+      // });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="card">
       <div className="card-header bg-danger text-white">
@@ -152,7 +183,7 @@ function AddPesanan() {
           <div className="col-10">
             <input
               className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="text"
+              type="number"
               value={noHp}
               onChange={useCallback((e) => {
                 setNoHp(e.target.value);
@@ -167,14 +198,35 @@ function AddPesanan() {
             </label>
           </div>
           <div className="col-10">
-            <input
-              className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="text"
-              value={noPolisi}
-              onChange={useCallback((e) => {
-                setNoPolisi(e.target.value);
-              }, [])}
-            />
+            <select
+              className="form-select"
+              aria-label="Default select example"
+              onChange={(e) => {
+                if (e.target.value !== "") {
+                  const data = JSON.parse(e.target.value);
+
+                  setNoPolisi(data.no_polisi);
+                  setMerk(data.merk);
+                }
+              }}
+            >
+              <option value={""}>--- Pilih Pesanan ---</option>
+              {dataKendaraan &&
+                dataKendaraan.map((data, i) => (
+                  <option
+                    key={i}
+                    ref={jenis}
+                    value={JSON.stringify({
+                      no_polisi: data.nomor_polisi,
+                      model: data.jenis_model,
+                      merk: data.merk_kendaraan,
+                    })}
+                  >
+                    {data.nomor_polisi} - {data.merk_kendaraan} -{" "}
+                    {data.jenis_model}
+                  </option>
+                ))}
+            </select>
           </div>
         </div>
         <div className="row g-3 px-4 mb-4">

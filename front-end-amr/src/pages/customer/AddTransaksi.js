@@ -307,6 +307,12 @@ function AddTransaksi() {
                 type="number"
                 className="border py-2 px-4 rounded-2 d-inline-block w-100 form-control"
                 placeholder="200000"
+                onChange={(e) => {
+                  setDataTransaksi({
+                    ...dataTransaksi,
+                    biaya_operasi: e.target.value,
+                  });
+                }}
               />
             </div>
           </div>
@@ -382,6 +388,10 @@ function AddTransaksi() {
                         <td>{Rupiah(data.harga)}</td>
                       </tr>
                     ))}
+                  <tr>
+                    <td colSpan={2}>Biaya Operasi</td>
+                    <td>{harga === 0 ? 0 : Rupiah(harga)}</td>
+                  </tr>
                   <tr>
                     <td colSpan={2}>Total</td>
                     <td>Rp. {harga === 0 ? 0 : Rupiah(harga)}</td>

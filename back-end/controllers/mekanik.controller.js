@@ -73,6 +73,11 @@ const addMekanik = async (req, res) => {
           // });
           console.log(err.sqlMessage);
 
+        return res.status(500).send({
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+
         // return response(res, 200, "Berhasil menambahkan data");
         // return res.status(201).send("Berhasil menambahkan data");
       }

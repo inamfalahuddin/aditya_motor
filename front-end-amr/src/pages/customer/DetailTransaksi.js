@@ -132,6 +132,15 @@ function DetailTransaksi() {
                     ))}
                   <tr>
                     <td colSpan={2} className="fw-bold">
+                      Biaya Operasi
+                    </td>
+                    <td>
+                      {dataDetail.biaya_operasi &&
+                        Rupiah(dataDetail.biaya_operasi)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={2} className="fw-bold">
                       Total
                     </td>
                     <td className="fw-bold">

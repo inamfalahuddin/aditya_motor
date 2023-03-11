@@ -4,7 +4,7 @@ const dateFormat = require("../utils/date");
 
 const getTransaksiAll = (req, res) => {
   db.query(
-    `SELECT a.id_transaksi, a.tanggal, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
+    `SELECT a.id_transaksi, a.tanggal, a.biaya_operasi, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
     JOIN customer b ON a.id_customer=b.id_customer
     JOIN pesanan c ON a.id_pesanan=c.id_pesanan
     JOIN mekanik d ON a.id_mekanik=d.id_mekanik`,
@@ -31,7 +31,7 @@ const getTransaksiById = (req, res) => {
   const { id } = req.params;
 
   db.query(
-    `SELECT a.id_transaksi, a.tanggal, b.username, c.no_polisi, c.merk_kendaraan, c.permasalahan, d.nama_mekanik, a.barang, a.total, a.qty FROM transaksi a
+    `SELECT a.id_transaksi, a.tanggal, a.biaya_operasi, b.username, c.no_polisi, c.merk_kendaraan, c.permasalahan, d.nama_mekanik, a.barang, a.total, a.qty FROM transaksi a
       JOIN customer b ON a.id_customer=b.id_customer
       JOIN pesanan c ON a.id_pesanan=c.id_pesanan
       JOIN mekanik d ON a.id_mekanik=d.id_mekanik
@@ -103,7 +103,7 @@ const getTransaksiByUserId = (req, res) => {
       } else {
         if (rows.length > 0) {
           db.query(
-            `SELECT a.id_transaksi, a.tanggal, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
+            `SELECT a.id_transaksi, a.tanggal, a.biaya_operasi, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
             JOIN customer b ON a.id_customer=b.id_customer
             JOIN pesanan c ON a.id_pesanan=c.id_pesanan
             JOIN mekanik d ON a.id_mekanik=d.id_mekanik
