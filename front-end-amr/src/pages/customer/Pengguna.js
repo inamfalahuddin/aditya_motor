@@ -20,8 +20,6 @@ function Pengguna() {
   const [password, setPassword] = useState({});
   const [message, setMessage] = useState({});
 
-  console.log(password);
-
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pengguna" });
 

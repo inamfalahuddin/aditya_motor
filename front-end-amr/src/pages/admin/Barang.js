@@ -20,6 +20,10 @@ function Barang() {
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "barang" });
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
 
     if (state.token.bearer === "") {
       refresh();

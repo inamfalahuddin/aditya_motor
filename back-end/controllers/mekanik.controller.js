@@ -47,6 +47,11 @@ const getMekanikById = (req, res) => {
 
 const addMekanik = async (req, res) => {
   const data = req.body;
+  const imageURL = path.join(
+    __dirname,
+    "..",
+    `/uploads/${req.file.originalname}`
+  );
 
   try {
     await sharp(req.file.buffer)
@@ -62,7 +67,7 @@ const addMekanik = async (req, res) => {
           alamat: data.alamat,
           no_hp: data.no_hp,
           jabatan: data.jabatan,
-          foto: path.join(__dirname, "..", `/uploads/${req.file.originalname}`),
+          foto: imageURL,
         },
       ],
       (err, rows, fields) => {
@@ -71,12 +76,11 @@ const addMekanik = async (req, res) => {
           //   code: err.code,
           //   sqlMessage: err.sqlMessage,
           // });
-          console.log(err.sqlMessage);
 
-        return res.status(500).send({
-          code: err.code,
-          sqlMessage: err.sqlMessage,
-        });
+          return res.status(500).send({
+            code: err.code,
+            sqlMessage: err.sqlMessage,
+          });
 
         // return response(res, 200, "Berhasil menambahkan data");
         // return res.status(201).send("Berhasil menambahkan data");
@@ -90,10 +94,10 @@ const addMekanik = async (req, res) => {
       .set({
         "Content-Type": "multipart/form-data",
       })
-      .send("Image uploaded succesfully");
+      .json({ message: "Berhasil menambahkan data" });
   } catch (error) {
     console.log(error);
-    res.status(400).send(error);
+    res.status(400).json({ data: error });
   }
 };
 

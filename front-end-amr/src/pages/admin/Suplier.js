@@ -18,6 +18,10 @@ function Suplier() {
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "suplier" });
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
 
     auth();
   }, []);

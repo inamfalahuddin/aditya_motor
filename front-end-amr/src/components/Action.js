@@ -49,6 +49,8 @@ function Action({ detail, edit, remove, accessed }) {
           reFetchData(`barang/all`, "SET_BARANG");
         } else if (remove.split("/")[1] === "transaksi") {
           reFetchData(`transaksi/all`, "SET_TRANSAKSI");
+        } else if (remove.split("/")[1] === "mekanik") {
+          reFetchData(`mekanik/all`, "SET_MEKANIK");
         }
       }
     } catch (err) {
@@ -103,6 +105,14 @@ function Action({ detail, edit, remove, accessed }) {
           payload: {
             ...state.data,
             transaksi: response.data.data,
+          },
+        });
+      case "SET_MEKANIK":
+        return disptach({
+          type: "SET_DATA",
+          payload: {
+            ...state.data,
+            mekanik: response.data.data,
           },
         });
       default:

@@ -17,6 +17,11 @@ function Dasbhoard() {
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "dashboard" });
 
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
+
     return () => {
       auth();
     };

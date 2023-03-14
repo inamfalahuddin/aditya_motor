@@ -34,6 +34,7 @@ import DetailBarang from "./pages/admin/DetailBarang";
 import EditBarang from "./pages/admin/EditBarang";
 import EditTransaksi from "./pages/customer/EditTransaksi";
 import Pembayaran from "./pages/customer/Pembayaran";
+import EditMekanik from "./pages/admin/EdiitMekanik";
 
 function App() {
   return (
@@ -222,11 +223,21 @@ function App() {
           }
         />
         <Route
-          path="/mekanik/detail"
+          path="/mekanik/detail/:id"
           element={
             <AppProvider>
               <Template>
                 <DetailMekanik />
+              </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/mekanik/edit/:id"
+          element={
+            <AppProvider>
+              <Template>
+                <EditMekanik />
               </Template>
             </AppProvider>
           }

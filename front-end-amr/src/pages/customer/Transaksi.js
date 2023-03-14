@@ -17,6 +17,11 @@ function Transaksi() {
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "transaksi" });
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
+
     if (state.token.bearer === "") {
       refresh();
     }

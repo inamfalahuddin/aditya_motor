@@ -1,18 +1,29 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserProfile from "../../images/icon-user-dark.svg";
 import jwtDecode from "jwt-decode";
+import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/usePrivate";
 
 function DetailMekanik() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
+  const auth = useAuth();
+  const axiosPrivate = useAxiosPrivate();
+  const [dataMekanik, setDataMekanik] = useState([]);
+
+  const { id } = useParams();
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "tambah mekanik" });
+
+    if (state.token.bearer === "") {
+      auth();
+    }
   }, []);
 
   useEffect(() => {
@@ -20,7 +31,24 @@ function DetailMekanik() {
     if (decode.role === "user") {
       navigate(`/dashboard`);
     }
+
+    getDetailMekanik(id);
   }, []);
+
+  const getDetailMekanik = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`mekanik/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataMekanik(response.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="card">
@@ -34,12 +62,12 @@ function DetailMekanik() {
             <div className="row g-3 px-4 align-items-center mb-4">
               <div className="col-2">
                 <label htmlFor="inputPassword6" className="col-form-label">
-                  Nama Lengkap
+                  Nama Mekanik
                 </label>
               </div>
               <div className="col-10">
                 <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-                  Andika Lubis
+                  {dataMekanik[0] && dataMekanik[0].nama_mekanik}
                 </span>
               </div>
             </div>
@@ -51,7 +79,7 @@ function DetailMekanik() {
               </div>
               <div className="col-10">
                 <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-                  Andika Lubis
+                  {dataMekanik[0] && dataMekanik[0].alamat}
                 </span>
               </div>
             </div>
@@ -63,7 +91,7 @@ function DetailMekanik() {
               </div>
               <div className="col-10">
                 <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-                  083816014304
+                  {dataMekanik[0] && dataMekanik[0].no_hp}
                 </span>
               </div>
             </div>
@@ -75,7 +103,7 @@ function DetailMekanik() {
               </div>
               <div className="col-10">
                 <span className="bg-light py-2 px-4 rounded-2 d-inline-block w-100">
-                  Kepala Mekanik
+                  {dataMekanik[0] && dataMekanik[0].jabatan}
                 </span>
               </div>
             </div>

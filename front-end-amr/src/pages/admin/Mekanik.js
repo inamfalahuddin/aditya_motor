@@ -8,6 +8,7 @@ import useAxiosPrivate from "../../hooks/usePrivate";
 import useAuth from "../../hooks/useAuth";
 import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import Alert from "../../components/Alert";
 
 function Mekanik() {
   const [state, dispatch] = useAppContext();
@@ -18,9 +19,18 @@ function Mekanik() {
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "mekanik" });
+    dispatch({
+      type: "SET_MESSAGE",
+      payload: {},
+    });
+
     auth();
     getMekanik();
   }, []);
+
+  useEffect(() => {
+    setDataMekanik(state.data.mekanik);
+  }, [state.data]);
 
   useEffect(() => {
     const decode = state.token.bearer && jwtDecode(state.token.bearer);
@@ -37,7 +47,13 @@ function Mekanik() {
         },
       });
 
-      setDataMekanik(response.data.data);
+      dispatch({
+        type: "SET_DATA",
+        payload: {
+          ...state.data,
+          mekanik: response.data.data,
+        },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -45,6 +61,10 @@ function Mekanik() {
 
   return (
     <div>
+      {state.message.message !== undefined ? (
+        <Alert data={state.message} />
+      ) : null}
+
       <div className="card">
         <Toolbar title={state.pages.title} to={`/${state.pages.title}/add`} />
         <div className="card-body m-0 p-0">
@@ -75,7 +95,11 @@ function Mekanik() {
                     <td style={{ verticalAlign: "middle" }}>{data.no_hp}</td>
                     <td style={{ verticalAlign: "middle" }}>{data.jabatan}</td>
                     <td style={{ verticalAlign: "middle" }}>
-                      <Action />
+                      <Action
+                        detail={`/mekanik/detail/${data.id_mekanik}`}
+                        edit={`/mekanik/edit/${data.id_mekanik}`}
+                        remove={`/mekanik/${data.id_mekanik}`}
+                      />
                     </td>
                   </tr>
                 ))

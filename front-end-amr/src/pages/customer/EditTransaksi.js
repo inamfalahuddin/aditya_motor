@@ -394,7 +394,7 @@ function EditBarang() {
                 color="primary"
                 onclick={() => editTransaksi()}
               >
-                Buat Transaksi
+                Perbarui Data
               </Button>
               <Button
                 className="me-3"

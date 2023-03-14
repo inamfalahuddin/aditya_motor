@@ -26,6 +26,7 @@ function AddTransaksi() {
   const [id, setId] = useState("");
   const [dataTransaksi, setDataTransaksi] = useState({});
   const [barangParse, setBarangParse] = useState([]);
+  const [hargaTotal, setHargaTotal] = useState(0);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "tambah transaksi" });
@@ -41,13 +42,15 @@ function AddTransaksi() {
 
   useEffect(() => {
     let sum = 0;
-    const total = barangParse.map((data) => {
+    barangParse.map((data) => {
       sum += data.harga;
     });
 
     setHarga(sum + Number(dataTransaksi.biaya_operasi));
+    setHargaTotal(sum + Number(dataTransaksi.biaya_operasi));
+
     updateBarang();
-  }, [barang, harga, dataTransaksi.biaya_oiperasi]);
+  }, [dataTransaksi.biaya_operasi, harga]);
 
   useEffect(() => {
     barang.map((val) => {
@@ -74,7 +77,7 @@ function AddTransaksi() {
       ...dataTransaksi,
       barang: JSON.stringify(barangParse),
       qty: barangParse.length,
-      total: harga,
+      total: hargaTotal,
     });
   };
 
