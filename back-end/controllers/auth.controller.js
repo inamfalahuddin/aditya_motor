@@ -60,10 +60,7 @@ const login = (req, res) => {
 
 const register = (req, res) => {
   const { username, alamat, no_tlp, email, password } = req.body;
-
   const idCustomer = generateIdCustomer();
-  const salt = bcrypt.genSaltSync();
-  const hashPassword = bcrypt.hashSync(password, salt);
 
   db.query(
     `INSERT INTO customer SET ?`,
@@ -74,7 +71,7 @@ const register = (req, res) => {
         alamat,
         no_tlp,
         email,
-        password: hashPassword,
+        password: hashPassword(password),
       },
     ],
     (err, rows, fields) => {
@@ -193,6 +190,78 @@ const refresh = (req, res) => {
   }
 };
 
+const editPassword = (req, res) => {
+  if (req.body) {
+    db.query(
+      `SELECT a.id_customer, a.password, b.role FROM customer a JOIN auth b ON a.id_customer=b.id_customer WHERE a.id_customer='${req.query.id}'`,
+      (err, rows, fields) => {
+        if (err) {
+          return response(res, 500, {
+            code: err.code,
+            sqlMessage: err.sqlMessage,
+          });
+        }
+
+        if (rows.length > 0) {
+          const match = bcrypt.compareSync(req.body.old, rows[0].password);
+          const { id_customer, role } = rows[0];
+
+          if (!match) {
+            return response(res, 404, "Password salah");
+          }
+
+          // const accessToken = jwt.sign(
+          //   { id_customer, role },
+          //   process.env.ACCESS_TOKEN_SECRET,
+          //   { expiresIn: "200s" }
+          // );
+
+          // const refreshToken = jwt.sign(
+          //   { id_customer, role },
+          //   process.env.REFRESH_TOKEN_SECRET,
+          //   { expiresIn: "1d" }
+          // );
+
+          // db.query(
+          //   `UPDATE auth SET token='${refreshToken}' WHERE id_customer='${id_customer}'`,
+          //   (err, rows, fields) => {
+          //     if (err) {
+          //       return response(res, 500, {
+          //         code: err.code,
+          //         sqlMessage: err.sqlMessage,
+          //       });
+          //     }
+          //   }
+          // );
+
+          db.query(
+            `UPDATE customer SET password='${hashPassword(
+              req.body.new
+            )}' WHERE id_customer='${id_customer}'`,
+            (err, rows, fields) => {
+              if (err) {
+                return response(res, 500, {
+                  code: err.code,
+                  sqlMessage: err.sqlMessage,
+                });
+              }
+            }
+          );
+
+          // res.cookie("refreshToken", refreshToken, {
+          //   httpOnly: true,
+          //   maxAge: 24 * 60 * 60 * 1000,
+          // });
+
+          return response(res, 200, "Password berhasil diupdate");
+        } else {
+          return response(res, 404, "User tidak terdaftar");
+        }
+      }
+    );
+  }
+};
+
 function generateIdCustomer() {
   const min = 100000;
   const max = 999999;
@@ -200,4 +269,13 @@ function generateIdCustomer() {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports = { login, register, logout, refresh };
+function hashPassword(password) {
+  if (password) {
+    const salt = bcrypt.genSaltSync();
+    const hashPassword = bcrypt.hashSync(password, salt);
+
+    return hashPassword;
+  }
+}
+
+module.exports = { login, register, logout, refresh, editPassword };

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import jwt_decode from "jwt-decode";
+import Alert from "../../components/Alert";
 
 function Pengguna() {
   const [state, dispatch] = useAppContext();
@@ -16,6 +17,10 @@ function Pengguna() {
   const [isEdit, setIsEdit] = useState(false);
   const [username, setUsername] = useState("");
   const [alamat, setAlamat] = useState("");
+  const [password, setPassword] = useState({});
+  const [message, setMessage] = useState({});
+
+  console.log(password);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pengguna" });
@@ -83,83 +88,159 @@ function Pengguna() {
     }
   };
 
+  const updatePassword = async (e) => {
+    try {
+      if (isEdit) {
+        const id = jwt_decode(state.token.bearer).id_customer;
+        const response = await axiosPrivate.put(
+          `auth/pwdchange?id=${id}`,
+          {
+            old: password.old,
+            new: password.new,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${state.token.bearer}`,
+            },
+          }
+        );
+
+        console.log(response);
+        setMessage({ message: response.data.message, color: "success" });
+      }
+    } catch (err) {
+      console.log(err);
+      setMessage({ message: err.response.data.message, color: "danger" });
+    }
+  };
+
   return (
-    <div className="card">
-      <div className="card-header bg-danger text-white">
-        <img src={IconData} alt="icon pengguna" />
-        <span className="ms-3">Data Pengguna</span>
+    <>
+      {message.message !== undefined ? <Alert data={message} /> : null}
+
+      <div className="card">
+        <div className="card-header bg-danger text-white">
+          <img src={IconData} alt="icon pengguna" />
+          <span className="ms-3">Data Pengguna</span>
+        </div>
+        <div className="card-body">
+          <div className="row g-3 px-4 align-items-center mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Username
+              </label>
+            </div>
+            <div className="col-10">
+              {isEdit ? (
+                <input
+                  className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                  type="text"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                />
+              ) : (
+                <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                  {dataPengguna[0] && dataPengguna[0].username}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="row g-3 px-4 align-items-center mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Alamat
+              </label>
+            </div>
+            <div className="col-10">
+              {isEdit ? (
+                <input
+                  className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                  type="text"
+                  value={alamat}
+                  onChange={(e) => {
+                    setAlamat(e.target.value);
+                  }}
+                />
+              ) : (
+                <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                  {dataPengguna[0] && dataPengguna[0].alamat}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="row g-3 px-4 align-items-center mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Ubah Password
+              </label>
+            </div>
+            <div className="col-10">
+              {isEdit ? (
+                <div className="row">
+                  <div className="col">
+                    <input
+                      className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                      type="password"
+                      placeholder="Masukan password lama"
+                      value={password.old}
+                      onChange={(e) => {
+                        setPassword({
+                          ...password,
+                          old: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="col">
+                    <input
+                      className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                      type="password"
+                      placeholder="Masukan password baru"
+                      value={password.new}
+                      onChange={(e) => {
+                        setPassword({
+                          ...password,
+                          new: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                  ***********
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="row g-3 px-4 align-items-center mb-4">
+            <div className="col-2"></div>
+            <div className="col-10">
+              <Button
+                className="me-3"
+                color="danger"
+                onclick={() => navigate("/dashboard")}
+              >
+                Kembali
+              </Button>
+              <Button
+                className="me-3"
+                color="primary"
+                onclick={useCallback(() => {
+                  setIsEdit(!isEdit);
+                  updateDataPengguna();
+                  // updatePassword(); masih error conn refused
+                }, [isEdit, username, alamat])}
+              >
+                {isEdit ? "Selesai Edit" : "Edit Sekarang"}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="card-body">
-        <div className="row g-3 px-4 align-items-center mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Username
-            </label>
-          </div>
-          <div className="col-10">
-            {isEdit ? (
-              <input
-                className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-                type="text"
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                }}
-              />
-            ) : (
-              <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
-                {dataPengguna[0] && dataPengguna[0].username}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="row g-3 px-4 align-items-center mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Alamat
-            </label>
-          </div>
-          <div className="col-10">
-            {isEdit ? (
-              <input
-                className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-                type="text"
-                value={alamat}
-                onChange={(e) => {
-                  setAlamat(e.target.value);
-                }}
-              />
-            ) : (
-              <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
-                {dataPengguna[0] && dataPengguna[0].alamat}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="row g-3 px-4 align-items-center mb-4">
-          <div className="col-2"></div>
-          <div className="col-10">
-            <Button
-              className="me-3"
-              color="danger"
-              onclick={() => navigate("/dashboard")}
-            >
-              Kembali
-            </Button>
-            <Button
-              className="me-3"
-              color="primary"
-              onclick={useCallback(() => {
-                setIsEdit(!isEdit);
-                updateDataPengguna();
-              }, [isEdit, username, alamat])}
-            >
-              Edit
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 

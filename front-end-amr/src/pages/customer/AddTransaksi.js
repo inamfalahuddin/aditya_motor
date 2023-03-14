@@ -45,13 +45,9 @@ function AddTransaksi() {
       sum += data.harga;
     });
 
-    setHarga(sum);
+    setHarga(sum + Number(dataTransaksi.biaya_operasi));
     updateBarang();
-
-    // barang.map((val) => {
-    //   setBarangParse([...barangParse, JSON.parse(val)]);
-    // });
-  }, [barang, harga]);
+  }, [barang, harga, dataTransaksi.biaya_oiperasi]);
 
   useEffect(() => {
     barang.map((val) => {
@@ -390,7 +386,11 @@ function AddTransaksi() {
                     ))}
                   <tr>
                     <td colSpan={2}>Biaya Operasi</td>
-                    <td>{harga === 0 ? 0 : Rupiah(harga)}</td>
+                    <td>
+                      {dataTransaksi.biaya_operasi === 0
+                        ? 0
+                        : Rupiah(dataTransaksi.biaya_operasi)}
+                    </td>
                   </tr>
                   <tr>
                     <td colSpan={2}>Total</td>

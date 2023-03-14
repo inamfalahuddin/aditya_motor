@@ -6,7 +6,6 @@ import Alert from "../components/Alert";
 import axios, { axiosPrivate } from "../api/axios";
 import { useAppContext } from "../context/app-context";
 import jwt_decoded from "jwt-decode";
-import useAuth from "../hooks/useAuth";
 import useRefreshToken from "../hooks/useRefreshToken";
 
 function Login() {

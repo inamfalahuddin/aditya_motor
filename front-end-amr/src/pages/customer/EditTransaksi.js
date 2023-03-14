@@ -47,9 +47,9 @@ function EditBarang() {
       sum += data.harga;
     });
 
-    setHarga(sum);
+    setHarga(sum + Number(dataTransaksi.biaya_operasi));
     updateBarang();
-  }, [barang, harga]);
+  }, [barang, harga, dataTransaksi.biaya_operasi]);
 
   useEffect(() => {
     barang.map((val) => {
@@ -281,6 +281,26 @@ function EditBarang() {
           <div className="row g-3 px-4 mb-4">
             <div className="col-2">
               <label htmlFor="inputPassword6" className="col-form-label">
+                Biaya Operasional
+              </label>
+            </div>
+            <div className="col-10">
+              <input
+                type="number"
+                className="border py-2 px-4 rounded-2 d-inline-block w-100 form-control"
+                placeholder="200000"
+                onChange={(e) => {
+                  setDataTransaksi({
+                    ...dataTransaksi,
+                    biaya_operasi: e.target.value,
+                  });
+                }}
+              />
+            </div>
+          </div>
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
                 Merk Kendaraan
               </label>
             </div>
@@ -350,6 +370,14 @@ function EditBarang() {
                         <td>{Rupiah(data.harga)}</td>
                       </tr>
                     ))}
+                  <tr>
+                    <td colSpan={2}>Biaya Operasi</td>
+                    <td>
+                      {dataTransaksi.biaya_operasi === 0
+                        ? 0
+                        : Rupiah(dataTransaksi.biaya_operasi)}
+                    </td>
+                  </tr>
                   <tr>
                     <td colSpan={2}>Total</td>
                     <td>Rp. {harga === 0 ? 0 : Rupiah(harga)}</td>
