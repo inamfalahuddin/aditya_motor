@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 14 Mar 2023 pada 12.59
+-- Waktu pembuatan: 15 Mar 2023 pada 03.32
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 8.1.12
 
@@ -41,11 +41,12 @@ CREATE TABLE `auth` (
 
 INSERT INTO `auth` (`id_customer`, `role`, `token`, `createdAt`, `updatedAt`) VALUES
 (255841, 'user', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6MjU1ODQxLCJyb2xlIjoidXNlciIsImlhdCI6MTY3ODYzNjMzMywiZXhwIjoxNjc4NzIyNzMzfQ.3Bw6-N4C3K9VWMWnqzY8orkLt6xd9X2X0pG4sa-R2p0', '2023-03-12 15:52:13', '0000-00-00 00:00:00'),
-(710843, 'admin', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6NzEwODQzLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2Nzg2MzYzOTAsImV4cCI6MTY3ODcyMjc5MH0.J4RVhlYtnrREKyEHuVh0xkvatxQUILEMMA1yLg_ty30', '2023-03-12 15:53:10', '0000-00-00 00:00:00'),
+(710843, 'admin', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6NzEwODQzLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2Nzg4NDMxMDQsImV4cCI6MTY3ODkyOTUwNH0.dN3aP4SvQvDSIGjbP_j2q3kq0eIAvsbj1MmsBLgO06U', '2023-03-15 01:18:24', '0000-00-00 00:00:00'),
 (152238, 'user', '', '2023-02-25 13:50:50', '0000-00-00 00:00:00'),
 (267451, 'user', '', '2023-03-12 15:08:52', '0000-00-00 00:00:00'),
 (872343, 'user', NULL, '2023-02-19 23:20:17', '0000-00-00 00:00:00'),
-(740699, 'user', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6NzQwNjk5LCJyb2xlIjoidXNlciIsImlhdCI6MTY3ODYzNDE4OSwiZXhwIjoxNjc4NzIwNTg5fQ.5vA_uuj9lpQytkJW8xIagymRToUKnr7v_dFqIDJXbM8', '2023-03-12 15:16:29', '0000-00-00 00:00:00');
+(740699, 'user', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6NzQwNjk5LCJyb2xlIjoidXNlciIsImlhdCI6MTY3ODYzNDE4OSwiZXhwIjoxNjc4NzIwNTg5fQ.5vA_uuj9lpQytkJW8xIagymRToUKnr7v_dFqIDJXbM8', '2023-03-12 15:16:29', '0000-00-00 00:00:00'),
+(201562, 'user', '', '2023-03-15 01:18:20', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -91,6 +92,7 @@ CREATE TABLE `customer` (
 
 INSERT INTO `customer` (`id_customer`, `username`, `alamat`, `no_tlp`, `email`, `password`) VALUES
 (152238, 'budi sembada', 'bojong gebang', '083816014304', 'budi@gmail.com', '$2b$10$HPhRoj45u2WWak4w7G0zaeFq47a9.ufCUJS8LJpCD8MEUIjB6zHrW'),
+(201562, 'Hanifah', 'babakan losari', '0875421345', 'hanifah@mail.com', '$2b$10$ZvM4FI81ulgS2/UIjdtiiet394d/PEhfoLJ10qODAWTCqmrQKa7/6'),
 (255841, 'fathan sembada', 'pabuaran wetan I', '083816014356', 'patan@mail.com', '$2b$10$UJC9hOb6GSApLqqYffXkoO49FTj8lzZ3UNYSzkUJF4QVNTCI8Jami'),
 (267451, 'riska widianti', 'sumber kidul', '087878455478', 'riska@mail.com', '$2b$10$k4BsJ4Cj9SHB8mMmrf4MK.rgCTzobI6tjbyzcIamdaiFu7jPzuHvG'),
 (710843, 'Ir. Budi Setiawan', 'kudumulya', '083816014356', 'budi@mail.com', '$2b$10$To8lcafTvoCuALxNMvsGyOMim/v5GAbsf1orgo03c8MbGffZC0CF2'),
@@ -124,7 +126,8 @@ INSERT INTO `kendaraan` (`id_kendaraan`, `id_customer`, `nomor_polisi`, `warna_k
 (487526, 255841, 'AB3456HD', 'hitam', 'honda', 'vario', 2015, '120', 'bensin'),
 (487527, 255841, 'E87656HD', 'merah', 'honda', 'vario', 2008, '120', 'bensin'),
 (487528, 267451, 'AB547GS', 'hitam', 'yamaha', 'vario', 2002, '120', 'minyak'),
-(487529, 740699, 'AB8754HD', 'hitam', 'yamaha', 'mio j', 2018, '70', 'minyak goreng');
+(487529, 740699, 'AB8754HD', 'hitam', 'yamaha', 'mio j', 2018, '70', 'minyak goreng'),
+(487530, 201562, 'E784HD', 'hitam', 'honda', 'supra x', 2020, '200', 'bensin/pertalite/pertamax');
 
 -- --------------------------------------------------------
 
@@ -136,7 +139,7 @@ CREATE TABLE `mekanik` (
   `id_mekanik` int(11) NOT NULL,
   `nama_mekanik` varchar(30) NOT NULL,
   `alamat` varchar(200) NOT NULL,
-  `no_hp` int(15) NOT NULL,
+  `no_hp` varchar(20) NOT NULL,
   `jabatan` varchar(50) NOT NULL,
   `foto` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -146,15 +149,11 @@ CREATE TABLE `mekanik` (
 --
 
 INSERT INTO `mekanik` (`id_mekanik`, `nama_mekanik`, `alamat`, `no_hp`, `jabatan`, `foto`) VALUES
-(25231, 'andika', 'hulubanteng', 234232, 'Mekanik 1', '3'),
-(45231, 'In\'am Falahuddin', 'Jl. Pangeran Sutajaya No. 142 Kec. Babakan Kab. Cirebon Jawa Barat 45191', 822441578, 'Mekanik 1', 'hasil'),
-(45233, 'yoga', 'sumber', 234092, 'Mekanik 1', '2'),
-(45235, 'lukman', 'gebang', 23423, 'Mekanik 1', '3'),
-(45237, 'maman', 'sindang', 32927309, 'Mekanik 1', '2'),
-(45238, 'fuad', 'sumber lor', 203993, 'Mekanik 1', '2'),
-(48231, 'opal', 'gebang', 23904, 'Mekanik 1', '2'),
-(48232, 'aditya imam', 'tegal', 875421212, 'front end', '/home/inam/Documents/aditya motor/back-end/uploads/LOGO-BALITBANGDA-pwt4d6kohudfif0r7dam83ddzl4774am42lqml9l34.png'),
-(48233, 'aditya imam', 'tegal', 875421212, 'front end', '/home/inam/Documents/aditya motor/back-end/uploads/LOGO-BALITBANGDA-pwt4d6kohudfif0r7dam83ddzl4774am42lqml9l34.png');
+(25231, 'andika', 'hulubanteng', '234232', 'Mekanik 1', '3'),
+(45233, 'yoga', 'sumber', '234092', 'Mekanik 1', '2'),
+(45235, 'lukman hakim', 'gebang', '082214658750', 'Mekanik 1', '3'),
+(48233, 'aditya imam', 'tegal', '875421212', 'front end', '/home/inam/Documents/aditya motor/back-end/uploads/LOGO-BALITBANGDA-pwt4d6kohudfif0r7dam83ddzl4774am42lqml9l34.png'),
+(48254, 'hasan albanna', 'bantul', '0875424578', 'cyber security', '/home/inam/Documents/aditya motor/back-end/uploads/incubator-10-min-768x545.jpeg');
 
 -- --------------------------------------------------------
 
@@ -210,7 +209,8 @@ INSERT INTO `pesanan` (`id_pesanan`, `id_customer`, `alamat`, `no_hp`, `no_polis
 (49, 267451, 'adf', 'asdf', 'AB547GS', 'yamaha', 'adsf', 'booking', '2023-03-12', '00:43:22', 'pending', 1),
 (50, 267451, 'asfd', 'asdf', 'AB547GS', 'yamaha', 'asdf', 'home service', '2023-03-12', '00:43:44', 'pending', 2),
 (51, 267451, 'desa sumber kidul dan lor', '087532132132', 'AB547GS', 'yamaha', '- tidak ada\n- tidak memiliki rem\n- mampu menahan panas', 'home service', '2023-03-12', '00:45:23', 'progres', 3),
-(52, 267451, 'Kali deres', '085842134568', 'AB547GS', 'yamaha', '- belajar react js', 'home service', '2023-03-12', '12:39:01', 'progres', 4);
+(52, 267451, 'Kali deres', '085842134568', 'AB547GS', 'yamaha', '- belajar react js', 'home service', '2023-03-12', '12:39:01', 'progres', 4),
+(53, 201562, 'babakan losari kec. babakan kab. cirebon', '0875423187', 'E784HD', 'honda', '- motor sering mogok\n- stater tidak bisa nyala\n- ganti oli \n- ganti lampu sen\n- ganti lampu depan\n- ganti klakson', 'booking', '2023-03-14', '20:04:45', 'progres', 1);
 
 -- --------------------------------------------------------
 
@@ -231,8 +231,7 @@ CREATE TABLE `suplier` (
 
 INSERT INTO `suplier` (`id_suplier`, `nama_toko`, `alamat`, `no_hp`) VALUES
 (45778, 'Toko Dea', 'Dusun 04 Desa Kudumulya RT/RW 005/004 Kec. Babakan Kab. Cirebon 45191', '083845647897'),
-(45800, 'tuku penasaran II', 'jalan makam roma II', '008784512457'),
-(45801, 'tuku penasaran IV', 'jalan makam roma III', '008784512457');
+(45800, 'tuku penasaran II', 'jalan makam roma II', '008784512457');
 
 -- --------------------------------------------------------
 
@@ -262,7 +261,7 @@ INSERT INTO `transaksi` (`id_transaksi`, `id_customer`, `id_pesanan`, `id_mekani
 (174550, 267451, 47, 7, 4, 0, 585000, '2023-03-04 00:00:00', '[{\"id\":4,\"nama\":\"Kampas rem belakang yamaha\",\"harga\":35000},{\"id\":2160,\"nama\":\"knalpot c56\",\"harga\":250000},{\"id\":2564,\"nama\":\"kanvas\",\"harga\":50000},{\"id\":2160,\"nama\":\"knalpot c56\",\"harga\":250000}]'),
 (174551, 267451, 50, 45231, 2, 300000, 285000, '2023-03-11 00:00:00', '[{\"id\":4,\"nama\":\"Kampas rem belakang yamaha\",\"harga\":35000},{\"id\":2160,\"nama\":\"knalpot c56\",\"harga\":250000}]'),
 (174552, 267451, 52, 48232, 1, 5000, 40000, '2023-03-12 00:00:00', '[{\"id\":4,\"nama\":\"Kampas rem belakang yamaha\",\"harga\":35000}]'),
-(174553, 255841, 45, 45233, 2, 200000, NULL, '2023-03-12 00:00:00', '[{\"id\":4,\"nama\":\"Kampas rem belakang yamaha\",\"harga\":35000},{\"id\":2160,\"nama\":\"knalpot c56\",\"harga\":250000}]');
+(174556, 201562, 53, 48233, 2, 100000, 400000, '2023-03-14 00:00:00', '[{\"id\":2564,\"nama\":\"kanvas\",\"harga\":50000},{\"id\":2160,\"nama\":\"knalpot c56\",\"harga\":250000}]');
 
 --
 -- Indexes for dumped tables
@@ -332,19 +331,19 @@ ALTER TABLE `transaksi`
 -- AUTO_INCREMENT untuk tabel `kendaraan`
 --
 ALTER TABLE `kendaraan`
-  MODIFY `id_kendaraan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=487530;
+  MODIFY `id_kendaraan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=487531;
 
 --
 -- AUTO_INCREMENT untuk tabel `mekanik`
 --
 ALTER TABLE `mekanik`
-  MODIFY `id_mekanik` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48234;
+  MODIFY `id_mekanik` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48255;
 
 --
 -- AUTO_INCREMENT untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT untuk tabel `suplier`
@@ -356,7 +355,7 @@ ALTER TABLE `suplier`
 -- AUTO_INCREMENT untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id_transaksi` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174554;
+  MODIFY `id_transaksi` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174557;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

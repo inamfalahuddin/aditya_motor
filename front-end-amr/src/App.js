@@ -34,7 +34,7 @@ import DetailBarang from "./pages/admin/DetailBarang";
 import EditBarang from "./pages/admin/EditBarang";
 import EditTransaksi from "./pages/customer/EditTransaksi";
 import Pembayaran from "./pages/customer/Pembayaran";
-import EditMekanik from "./pages/admin/EdiitMekanik";
+import EditMekanik from "./pages/admin/EditMekanik";
 
 function App() {
   return (
