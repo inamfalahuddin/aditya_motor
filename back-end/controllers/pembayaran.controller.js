@@ -1,5 +1,7 @@
 const response = require("../utils/response");
 const db = require("../config/db.con");
+const sharp = require("sharp");
+const path = require("path");
 
 const getRekening = (req, res) => {
   db.query(`SELECT * FROM rekening`, (err, rows, fields) => {
@@ -9,11 +11,29 @@ const getRekening = (req, res) => {
         sqlMessage: err.sqlMessage,
       });
 
-    console.log("oke lah ya");
     return response(res, 200, "Berhasil", rows, {
       jumlah_data: rows.length,
     });
   });
+};
+
+const getPembayaran = (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    `SELECT * FROM pembayaran WHERE id_transaksi=${id}`,
+    (err, rows, fields) => {
+      if (err)
+        return response(res, 500, {
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+        });
+
+      return response(res, 200, "Berhasil", rows, {
+        jumlah_data: rows.length,
+      });
+    }
+  );
 };
 
 const updateRekening = (req, res) => {
@@ -40,4 +60,51 @@ const updateRekening = (req, res) => {
   );
 };
 
-module.exports = { getRekening, updateRekening };
+const addPembayaran = async (req, res) => {
+  const data = req.body;
+
+  const genereateId = Date.now();
+  const imageURL = path.join(
+    __dirname,
+    "..",
+    `/uploads/${req.file.originalname}`
+  );
+
+  try {
+    await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toFile(imageURL);
+
+    db.query(
+      `INSERT INTO pembayaran SET ?`,
+      [
+        {
+          id_transaksi: data.id_transaksi,
+          metode: data.metode,
+          bukti_pembayaran: imageURL,
+          status: data.status,
+        },
+      ],
+      (err, rows, fields) => {
+        if (err)
+          return res.status(500).send({
+            code: err.code,
+            sqlMessage: err.sqlMessage,
+          });
+      }
+    );
+
+    return res
+      .status(201)
+      .set({
+        "Content-Type": "multipart/form-data",
+      })
+      .json({ message: "Berhasil menambahkan data" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ data: error });
+  }
+};
+
+module.exports = { getRekening, getPembayaran, addPembayaran, updateRekening };

@@ -56,7 +56,7 @@ function Pengguna() {
     }
   };
 
-  const getRekening = async (id) => {
+  const getRekening = async () => {
     try {
       const response = await axiosPrivate.get(`rekening`, {
         withCredentials: true,

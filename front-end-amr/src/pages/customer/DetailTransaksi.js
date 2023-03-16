@@ -14,6 +14,7 @@ function DetailTransaksi() {
   const auth = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [dataDetail, setDataDetail] = useState([]);
+  const [dataPembayaran, setDataPembayaran] = useState([]);
 
   const { id } = useParams();
 
@@ -23,6 +24,8 @@ function DetailTransaksi() {
     if (state.token.bearer === "") {
       auth();
     }
+
+    getPembayaran(id);
   }, []);
 
   useEffect(() => {
@@ -47,13 +50,29 @@ function DetailTransaksi() {
     }
   };
 
+  const getPembayaran = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`pembayaran/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      setDataPembayaran(response.data.data[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const btnBayar = useCallback(() => {
     dispatch({ type: "SET_MODAL", payload: !state.isModal });
   }, []);
 
   return (
     <>
-      <ModalBayar id={dataDetail.id_transaksi} />
+      {state.role === "admin" ? null : (
+        <ModalBayar id={dataDetail.id_transaksi} />
+      )}
       <div className="card">
         <div className="card-header bg-danger text-white">
           <img src={IconData} alt="icon pengguna" />
@@ -179,14 +198,16 @@ function DetailTransaksi() {
           <div className="row g-3 px-4 align-items-center mb-4">
             <div className="col-2"></div>
             <div className="col-10">
-              <Button
-                className="me-3"
-                color="success"
-                //   onclick={() => navigate("/transaksi")}
-                onclick={btnBayar}
-              >
-                Bayar
-              </Button>
+              {state.role === "admin" ? null : (
+                <Button
+                  className="me-3"
+                  color="success"
+                  //   onclick={() => navigate("/transaksi")}
+                  onclick={btnBayar}
+                >
+                  Bayar
+                </Button>
+              )}
               <Button
                 className="me-3"
                 color="danger"

@@ -24,6 +24,7 @@ const intialState = {
   },
   isModal: false,
   isPrint: false,
+  isPembayaran: {},
 };
 
 const reducer = (state, action) => {
@@ -47,6 +48,8 @@ const reducer = (state, action) => {
       return { ...state, isModal: action.payload };
     case "SET_PRINT":
       return { ...state, isPrint: action.payload };
+    case "SET_PEMBAYARAN":
+      return { ...state, isPembayaran: action.payload };
     default:
       throw new Error();
   }

@@ -30,10 +30,33 @@ function ModalBayar({ id }) {
               </h5>
             </div>
             <div className="modal-body d-flex justify-content-center gap-3 py-5">
-              <Button color="success">Cash</Button>
+              <Button
+                color="success"
+                onclick={() => {
+                  navigate(`/pembayaran/${id}`);
+                  dispatch({ type: "SET_MODAL", payload: false });
+                  dispatch({
+                    type: "SET_PEMBAYARAN",
+                    payload: {
+                      metode: "cash",
+                    },
+                  });
+                }}
+              >
+                Cash
+              </Button>
               <Button
                 color="primary"
-                onclick={() => navigate(`/pembayaran/${id}`)}
+                onclick={() => {
+                  navigate(`/pembayaran/${id}`);
+                  dispatch({ type: "SET_MODAL", payload: false });
+                  dispatch({
+                    type: "SET_PEMBAYARAN",
+                    payload: {
+                      metode: "debit",
+                    },
+                  });
+                }}
               >
                 Debit
               </Button>

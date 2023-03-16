@@ -7,6 +7,8 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import jwt_decode from "jwt-decode";
 import Rupiah from "../../helper/Rupiah";
+import Alert from "../../components/Alert";
+import axios from "../../api/axios";
 
 function Pembayaran() {
   const [state, dispatch] = useAppContext();
@@ -14,6 +16,10 @@ function Pembayaran() {
   const auth = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [dataDetail, setDataDetail] = useState([]);
+  const [rekening, setRekening] = useState([]);
+  const [message, setMessage] = useState({});
+
+  const [selectedFile, setSelectedFile] = useState("");
 
   const { id } = useParams();
 
@@ -25,7 +31,10 @@ function Pembayaran() {
     }
 
     getDataTransaksi();
+    getRekening();
   }, []);
+
+  console.log(state.isPembayaran);
 
   const getDataTransaksi = async () => {
     try {
@@ -36,10 +45,57 @@ function Pembayaran() {
         },
       });
 
-      console.log(response);
       setDataDetail(response.data.data[0]);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const getRekening = async () => {
+    try {
+      const response = await axiosPrivate.get(`rekening`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+      const data = response.data.data[0];
+
+      setRekening({
+        nama: data.atas_nama,
+        bank: data.nama_bank,
+        no_rek: data.no_rekening,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+
+    const dataFile = new FormData();
+    dataFile.append("id_transaksi", id);
+    dataFile.append("metode", state.isPembayaran.metode);
+    dataFile.append("bukti_pembayaran", selectedFile);
+    dataFile.append("status", "pending");
+
+    try {
+      const response = await axios({
+        method: "post",
+        url: "/pembayaran",
+        data: dataFile,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(dataFile);
+
+      // setMessage({ message: response.data.message, color: "success" });
+    } catch (err) {
+      console.log(err);
+      setMessage({ message: err.response.data.message, color: "danger" });
     }
   };
 
@@ -47,12 +103,19 @@ function Pembayaran() {
     <div className="card">
       <div className="card-header bg-danger text-white">
         <img src={IconData} alt="icon pengguna" />
-        <span className="ms-3">Pembayaran Debit</span>
+        <span className="ms-3">Pembayaran {state.isPembayaran.metode}</span>
       </div>
       <div className="card-body">
         <div className="row g-3 px-4 align-items-start mb-4">
-          <div className="col-12">
+          <Alert
+            data={{
+              color: "warning",
+              message: `Metode pembayaran yang anda gunakan adalah ${state.isPembayaran.metode}`,
+            }}
+          />
+          <div className="col-12 d-flex justify-content-between align-items-center">
             <h1>Invoice #{id}</h1>
+            <span>{dataDetail.tanggal}</span>
           </div>
           <div className="col-2">
             <label htmlFor="inputPassword6" className="col-form-label">
@@ -108,43 +171,48 @@ function Pembayaran() {
               </tbody>
             </table>
           </div>
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Nomor Rekening Tujuan
-            </label>
-          </div>
-          <div className="col-10">
-            <span className="py-2 rounded-2 w-100 text-capitalize">
-              a.n In'am Falahuddin
-            </span>
-            <h5>#784312135689232 - BRI</h5>
-            <h5>#784312135689232 - BCA</h5>
-            <h5>#784312135689232 - Mandiri</h5>
-          </div>{" "}
+          {state.isPembayaran.metode === "cash" ? null : (
+            <>
+              <div className="col-2">
+                <label htmlFor="inputPassword6" className="col-form-label">
+                  Nomor Rekening Tujuan
+                </label>
+              </div>
+              <div className="col-10">
+                <span className="py-2 rounded-2 w-100 text-capitalize">
+                  <span className="text-lowercase">a.n</span> {rekening.nama}
+                </span>
+                <h5>
+                  {rekening.no_rek} - {rekening.bank}
+                </h5>
+              </div>
+            </>
+          )}
         </div>
-
-        <div className="row g-3 px-4 mb-4">
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Upload Bukti Pembayaran
-            </label>
+        {state.isPembayaran.metode === "cash" ? null : (
+          <div className="row g-3 px-4 mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Upload Bukti Pembayaran
+              </label>
+            </div>
+            <div className="col-10">
+              <input
+                className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                type="file"
+                name="bukti_pembayaran"
+                onChange={(e) => {
+                  setSelectedFile(e.target.files[0]);
+                }}
+              />
+            </div>
           </div>
-          <div className="col-10">
-            <input
-              className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-              type="file"
-            />
-          </div>
-        </div>
+        )}
 
         <div className="row g-3 px-4 align-items-center mb-4">
           <div className="col-2"></div>
           <div className="col-10">
-            <Button
-              className="me-3"
-              color="primary"
-              onclick={() => navigate("/transaksi")}
-            >
+            <Button className="me-3" color="primary" onclick={submit}>
               Kirim
             </Button>
             <Button
