@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import Action from "../../components/Action";
 import Toolbar from "../../components/Toolbar";
@@ -9,6 +9,7 @@ import useAuth from "../../hooks/useAuth";
 import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../components/Alert";
+import { useReactToPrint } from "react-to-print";
 
 function Mekanik() {
   const [state, dispatch] = useAppContext();
@@ -16,6 +17,21 @@ function Mekanik() {
   const axiosPrivate = useAxiosPrivate();
   const auth = useAuth();
   const navigate = useNavigate("");
+
+  const componentsRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentsRef.current,
+    documentTitle: "emp-data",
+    onAfterPrint: () => alert("print sukses"),
+  });
+
+  useEffect(() => {
+    if (state.isPrint) {
+      handlePrint();
+      dispatch({ type: "SET_PRINT", payload: false });
+    }
+  }, [state.isPrint]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "mekanik" });
@@ -67,7 +83,7 @@ function Mekanik() {
 
       <div className="card">
         <Toolbar title={state.pages.title} to={`/${state.pages.title}/add`} />
-        <div className="card-body m-0 p-0">
+        <div className="card-body m-0 p-0" ref={componentsRef}>
           <table className="table table-hover border-white">
             <thead className="bg-danger text-white">
               <tr>
@@ -77,7 +93,7 @@ function Mekanik() {
                 <td>Alamat</td>
                 <td>No Hp</td>
                 <td>Jabatan</td>
-                <td>Action</td>
+                {state.isPrint ? null : <td>Action</td>}
               </tr>
             </thead>
             <tbody>
@@ -95,11 +111,13 @@ function Mekanik() {
                     <td style={{ verticalAlign: "middle" }}>{data.no_hp}</td>
                     <td style={{ verticalAlign: "middle" }}>{data.jabatan}</td>
                     <td style={{ verticalAlign: "middle" }}>
-                      <Action
-                        detail={`/mekanik/detail/${data.id_mekanik}`}
-                        edit={`/mekanik/edit/${data.id_mekanik}`}
-                        remove={`/mekanik/${data.id_mekanik}`}
-                      />
+                      {state.isPrint ? null : (
+                        <Action
+                          detail={`/mekanik/detail/${data.id_mekanik}`}
+                          edit={`/mekanik/edit/${data.id_mekanik}`}
+                          remove={`/mekanik/${data.id_mekanik}`}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))

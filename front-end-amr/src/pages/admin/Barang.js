@@ -1,15 +1,14 @@
 import jwtDecode from "jwt-decode";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import Action from "../../components/Action";
 import Alert from "../../components/Alert";
-import Loading from "../../components/Loading";
 import Toolbar from "../../components/Toolbar";
 import { useAppContext } from "../../context/app-context";
 import Rupiah from "../../helper/Rupiah";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import useRefreshToken from "../../hooks/useRefreshToken";
-import Template from "../Template";
 
 function Barang() {
   const [state, dispatch] = useAppContext();
@@ -17,6 +16,21 @@ function Barang() {
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
   const navigate = useNavigate("");
+
+  const componentsRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentsRef.current,
+    documentTitle: "emp-data",
+    onAfterPrint: () => alert("print sukses"),
+  });
+
+  useEffect(() => {
+    if (state.isPrint) {
+      handlePrint();
+      dispatch({ type: "SET_PRINT", payload: false });
+    }
+  }, [state.isPrint]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "barang" });
@@ -73,7 +87,7 @@ function Barang() {
 
       <div className="card">
         <Toolbar to="/barang/add" />
-        <div className="card-body m-0 p-0">
+        <div className="card-body m-0 p-0" ref={componentsRef}>
           <table className="table table-hover border-white">
             <thead className="bg-danger text-white">
               <tr>
@@ -82,7 +96,7 @@ function Barang() {
                 <td>Nama Barang</td>
                 <td>Harga Barang</td>
                 <td>Qty</td>
-                <td>Action</td>
+                {state.isPrint ? null : <td>Action</td>}
               </tr>
             </thead>
             <tbody>
@@ -105,11 +119,13 @@ function Barang() {
                       </td>
                       <td style={{ verticalAlign: "middle" }}>{data.qty}</td>
                       <td style={{ verticalAlign: "middle" }}>
-                        <Action
-                          detail={`none`}
-                          edit={`/barang/edit/${data.id_barang}`}
-                          remove={`/barang/${data.id_barang}`}
-                        />
+                        {state.isPrint ? null : (
+                          <Action
+                            detail={`none`}
+                            edit={`/barang/edit/${data.id_barang}`}
+                            remove={`/barang/${data.id_barang}`}
+                          />
+                        )}
                       </td>
                     </tr>
                   );

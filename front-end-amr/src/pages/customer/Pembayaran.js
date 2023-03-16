@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import jwt_decode from "jwt-decode";
+import Rupiah from "../../helper/Rupiah";
 
 function Pembayaran() {
   const [state, dispatch] = useAppContext();
@@ -22,7 +23,25 @@ function Pembayaran() {
     if (state.token.bearer === "") {
       auth();
     }
+
+    getDataTransaksi();
   }, []);
+
+  const getDataTransaksi = async () => {
+    try {
+      const response = await axiosPrivate.get(`transaksi/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      console.log(response);
+      setDataDetail(response.data.data[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="card">
@@ -33,7 +52,7 @@ function Pembayaran() {
       <div className="card-body">
         <div className="row g-3 px-4 align-items-start mb-4">
           <div className="col-12">
-            <h1>Invoice #541238975</h1>
+            <h1>Invoice #{id}</h1>
           </div>
           <div className="col-2">
             <label htmlFor="inputPassword6" className="col-form-label">
@@ -43,7 +62,7 @@ function Pembayaran() {
           <div className="col-10">
             <span>:</span>
             <span className="py-2 px-4 rounded-2 w-100 text-capitalize">
-              In'am Falahuddin
+              {dataDetail.username}
             </span>
           </div>
           <div className="col-2">
@@ -55,30 +74,36 @@ function Pembayaran() {
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">No</th>
+                  <th scope="col">No.</th>
                   <th scope="col">Nama Barang</th>
-                  <th scope="col">Qty</th>
                   <th scope="col">Harga</th>
                 </tr>
               </thead>
               <tbody>
+                {dataDetail.barang &&
+                  JSON.parse(dataDetail.barang).map((data, i) => (
+                    <tr key={i}>
+                      <th scope="row">{i + 1}</th>
+                      <td>{data.nama}</td>
+                      <td>{Rupiah(data.harga)}</td>
+                    </tr>
+                  ))}
                 <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
+                  <td colSpan={2} className="fw-bold">
+                    Biaya Operasi
+                  </td>
+                  <td>
+                    {dataDetail.biaya_operasi &&
+                      Rupiah(dataDetail.biaya_operasi)}
+                  </td>
                 </tr>
                 <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-                <tr>
-                  <th colSpan={3} scope="row">
+                  <td colSpan={2} className="fw-bold">
                     Total
-                  </th>
-                  <td>Rp. 520.000</td>
+                  </td>
+                  <td className="fw-bold">
+                    Rp. {dataDetail.total && Rupiah(dataDetail.total)}
+                  </td>
                 </tr>
               </tbody>
             </table>

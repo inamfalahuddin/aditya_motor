@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import Toolbar from "../../components/Toolbar";
 import useAxiosPrivate from "../../hooks/usePrivate";
@@ -6,6 +6,7 @@ import useRefreshToken from "../../hooks/useRefreshToken";
 import Action from "../../components/Action";
 import jwtDecode from "jwt-decode";
 import Alert from "../../components/Alert";
+import { useReactToPrint } from "react-to-print";
 
 function Pemesan() {
   const [state, dispatch] = useAppContext();
@@ -13,6 +14,21 @@ function Pemesan() {
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
   const [role, setRole] = useState("");
+
+  const componentsRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentsRef.current,
+    documentTitle: "emp-data",
+    onAfterPrint: () => alert("print sukses"),
+  });
+
+  useEffect(() => {
+    if (state.isPrint) {
+      handlePrint();
+      dispatch({ type: "SET_PRINT", payload: false });
+    }
+  }, [state.isPrint]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pesanan" });
@@ -96,7 +112,7 @@ function Pemesan() {
 
       <div className="card">
         <Toolbar to="/pesanan/add" />
-        <div className="card-body m-0 p-0">
+        <div className="card-body m-0 p-0" ref={componentsRef}>
           <table className="table table-hover border-white">
             <thead className="border-start border-end bg-danger text-white">
               <tr>
@@ -107,7 +123,7 @@ function Pemesan() {
                 <td>Pelayanan</td>
                 <td>No Antrian</td>
                 <td>Status</td>
-                <td>Action</td>
+                {state.isPrint ? null : <td>Action</td>}
               </tr>
             </thead>
             <tbody className="border-start border-end">
@@ -134,12 +150,14 @@ function Pemesan() {
                       </span>
                     </td>
                     <td>
-                      <Action
-                        detail={`/pesanan/detail/${data.id_pesanan}`}
-                        edit={`/pesanan/edit/${data.id_pesanan}`}
-                        remove={`/pesanan/${data.id_pesanan}`}
-                        accessed={role}
-                      />
+                      {state.isPrint ? null : (
+                        <Action
+                          detail={`/pesanan/detail/${data.id_pesanan}`}
+                          edit={`/pesanan/edit/${data.id_pesanan}`}
+                          remove={`/pesanan/${data.id_pesanan}`}
+                          accessed={role}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))

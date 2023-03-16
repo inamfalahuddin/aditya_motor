@@ -20,6 +20,15 @@ function Toolbar({ title, to }) {
     setRole(decode.role);
   }, [state.token.bearer]);
 
+  const btnPrint = () => {
+    dispatch({
+      type: "SET_PRINT",
+      payload: !state.isPrint,
+    });
+  };
+
+  console.log(state.isPrint);
+
   return (
     <div className="card-header d-flex justify-content-between align-items-center bg-white py-4">
       <span>Data {state.pages.title}</span>
@@ -31,7 +40,7 @@ function Toolbar({ title, to }) {
           </span>
         </Button>
       )}
-      <Button color="success" onclick={() => window.print()}>
+      <Button color="success" onclick={btnPrint}>
         <img className="me-2" src={IconPrint} alt="add" />
         <span style={{ fontSize: ".85rem" }}>Print</span>
       </Button>

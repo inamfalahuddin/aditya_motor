@@ -100,9 +100,6 @@ const addKendaraan = (req, res) => {
 };
 
 const updateKendaraan = (req, res) => {
-
-
-
   const { id } = req.params;
   const data = req.body;
 

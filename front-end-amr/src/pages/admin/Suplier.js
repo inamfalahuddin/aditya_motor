@@ -1,6 +1,7 @@
 import jwtDecode from "jwt-decode";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import Action from "../../components/Action";
 import Alert from "../../components/Alert";
 import Toolbar from "../../components/Toolbar";
@@ -15,6 +16,21 @@ function Suplier() {
   const axiosPrivate = useAxiosPrivate();
   const auth = useAuth();
   const navigate = useNavigate("");
+
+  const componentsRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentsRef.current,
+    documentTitle: "emp-data",
+    onAfterPrint: () => alert("print sukses"),
+  });
+
+  useEffect(() => {
+    if (state.isPrint) {
+      handlePrint();
+      dispatch({ type: "SET_PRINT", payload: false });
+    }
+  }, [state.isPrint]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "suplier" });
@@ -67,7 +83,7 @@ function Suplier() {
 
       <div className="card">
         <Toolbar title={state.pages.title} to={`/${state.pages.title}/add`} />
-        <div className="card-body m-0 p-0">
+        <div className="card-body m-0 p-0" ref={componentsRef}>
           <table className="table table-hover border-white">
             <thead className="bg-danger text-white">
               <tr>
@@ -75,7 +91,7 @@ function Suplier() {
                 <td>Nama Toko</td>
                 <td>Alamat</td>
                 <td>No HP</td>
-                <td>Action</td>
+                {state.isPrint ? null : <td>Action</td>}
               </tr>
             </thead>
             <tbody>
@@ -98,11 +114,13 @@ function Suplier() {
                       </td>
                       <td style={{ verticalAlign: "middle" }}>{data.no_hp}</td>
                       <td style={{ verticalAlign: "middle" }}>
-                        <Action
-                          detail={`/suplier/detail/${data.id_suplier}`}
-                          edit={`/suplier/edit/${data.id_suplier}`}
-                          remove={`/suplier/${data.id_suplier}`}
-                        />
+                        {state.isPrint ? null : (
+                          <Action
+                            detail={`/suplier/detail/${data.id_suplier}`}
+                            edit={`/suplier/edit/${data.id_suplier}`}
+                            remove={`/suplier/${data.id_suplier}`}
+                          />
+                        )}
                       </td>
                     </tr>
                   );

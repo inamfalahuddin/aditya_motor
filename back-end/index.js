@@ -8,6 +8,7 @@ const pesananRoute = require("./routes/pesanan.routes");
 const customerRoute = require("./routes/customer.routes");
 const kendaraanRoute = require("./routes/kendaraan.routes");
 const transaksiRoute = require("./routes/transaksi.routes");
+const pembayaranRoute = require("./routes/rekening.routes");
 const loginRoute = require("./routes/auth.routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -68,6 +69,7 @@ app.use(pesananRoute);
 app.use(customerRoute);
 app.use(kendaraanRoute);
 app.use(transaksiRoute);
+app.use(pembayaranRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(

@@ -35,6 +35,7 @@ import EditBarang from "./pages/admin/EditBarang";
 import EditTransaksi from "./pages/customer/EditTransaksi";
 import Pembayaran from "./pages/customer/Pembayaran";
 import EditMekanik from "./pages/admin/EditMekanik";
+import Print from "./pages/Print";
 
 function App() {
   return (
@@ -149,6 +150,14 @@ function App() {
               <Template>
                 <Transaksi />
               </Template>
+            </AppProvider>
+          }
+        />
+        <Route
+          path="/transaksi/print"
+          element={
+            <AppProvider>
+              <Print />
             </AppProvider>
           }
         />

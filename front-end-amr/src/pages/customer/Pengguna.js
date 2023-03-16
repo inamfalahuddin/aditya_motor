@@ -19,6 +19,7 @@ function Pengguna() {
   const [alamat, setAlamat] = useState("");
   const [password, setPassword] = useState({});
   const [message, setMessage] = useState({});
+  const [rekening, setRekening] = useState({});
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "pengguna" });
@@ -33,6 +34,7 @@ function Pengguna() {
       const decode = jwt_decode(state.token.bearer);
 
       getDataPengguna(decode.id_customer);
+      getRekening();
     }
   }, [state.token.bearer]);
 
@@ -49,6 +51,26 @@ function Pengguna() {
       setUsername(data[0].username);
       setAlamat(data[0].alamat);
       setDataPengguna(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getRekening = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`rekening`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+      const data = response.data.data[0];
+
+      setRekening({
+        nama: data.atas_nama,
+        bank: data.nama_bank,
+        no_rek: data.no_rekening,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -80,6 +102,24 @@ function Pengguna() {
 
           setDataPengguna(response.data.data);
         }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateRekening = async (e) => {
+    try {
+      if (isEdit) {
+        const id = jwt_decode(state.token.bearer).id_customer;
+
+        console.log(rekening);
+        const response = await axiosPrivate.put(`rekening`, rekening, {
+          headers: {
+            Authorization: `Bearer ${state.token.bearer}`,
+          },
+        });
+        console.log(response.data.data);
       }
     } catch (err) {
       console.log(err);
@@ -171,6 +211,56 @@ function Pengguna() {
           <div className="row g-3 px-4 align-items-center mb-4">
             <div className="col-2">
               <label htmlFor="inputPassword6" className="col-form-label">
+                No Rekening
+              </label>
+            </div>
+            <div className="col-10">
+              {isEdit ? (
+                <>
+                  <input
+                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
+                    type="text"
+                    value={rekening.nama}
+                    onChange={(e) => {
+                      setRekening({
+                        ...rekening,
+                        nama: e.target.value,
+                      });
+                    }}
+                  />
+                  <input
+                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
+                    type="text"
+                    value={rekening.bank}
+                    onChange={(e) => {
+                      setRekening({
+                        ...rekening,
+                        bank: e.target.value,
+                      });
+                    }}
+                  />
+                  <input
+                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
+                    type="text"
+                    value={rekening.no_rek}
+                    onChange={(e) => {
+                      setRekening({
+                        ...rekening,
+                        no_rek: e.target.value,
+                      });
+                    }}
+                  />
+                </>
+              ) : (
+                <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                  {rekening.no_rek}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="row g-3 px-4 align-items-center mb-4">
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
                 Ubah Password
               </label>
             </div>
@@ -229,6 +319,7 @@ function Pengguna() {
                 onclick={useCallback(() => {
                   setIsEdit(!isEdit);
                   updateDataPengguna();
+                  updateRekening();
                   // updatePassword(); masih error conn refused
                 }, [isEdit, username, alamat])}
               >

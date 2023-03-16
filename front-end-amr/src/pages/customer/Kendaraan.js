@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import Toolbar from "../../components/Toolbar";
 import Action from "../../components/Action";
@@ -7,6 +7,7 @@ import useRefreshToken from "../../hooks/useRefreshToken";
 import jwtDecode from "jwt-decode";
 import Alert from "../../components/Alert";
 import { useNavigate } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 
 function Kendaraan() {
   const [state, dispatch] = useAppContext();
@@ -14,6 +15,21 @@ function Kendaraan() {
   const axiosPrivate = useAxiosPrivate();
   const refresh = useRefreshToken();
   const navigate = useNavigate("");
+
+  const componentsRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentsRef.current,
+    documentTitle: "emp-data",
+    onAfterPrint: () => alert("print sukses"),
+  });
+
+  useEffect(() => {
+    if (state.isPrint) {
+      handlePrint();
+      dispatch({ type: "SET_PRINT", payload: false });
+    }
+  }, [state.isPrint]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "kendaraan" });
@@ -76,7 +92,7 @@ function Kendaraan() {
 
       <div className="card">
         <Toolbar to="/kendaraan/add" />
-        <div className="card-body m-0 p-0">
+        <div className="card-body m-0 p-0" ref={componentsRef}>
           <table className="table table-hover border-white">
             <thead className="bg-danger text-white">
               <tr>
@@ -87,7 +103,7 @@ function Kendaraan() {
                 <td>Jenis</td>
                 <td>Tahun Kendaraan</td>
                 <td>Isi Cylinder</td>
-                <td>Action</td>
+                {state.isPrint ? null : <td>Action</td>}
               </tr>
             </thead>
             <tbody>
@@ -108,11 +124,13 @@ function Kendaraan() {
                     <td>{data.tahun_kendaraan}</td>
                     <td>{data.isi_silinder}</td>
                     <td>
-                      <Action
-                        detail={`/kendaraan/detail/${data.id_kendaraan}`}
-                        edit={`/kendaraan/edit/${data.id_kendaraan}`}
-                        remove={data.id_kendaraan}
-                      />
+                      {state.isPrint ? null : (
+                        <Action
+                          detail={`/kendaraan/detail/${data.id_kendaraan}`}
+                          edit={`/kendaraan/edit/${data.id_kendaraan}`}
+                          remove={`/kendaraan/${data.id_kendaraan}`}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))

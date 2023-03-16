@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import Toolbar from "../../components/Toolbar";
 import Action from "../../components/Action";
@@ -6,6 +6,7 @@ import useRefreshToken from "../../hooks/useRefreshToken";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import jwt_decode from "jwt-decode";
 import Alert from "../../components/Alert";
+import { useReactToPrint } from "react-to-print";
 
 function Transaksi() {
   const [state, dispatch] = useAppContext();
@@ -14,6 +15,21 @@ function Transaksi() {
   const refresh = useRefreshToken();
 
   const [role, setRole] = useState("");
+
+  const componentsRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentsRef.current,
+    documentTitle: "emp-data",
+    onAfterPrint: () => alert("print sukses"),
+  });
+
+  useEffect(() => {
+    if (state.isPrint) {
+      handlePrint();
+      dispatch({ type: "SET_PRINT", payload: false });
+    }
+  }, [state.isPrint]);
 
   useEffect(() => {
     dispatch({ type: "SET_TITLE", payload: "transaksi" });
@@ -96,7 +112,7 @@ function Transaksi() {
 
       <div className="card">
         <Toolbar to="/transaksi/add" />
-        <div className="card-body m-0 p-0">
+        <div className="card-body m-0 p-0" ref={componentsRef}>
           <table className="table table-hover border-white">
             <thead className="bg-danger text-white">
               <tr>
@@ -106,7 +122,7 @@ function Transaksi() {
                 <td>No Polisi</td>
                 <td>Merk Kendaraan</td>
                 <td>Nama Mekanik</td>
-                <td>Action</td>
+                {state.isPrint ? null : <td>Action</td>}
               </tr>
             </thead>
             <tbody>
@@ -125,12 +141,14 @@ function Transaksi() {
                     <td className="text-capitalize">{data.merk_kendaraan}</td>
                     <td className="text-capitalize">{data.nama_mekanik}</td>
                     <td>
-                      <Action
-                        detail={`/transaksi/detail/${data.id_transaksi}`}
-                        edit={`/transaksi/edit/${data.id_transaksi}`}
-                        remove={`/transaksi/${data.id_transaksi}`}
-                        accessed={role}
-                      />
+                      {state.isPrint ? null : (
+                        <Action
+                          detail={`/transaksi/detail/${data.id_transaksi}`}
+                          edit={`/transaksi/edit/${data.id_transaksi}`}
+                          remove={`/transaksi/${data.id_transaksi}`}
+                          accessed={role}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))

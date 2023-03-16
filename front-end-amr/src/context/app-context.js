@@ -23,6 +23,7 @@ const intialState = {
     pesanan: [],
   },
   isModal: false,
+  isPrint: false,
 };
 
 const reducer = (state, action) => {
@@ -44,6 +45,8 @@ const reducer = (state, action) => {
       return { ...state, data: action.payload };
     case "SET_MODAL":
       return { ...state, isModal: action.payload };
+    case "SET_PRINT":
+      return { ...state, isPrint: action.payload };
     default:
       throw new Error();
   }
