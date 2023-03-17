@@ -18,6 +18,7 @@ function Pembayaran() {
   const [dataDetail, setDataDetail] = useState([]);
   const [rekening, setRekening] = useState([]);
   const [message, setMessage] = useState({});
+  const [pembayaran, setPembayaran] = useState([]);
 
   const [selectedFile, setSelectedFile] = useState("");
 
@@ -34,7 +35,9 @@ function Pembayaran() {
     getRekening();
   }, []);
 
-  console.log(state.isPembayaran);
+  useEffect(() => {
+    getDataPembayaran();
+  }, [state.token.bearer]);
 
   const getDataTransaksi = async () => {
     try {
@@ -46,6 +49,22 @@ function Pembayaran() {
       });
 
       setDataDetail(response.data.data[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getDataPembayaran = async () => {
+    try {
+      const response = await axiosPrivate.get(`pembayaran/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${state.token.bearer}`,
+        },
+      });
+
+      console.log(response);
+      setPembayaran(response.data.data);
     } catch (err) {
       console.log(err);
     }
@@ -80,152 +99,171 @@ function Pembayaran() {
     dataFile.append("bukti_pembayaran", selectedFile);
     dataFile.append("status", "pending");
 
-    try {
-      const response = await axios({
-        method: "post",
-        url: "/pembayaran",
-        data: dataFile,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    if (selectedFile !== "") {
+      try {
+        console.log(selectedFile === "");
+        // if(dataFile)
+        const response = await axios({
+          method: "post",
+          url: "/pembayaran",
+          data: dataFile,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-      console.log(dataFile);
-
-      // setMessage({ message: response.data.message, color: "success" });
-    } catch (err) {
-      console.log(err);
-      setMessage({ message: err.response.data.message, color: "danger" });
+        console.log(response);
+        setMessage({ message: "Pembayaran Berhasil", color: "success" });
+      } catch (err) {
+        console.log(err);
+        setMessage({ message: err.response.data.message, color: "danger" });
+      }
+    } else {
+      if (state.isPembayaran.metode === "debit") {
+        alert("mohon input bukti pembayaran!");
+      }
     }
   };
 
   return (
-    <div className="card">
-      <div className="card-header bg-danger text-white">
-        <img src={IconData} alt="icon pengguna" />
-        <span className="ms-3">Pembayaran {state.isPembayaran.metode}</span>
-      </div>
-      <div className="card-body">
-        <div className="row g-3 px-4 align-items-start mb-4">
-          <Alert
-            data={{
-              color: "warning",
-              message: `Metode pembayaran yang anda gunakan adalah ${state.isPembayaran.metode}`,
-            }}
-          />
-          <div className="col-12 d-flex justify-content-between align-items-center">
-            <h1>Invoice #{id}</h1>
-            <span>{dataDetail.tanggal}</span>
-          </div>
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Nama Lengkap
-            </label>
-          </div>
-          <div className="col-10">
-            <span>:</span>
-            <span className="py-2 px-4 rounded-2 w-100 text-capitalize">
-              {dataDetail.username}
-            </span>
-          </div>
-          <div className="col-2">
-            <label htmlFor="inputPassword6" className="col-form-label">
-              Rincian Biaya
-            </label>
-          </div>
-          <div className="col-10">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">No.</th>
-                  <th scope="col">Nama Barang</th>
-                  <th scope="col">Harga</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dataDetail.barang &&
-                  JSON.parse(dataDetail.barang).map((data, i) => (
-                    <tr key={i}>
-                      <th scope="row">{i + 1}</th>
-                      <td>{data.nama}</td>
-                      <td>{Rupiah(data.harga)}</td>
-                    </tr>
-                  ))}
-                <tr>
-                  <td colSpan={2} className="fw-bold">
-                    Biaya Operasi
-                  </td>
-                  <td>
-                    {dataDetail.biaya_operasi &&
-                      Rupiah(dataDetail.biaya_operasi)}
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={2} className="fw-bold">
-                    Total
-                  </td>
-                  <td className="fw-bold">
-                    Rp. {dataDetail.total && Rupiah(dataDetail.total)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          {state.isPembayaran.metode === "cash" ? null : (
-            <>
-              <div className="col-2">
-                <label htmlFor="inputPassword6" className="col-form-label">
-                  Nomor Rekening Tujuan
-                </label>
-              </div>
-              <div className="col-10">
-                <span className="py-2 rounded-2 w-100 text-capitalize">
-                  <span className="text-lowercase">a.n</span> {rekening.nama}
-                </span>
-                <h5>
-                  {rekening.no_rek} - {rekening.bank}
-                </h5>
-              </div>
-            </>
-          )}
+    <>
+      {/* {message !== undefined ? <Alert data={message} /> : null} */}
+
+      <div className="card">
+        <div className="card-header bg-danger text-white">
+          <img src={IconData} alt="icon pengguna" />
+          <span className="ms-3">Pembayaran {state.isPembayaran.metode}</span>
         </div>
-        {state.isPembayaran.metode === "cash" ? null : (
-          <div className="row g-3 px-4 mb-4">
+        <div className="card-body">
+          <div className="row g-3 px-4 align-items-start mb-4">
+            <Alert
+              data={{
+                color: "warning",
+                message: `Metode pembayaran yang anda gunakan adalah ${state.isPembayaran.metode}`,
+              }}
+            />
+            <div className="col-12 d-flex justify-content-between align-items-center">
+              <h1>Invoice #{id}</h1>
+              <span>{dataDetail.tanggal}</span>
+            </div>
             <div className="col-2">
               <label htmlFor="inputPassword6" className="col-form-label">
-                Upload Bukti Pembayaran
+                Nama Lengkap
               </label>
             </div>
             <div className="col-10">
-              <input
-                className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-                type="file"
-                name="bukti_pembayaran"
-                onChange={(e) => {
-                  setSelectedFile(e.target.files[0]);
-                }}
-              />
+              <span>:</span>
+              <span className="py-2 px-4 rounded-2 w-100 text-capitalize">
+                {dataDetail.username}
+              </span>
             </div>
+            <div className="col-2">
+              <label htmlFor="inputPassword6" className="col-form-label">
+                Rincian Biaya
+              </label>
+            </div>
+            <div className="col-10">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Nama Barang</th>
+                    <th scope="col">Harga</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataDetail.barang &&
+                    JSON.parse(dataDetail.barang).map((data, i) => (
+                      <tr key={i}>
+                        <th scope="row">{i + 1}</th>
+                        <td>{data.nama}</td>
+                        <td>{Rupiah(data.harga)}</td>
+                      </tr>
+                    ))}
+                  <tr>
+                    <td colSpan={2} className="fw-bold">
+                      Biaya Operasi
+                    </td>
+                    <td>
+                      {dataDetail.biaya_operasi &&
+                        Rupiah(dataDetail.biaya_operasi)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={2} className="fw-bold">
+                      Total
+                    </td>
+                    <td className="fw-bold">
+                      Rp. {dataDetail.total && Rupiah(dataDetail.total)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            {state.isPembayaran.metode === "cash" ? null : (
+              <>
+                <div className="col-2">
+                  <label htmlFor="inputPassword6" className="col-form-label">
+                    Nomor Rekening Tujuan
+                  </label>
+                </div>
+                <div className="col-10">
+                  <span className="py-2 rounded-2 w-100 text-capitalize">
+                    <span className="text-lowercase">a.n</span> {rekening.nama}
+                  </span>
+                  <h5>
+                    {rekening.no_rek} - {rekening.bank}
+                  </h5>
+                </div>
+              </>
+            )}
           </div>
-        )}
+          {state.isPembayaran.metode === "cash" ? null : pembayaran.length >
+            0 ? (
+            <Alert
+              data={{
+                message: `Berhasil ! status pembayaran anda ${pembayaran[0].status}, mohon tunggu hinga tim kami mengkonfirmasikannya. Terimakasih atas kepercayaan anda`,
+                color: "info",
+              }}
+            />
+          ) : (
+            <div className="row g-3 px-4 mb-4">
+              <div className="col-2">
+                <label htmlFor="inputPassword6" className="col-form-label">
+                  Upload Bukti Pembayaran
+                </label>
+              </div>
+              <div className="col-10">
+                <input
+                  className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                  type="file"
+                  name="bukti_pembayaran"
+                  onChange={(e) => {
+                    setSelectedFile(e.target.files[0]);
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
-        <div className="row g-3 px-4 align-items-center mb-4">
-          <div className="col-2"></div>
-          <div className="col-10">
-            <Button className="me-3" color="primary" onclick={submit}>
-              Kirim
-            </Button>
-            <Button
-              className="me-3"
-              color="danger"
-              onclick={() => navigate("/transaksi")}
-            >
-              Kembali
-            </Button>
+          <div className="row g-3 px-4 align-items-center mb-4">
+            <div className="col-2"></div>
+            <div className="col-10">
+              <Button className="me-3" color="primary" onclick={submit}>
+                Kirim
+              </Button>
+              <Button
+                className="me-3"
+                color="danger"
+                onclick={() => navigate("/transaksi")}
+              >
+                Kembali
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

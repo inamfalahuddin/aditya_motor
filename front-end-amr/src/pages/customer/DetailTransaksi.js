@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import Rupiah from "../../helper/Rupiah";
@@ -24,8 +24,6 @@ function DetailTransaksi() {
     if (state.token.bearer === "") {
       auth();
     }
-
-    getPembayaran(id);
   }, []);
 
   useEffect(() => {
@@ -33,6 +31,7 @@ function DetailTransaksi() {
       //   const decode = jwt_decode(state.token.bearer);
       getDataTransaksi(id);
     }
+    getPembayaran();
   }, [state.token.bearer]);
 
   const getDataTransaksi = async (id) => {
@@ -50,7 +49,7 @@ function DetailTransaksi() {
     }
   };
 
-  const getPembayaran = async (id) => {
+  const getPembayaran = async () => {
     try {
       const response = await axiosPrivate.get(`pembayaran/${id}`, {
         withCredentials: true,
@@ -59,14 +58,21 @@ function DetailTransaksi() {
         },
       });
 
-      setDataPembayaran(response.data.data[0]);
+      setDataPembayaran(response.data.data);
     } catch (err) {
       console.log(err);
     }
   };
+
   const btnBayar = useCallback(() => {
     dispatch({ type: "SET_MODAL", payload: !state.isModal });
   }, []);
+
+  useEffect(() => {
+    if (dataPembayaran.length > 0) {
+      navigate(`/pembayaran/${id}`);
+    }
+  }, [dataPembayaran]);
 
   return (
     <>

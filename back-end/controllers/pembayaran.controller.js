@@ -64,46 +64,49 @@ const addPembayaran = async (req, res) => {
   const data = req.body;
 
   const genereateId = Date.now();
-  const imageURL = path.join(
-    __dirname,
-    "..",
-    `/uploads/${req.file.originalname}`
-  );
 
-  try {
-    await sharp(req.file.buffer)
-      .resize({ width: 250, height: 250 })
-      .png()
-      .toFile(imageURL);
-
-    db.query(
-      `INSERT INTO pembayaran SET ?`,
-      [
-        {
-          id_transaksi: data.id_transaksi,
-          metode: data.metode,
-          bukti_pembayaran: imageURL,
-          status: data.status,
-        },
-      ],
-      (err, rows, fields) => {
-        if (err)
-          return res.status(500).send({
-            code: err.code,
-            sqlMessage: err.sqlMessage,
-          });
-      }
+  if (req.file.originalname) {
+    const imageURL = path.join(
+      __dirname,
+      "..",
+      `/uploads/${req.file.originalname}`
     );
 
-    return res
-      .status(201)
-      .set({
-        "Content-Type": "multipart/form-data",
-      })
-      .json({ message: "Berhasil menambahkan data" });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ data: error });
+    try {
+      await sharp(req.file.buffer)
+        .resize({ width: 250, height: 250 })
+        .png()
+        .toFile(imageURL);
+
+      db.query(
+        `INSERT INTO pembayaran SET ?`,
+        [
+          {
+            id_transaksi: data.id_transaksi,
+            metode: data.metode,
+            bukti_pembayaran: imageURL,
+            status: data.status,
+          },
+        ],
+        (err, rows, fields) => {
+          if (err)
+            return res.status(500).send({
+              code: err.code,
+              sqlMessage: err.sqlMessage,
+            });
+        }
+      );
+
+      return res
+        .status(201)
+        .set({
+          "Content-Type": "multipart/form-data",
+        })
+        .json({ message: "Berhasil menambahkan data" });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ data: error });
+    }
   }
 };
 
