@@ -93,16 +93,49 @@ function Pembayaran() {
   const submit = async (e) => {
     e.preventDefault();
 
-    const dataFile = new FormData();
-    dataFile.append("id_transaksi", id);
-    dataFile.append("metode", state.isPembayaran.metode);
-    dataFile.append("bukti_pembayaran", selectedFile);
-    dataFile.append("status", "pending");
+    console.log("event submit ok");
 
-    if (selectedFile !== "") {
+    if (state.isPembayaran.metode === "debit") {
+      const dataFile = new FormData();
+
+      dataFile.append("id_transaksi", id);
+      dataFile.append("metode", state.isPembayaran.metode);
+      dataFile.append("bukti_pembayaran", selectedFile);
+      dataFile.append("status", "pending");
+
+      if (selectedFile !== "") {
+        try {
+          const response = await axios({
+            method: "post",
+            url: "/pembayaran",
+            data: dataFile,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          setMessage({ message: "Pembayaran Berhasil", color: "success" });
+          navigate(`/pembayaran/${id}`);
+        } catch (err) {
+          console.log(err);
+          setMessage({ message: err.response.data.message, color: "danger" });
+        }
+      } else {
+        if (state.isPembayaran.metode === "debit") {
+          alert("mohon input bukti pembayaran!");
+        }
+      }
+    }
+
+    if (state.isPembayaran.metode === "cash") {
+      const dataFile = new FormData();
+
+      dataFile.append("id_transaksi", id);
+      dataFile.append("metode", state.isPembayaran.metode);
+      dataFile.append("bukti_pembayaran", "");
+      dataFile.append("status", "pending");
+
       try {
-        console.log(selectedFile === "");
-        // if(dataFile)
         const response = await axios({
           method: "post",
           url: "/pembayaran",
@@ -112,22 +145,18 @@ function Pembayaran() {
           },
         });
 
-        console.log(response);
+        navigate(`/pembayaran/${id}`);
         setMessage({ message: "Pembayaran Berhasil", color: "success" });
       } catch (err) {
         console.log(err);
         setMessage({ message: err.response.data.message, color: "danger" });
-      }
-    } else {
-      if (state.isPembayaran.metode === "debit") {
-        alert("mohon input bukti pembayaran!");
       }
     }
   };
 
   return (
     <>
-      {/* {message !== undefined ? <Alert data={message} /> : null} */}
+      {message !== undefined ? <Alert data={message} /> : null}
 
       <div className="card">
         <div className="card-header bg-danger text-white">
@@ -136,12 +165,6 @@ function Pembayaran() {
         </div>
         <div className="card-body">
           <div className="row g-3 px-4 align-items-start mb-4">
-            <Alert
-              data={{
-                color: "warning",
-                message: `Metode pembayaran yang anda gunakan adalah ${state.isPembayaran.metode}`,
-              }}
-            />
             <div className="col-12 d-flex justify-content-between align-items-center">
               <h1>Invoice #{id}</h1>
               <span>{dataDetail.tanggal}</span>
@@ -200,8 +223,26 @@ function Pembayaran() {
                 </tbody>
               </table>
             </div>
-            {state.isPembayaran.metode === "cash" ? null : (
-              <>
+          </div>
+
+          {pembayaran && pembayaran.length === 0 ? null : (
+            <Alert
+              data={{
+                message: `Berhasil ! status pembayaran anda saat ini  ${
+                  pembayaran[0] && pembayaran[0].status
+                } menggunakan metode ${
+                  pembayaran[0] && pembayaran[0].metode
+                }, mohon tunggu hinga tim kami mengkonfirmasikannya. Terimakasih atas kepercayaan anda`,
+                color: "info",
+              }}
+            />
+          )}
+
+          {state.isPembayaran.metode === "cash" ? null : pembayaran[0] &&
+            pembayaran[0].metode === "cash" ? null : pembayaran.length >
+            0 ? null : (
+            <>
+              <div className="row g-3 px-4 mb-4">
                 <div className="col-2">
                   <label htmlFor="inputPassword6" className="col-form-label">
                     Nomor Rekening Tujuan
@@ -215,43 +256,34 @@ function Pembayaran() {
                     {rekening.no_rek} - {rekening.bank}
                   </h5>
                 </div>
-              </>
-            )}
-          </div>
-          {state.isPembayaran.metode === "cash" ? null : pembayaran.length >
-            0 ? (
-            <Alert
-              data={{
-                message: `Berhasil ! status pembayaran anda ${pembayaran[0].status}, mohon tunggu hinga tim kami mengkonfirmasikannya. Terimakasih atas kepercayaan anda`,
-                color: "info",
-              }}
-            />
-          ) : (
-            <div className="row g-3 px-4 mb-4">
-              <div className="col-2">
-                <label htmlFor="inputPassword6" className="col-form-label">
-                  Upload Bukti Pembayaran
-                </label>
               </div>
-              <div className="col-10">
-                <input
-                  className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
-                  type="file"
-                  name="bukti_pembayaran"
-                  onChange={(e) => {
-                    setSelectedFile(e.target.files[0]);
-                  }}
-                />
+              <div className="row g-3 px-4 mb-4">
+                <div className="col-2">
+                  <label htmlFor="inputPassword6" className="col-form-label">
+                    Upload Bukti Pembayaran
+                  </label>
+                </div>
+                <div className="col-10">
+                  <input
+                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control"
+                    type="file"
+                    name="bukti_pembayaran"
+                    onChange={(e) => {
+                      setSelectedFile(e.target.files[0]);
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           <div className="row g-3 px-4 align-items-center mb-4">
-            <div className="col-2"></div>
-            <div className="col-10">
-              <Button className="me-3" color="primary" onclick={submit}>
-                Kirim
-              </Button>
+            <div className="col-12">
+              {pembayaran && pembayaran.length > 0 ? null : (
+                <Button className="me-3" color="primary" onclick={submit}>
+                  Kirim
+                </Button>
+              )}
               <Button
                 className="me-3"
                 color="danger"

@@ -63,9 +63,7 @@ const updateRekening = (req, res) => {
 const addPembayaran = async (req, res) => {
   const data = req.body;
 
-  const genereateId = Date.now();
-
-  if (req.file.originalname) {
+  if (req.file) {
     const imageURL = path.join(
       __dirname,
       "..",
@@ -84,7 +82,39 @@ const addPembayaran = async (req, res) => {
           {
             id_transaksi: data.id_transaksi,
             metode: data.metode,
-            bukti_pembayaran: imageURL,
+            bukti_pembayaran: `/images/${req.file.originalname}`,
+            status: data.status,
+          },
+        ],
+        (err, rows, fields) => {
+          if (err)
+            return res.status(500).send({
+              code: err.code,
+              sqlMessage: err.sqlMessage,
+            });
+        }
+      );
+
+      return res
+        .status(201)
+        .set({
+          "Content-Type": "multipart/form-data",
+        })
+        .json({ message: "Berhasil menambahkan data" });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ data: error });
+    }
+  } else {
+    console.log("oke masuk");
+    try {
+      db.query(
+        `INSERT INTO pembayaran SET ?`,
+        [
+          {
+            id_transaksi: data.id_transaksi,
+            metode: data.metode,
+            bukti_pembayaran: "",
             status: data.status,
           },
         ],

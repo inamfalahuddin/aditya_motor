@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../context/app-context";
 import IconData from "../../images/icon-data.svg";
 import Button from "../../components/Button";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/usePrivate";
 import Rupiah from "../../helper/Rupiah";
@@ -69,8 +69,10 @@ function DetailTransaksi() {
   }, []);
 
   useEffect(() => {
-    if (dataPembayaran.length > 0) {
-      navigate(`/pembayaran/${id}`);
+    if (state.role === "user") {
+      if (dataPembayaran.length > 0) {
+        // navigate(`/pembayaran/${id}`);
+      }
     }
   }, [dataPembayaran]);
 
@@ -201,9 +203,63 @@ function DetailTransaksi() {
             </div>
           </div>
 
+          {state.role === "admin" ? (
+            <div className="row g-3 px-4 align-items-center mb-4">
+              <div className="col-2">
+                <label htmlFor="inputPassword6" className="col-form-label">
+                  Konfirmasi Pembayaran
+                </label>
+              </div>
+              <div className="col-10 alert alert-info py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                <div className="d-flex justify-content-between align-items-center">
+                  <p>Bukti Pembayaran</p>
+                  <span className="text-end">
+                    <h3>
+                      #{dataPembayaran[0] && dataPembayaran[0].id_pembayaran}
+                    </h3>
+                    <small>
+                      {dataPembayaran[0] && dataPembayaran[0].createdAt}
+                    </small>
+                  </span>
+                </div>
+                {dataPembayaran[0] && dataPembayaran[0].metode === "cash" ? (
+                  <h5>
+                    Pembayaran Menggunakan Cash - #
+                    {dataPembayaran[0].id_transaksi}
+                  </h5>
+                ) : (
+                  <div
+                    className="bg-primary-100"
+                    style={{ width: "50%", height: "auto" }}
+                  >
+                    <img
+                      className="rounded"
+                      src={
+                        dataPembayaran[0] &&
+                        `http://localhost:5000/v1${dataPembayaran[0].bukti_pembayaran}`
+                      }
+                      alt="gambar bukti pembayaran"
+                    />
+                  </div>
+                )}
+                <Button
+                  className="me-3 mt-3"
+                  color="success"
+                  //   onclick={() => navigate("/transaksi")}
+                  onclick={() => {
+                    alert(
+                      "Apakah anda yakin ingin mengkonfirmasi pembayaran ini ?"
+                    );
+                  }}
+                >
+                  Konfirmasi Pembayaran
+                </Button>
+              </div>
+            </div>
+          ) : null}
+
           <div className="row g-3 px-4 align-items-center mb-4">
-            <div className="col-2"></div>
-            <div className="col-10">
+            <div className="col-12">
               {state.role === "admin" ? null : (
                 <Button
                   className="me-3"

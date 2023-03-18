@@ -103,10 +103,11 @@ const getTransaksiByUserId = (req, res) => {
       } else {
         if (rows.length > 0) {
           db.query(
-            `SELECT a.id_transaksi, a.tanggal, a.biaya_operasi, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik FROM transaksi a
+            `SELECT a.id_transaksi, a.tanggal, a.biaya_operasi, b.username, c.no_polisi, c.merk_kendaraan, d.nama_mekanik, e.status FROM transaksi a
             JOIN customer b ON a.id_customer=b.id_customer
             JOIN pesanan c ON a.id_pesanan=c.id_pesanan
             JOIN mekanik d ON a.id_mekanik=d.id_mekanik
+            LEFT JOIN pembayaran e ON a.id_transaksi=e.id_transaksi
             WHERE a.id_customer='${id}'
             `,
             (err, rows, fields) => {

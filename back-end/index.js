@@ -21,6 +21,7 @@ dotenv.config();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use("/v1/images", express.static("uploads"));
 
 app.use(
   cors({
@@ -50,8 +51,6 @@ app.post("/v1/upload", upload.single("image-upload"), async (req, res) => {
       .toFile(__dirname + `/uploads/${req.file.originalname}`);
 
     const pathFile = `${__dirname}/uploads/${req.file.originalname}`;
-
-    console.log(pathFile);
 
     res.status(201).send("Image uploaded succesfully");
   } catch (error) {

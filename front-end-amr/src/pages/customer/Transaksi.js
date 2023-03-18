@@ -143,7 +143,11 @@ function Transaksi() {
                     <td>
                       {state.isPrint ? null : (
                         <Action
-                          detail={`/transaksi/detail/${data.id_transaksi}`}
+                          detail={
+                            data.status
+                              ? `/pembayaran/${data.id_transaksi}`
+                              : `/transaksi/detail/${data.id_transaksi}`
+                          }
                           edit={`/transaksi/edit/${data.id_transaksi}`}
                           remove={`/transaksi/${data.id_transaksi}`}
                           accessed={role}
