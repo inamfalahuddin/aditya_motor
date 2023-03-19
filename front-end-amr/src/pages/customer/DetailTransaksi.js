@@ -12,9 +12,11 @@ function DetailTransaksi() {
   const [state, dispatch] = useAppContext();
   const navigate = useNavigate();
   const auth = useAuth();
-  const axiosPrivate = useAxiosPrivate();
   const [dataDetail, setDataDetail] = useState([]);
   const [dataPembayaran, setDataPembayaran] = useState([]);
+  const [konfirmasi, setKonfirmasi] = useState(false);
+
+  const axiosPrivate = useAxiosPrivate();
 
   const { id } = useParams();
 
@@ -33,6 +35,12 @@ function DetailTransaksi() {
     }
     getPembayaran();
   }, [state.token.bearer]);
+
+  useEffect(() => {
+    if (dataPembayaran[0] && dataPembayaran[0].status === "konfirmasi") {
+      setKonfirmasi(true);
+    }
+  }, [dataPembayaran]);
 
   const getDataTransaksi = async (id) => {
     try {
@@ -68,13 +76,23 @@ function DetailTransaksi() {
     dispatch({ type: "SET_MODAL", payload: !state.isModal });
   }, []);
 
-  useEffect(() => {
-    if (state.role === "user") {
-      if (dataPembayaran.length > 0) {
-        // navigate(`/pembayaran/${id}`);
-      }
+  const konfirmasiPembayaran = async () => {
+    try {
+      const response = await axiosPrivate.put(
+        `konfirmasi/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${state.token.bearer}`,
+          },
+        }
+      );
+
+      console.log(response);
+    } catch (err) {
+      console.log(err);
     }
-  }, [dataPembayaran]);
+  };
 
   return (
     <>
@@ -243,14 +261,16 @@ function DetailTransaksi() {
                   </div>
                 )}
                 <Button
-                  className="me-3 mt-3"
+                  className={`me-3 mt-3 ${konfirmasi ? "opacity-25 " : ""}`}
                   color="success"
-                  //   onclick={() => navigate("/transaksi")}
-                  onclick={() => {
-                    alert(
-                      "Apakah anda yakin ingin mengkonfirmasi pembayaran ini ?"
-                    );
-                  }}
+                  onclick={
+                    !konfirmasi
+                      ? () => {
+                          konfirmasiPembayaran();
+                          setKonfirmasi(true);
+                        }
+                      : null
+                  }
                 >
                   Konfirmasi Pembayaran
                 </Button>

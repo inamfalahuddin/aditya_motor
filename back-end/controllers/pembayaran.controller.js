@@ -2,6 +2,7 @@ const response = require("../utils/response");
 const db = require("../config/db.con");
 const sharp = require("sharp");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 
 const getRekening = (req, res) => {
   db.query(`SELECT * FROM rekening`, (err, rows, fields) => {
@@ -40,7 +41,6 @@ const updateRekening = (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
-  console.log(data);
   const idRekening = 2154882;
 
   db.query(
@@ -55,7 +55,7 @@ const updateRekening = (req, res) => {
           code: err.code,
           sqlMessage: err.sqlMessage,
         });
-      return response(res, 200, `Berhasil memperbarui data '${id}'`);
+      return response(res, 200, `Berhasil memperbarui data '${idRekening}'`);
     }
   );
 };
@@ -140,4 +140,40 @@ const addPembayaran = async (req, res) => {
   }
 };
 
-module.exports = { getRekening, getPembayaran, addPembayaran, updateRekening };
+const konfirmasiPembayaran = (req, res) => {
+  const { id } = req.params;
+
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return response(res, 403, err.message);
+    }
+
+    if (decoded.role === "admin") {
+      db.query(
+        `UPDATE pembayaran SET
+           status='konfirmasi'
+           WHERE id_pembayaran=${id} OR id_transaksi=${id}`,
+        (err, rows, fields) => {
+          if (err)
+            return response(res, 500, {
+              code: err.code,
+              sqlMessage: err.sqlMessage,
+            });
+        }
+      );
+      return response(res, 200, `Berhasil memperbarui data '${id}'`);
+    }
+    return response(res, 500, "Maaf anda bukan admin");
+  });
+};
+
+module.exports = {
+  getRekening,
+  getPembayaran,
+  addPembayaran,
+  updateRekening,
+  konfirmasiPembayaran,
+};

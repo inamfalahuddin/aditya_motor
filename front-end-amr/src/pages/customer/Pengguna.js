@@ -109,17 +109,16 @@ function Pengguna() {
   };
 
   const updateRekening = async (e) => {
+    console.log(rekening);
     try {
       if (isEdit) {
         const id = jwt_decode(state.token.bearer).id_customer;
-
-        console.log(rekening);
         const response = await axiosPrivate.put(`rekening`, rekening, {
           headers: {
             Authorization: `Bearer ${state.token.bearer}`,
           },
         });
-        console.log(response.data.data);
+        console.log(response);
       }
     } catch (err) {
       console.log(err);
@@ -208,56 +207,58 @@ function Pengguna() {
               )}
             </div>
           </div>
-          <div className="row g-3 px-4 align-items-center mb-4">
-            <div className="col-2">
-              <label htmlFor="inputPassword6" className="col-form-label">
-                No Rekening
-              </label>
+          {state.role === "user" ? null : (
+            <div className="row g-3 px-4 align-items-center mb-4">
+              <div className="col-2">
+                <label htmlFor="inputPassword6" className="col-form-label">
+                  No Rekening
+                </label>
+              </div>
+              <div className="col-10">
+                {isEdit ? (
+                  <>
+                    <input
+                      className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
+                      type="text"
+                      value={rekening.nama}
+                      onChange={(e) => {
+                        setRekening({
+                          ...rekening,
+                          nama: e.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
+                      type="text"
+                      value={rekening.bank}
+                      onChange={(e) => {
+                        setRekening({
+                          ...rekening,
+                          bank: e.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
+                      type="text"
+                      value={rekening.no_rek}
+                      onChange={(e) => {
+                        setRekening({
+                          ...rekening,
+                          no_rek: e.target.value,
+                        });
+                      }}
+                    />
+                  </>
+                ) : (
+                  <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
+                    {rekening.no_rek}
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="col-10">
-              {isEdit ? (
-                <>
-                  <input
-                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
-                    type="text"
-                    value={rekening.nama}
-                    onChange={(e) => {
-                      setRekening({
-                        ...rekening,
-                        nama: e.target.value,
-                      });
-                    }}
-                  />
-                  <input
-                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
-                    type="text"
-                    value={rekening.bank}
-                    onChange={(e) => {
-                      setRekening({
-                        ...rekening,
-                        bank: e.target.value,
-                      });
-                    }}
-                  />
-                  <input
-                    className="bg-light py-2 px-4 rounded-2 d-inline-block w-100 border-0 form-control mb-3"
-                    type="text"
-                    value={rekening.no_rek}
-                    onChange={(e) => {
-                      setRekening({
-                        ...rekening,
-                        no_rek: e.target.value,
-                      });
-                    }}
-                  />
-                </>
-              ) : (
-                <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
-                  {rekening.no_rek}
-                </span>
-              )}
-            </div>
-          </div>
+          )}
           <div className="row g-3 px-4 align-items-center mb-4">
             <div className="col-2">
               <label htmlFor="inputPassword6" className="col-form-label">
@@ -321,7 +322,7 @@ function Pengguna() {
                   updateDataPengguna();
                   updateRekening();
                   // updatePassword(); masih error conn refused
-                }, [isEdit, username, alamat])}
+                }, [isEdit, username, alamat, rekening])}
               >
                 {isEdit ? "Selesai Edit" : "Edit Sekarang"}
               </Button>
