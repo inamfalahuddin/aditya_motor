@@ -63,7 +63,6 @@ function Pembayaran() {
         },
       });
 
-      console.log(response);
       setPembayaran(response.data.data);
     } catch (err) {
       console.log(err);

@@ -27,8 +27,6 @@ function Toolbar({ title, to }) {
     });
   };
 
-  console.log(state.isPrint);
-
   return (
     <div className="card-header d-flex justify-content-between align-items-center bg-white py-4">
       <span>Data {state.pages.title}</span>

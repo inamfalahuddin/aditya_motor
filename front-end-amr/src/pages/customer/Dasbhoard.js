@@ -22,9 +22,7 @@ function Dasbhoard() {
       payload: {},
     });
 
-    return () => {
-      auth();
-    };
+    auth();
   }, []);
 
   useEffect(() => {

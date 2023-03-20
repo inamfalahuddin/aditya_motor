@@ -17,7 +17,7 @@ function Pengguna() {
   const [isEdit, setIsEdit] = useState(false);
   const [username, setUsername] = useState("");
   const [alamat, setAlamat] = useState("");
-  const [password, setPassword] = useState({});
+  const [password, setPassword] = useState({ old: "", new: "" });
   const [message, setMessage] = useState({});
   const [rekening, setRekening] = useState({});
 
@@ -109,7 +109,6 @@ function Pengguna() {
   };
 
   const updateRekening = async (e) => {
-    console.log(rekening);
     try {
       if (isEdit) {
         const id = jwt_decode(state.token.bearer).id_customer;
@@ -118,7 +117,6 @@ function Pengguna() {
             Authorization: `Bearer ${state.token.bearer}`,
           },
         });
-        console.log(response);
       }
     } catch (err) {
       console.log(err);
@@ -142,11 +140,10 @@ function Pengguna() {
           }
         );
 
-        console.log(response);
         setMessage({ message: response.data.message, color: "success" });
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       setMessage({ message: err.response.data.message, color: "danger" });
     }
   };
@@ -296,6 +293,17 @@ function Pengguna() {
                       }}
                     />
                   </div>
+                  <div className="col">
+                    <Button
+                      className="me-3"
+                      color="danger"
+                      onclick={() => {
+                        updatePassword();
+                      }}
+                    >
+                      Update Password
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <span className="py-2 px-4 rounded-2 d-inline-block w-100 text-capitalize">
@@ -321,7 +329,6 @@ function Pengguna() {
                   setIsEdit(!isEdit);
                   updateDataPengguna();
                   updateRekening();
-                  // updatePassword(); masih error conn refused
                 }, [isEdit, username, alamat, rekening])}
               >
                 {isEdit ? "Selesai Edit" : "Edit Sekarang"}
